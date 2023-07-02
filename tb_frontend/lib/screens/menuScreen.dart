@@ -21,7 +21,7 @@ class MenuScreen extends StatelessWidget {
             mainAxisSpacing: 10,
           ),
           children: [
-            ElevatedButton(
+            /*ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -50,11 +50,13 @@ class MenuScreen extends StatelessWidget {
                 Navigator.pushNamed(context, '/settings');
               },
               child: const Text('Deliveries'),
-            ),
+            ),*/
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
+          currentIndex: 0,
+          onTap: () {},
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.stacked_bar_chart), label: 'Stats'),
             BottomNavigationBarItem(icon: Icon(Icons.local_dining_sharp), label: 'Dishes'),
