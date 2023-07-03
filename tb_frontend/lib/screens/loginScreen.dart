@@ -1,8 +1,11 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
 //import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../models/user.dart';
 import 'menuScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,6 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   //final _storage = const FlutterSecureStorage();
 
+  late String token;
+  
   final _usernameController = TextEditingController(text: "");
   final _passwordController = TextEditingController(text: "");
   bool _isPasswordInputHidden = true;
@@ -53,10 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: AppBar(
-        title: const Text('Login'),
-        centerTitle: true,
-      ),*/
       body: Form(
         key: _formKey,
         child: Container(
@@ -64,20 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
           alignment: Alignment.center,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          //color: kColorScheme.background,
-          /*decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                kColorScheme.background,
-                kColorScheme.primary,
-              ],
-            ),
-          ),*/
           child: Column(
-            /*mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,*/
             children: [
               const SizedBox(height: 32),
               Text(
@@ -91,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 32),
               TextFormField(
+                controller: _usernameController,
                 maxLength: 50,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
@@ -99,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   icon: Icon(Icons.email),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty || !emailRegex.hasMatch(value)) {
+                  if (value == null || value.isEmpty /*|| !emailRegex.hasMatch(value)*/) {
                     return 'Please enter a valid email';
                   }
                   return null;
@@ -107,6 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                controller: _passwordController,
                 maxLength: 50,
                 obscureText: _isPasswordInputHidden,
                 decoration: InputDecoration(
@@ -134,7 +124,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    _menuScreen();
+
+                    final Future<String> futureToken = login(
+                        _usernameController.text, _passwordController.text);
+
+                    if (futureToken != null) {
+                      futureToken.then((token) {
+                        if (token != null) {
+                          log(token);
+                          _menuScreen();
+                        }
+                      });
+                    }
+                    else {
+                      log('Token is null');
+                    }
+                    /*FutureBuilder<String>(
+                    future: _futureToken,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data!);
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}');
+                      }
+
+                      return const CircularProgressIndicator();
+                    },
+                  );*/
                   }
                 },
                 child: const Text('Sign in'),

@@ -10,8 +10,16 @@ class MenuScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Menu'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         ),
-        drawer: Drawer(),
+        drawer: const Drawer(),
         body: GridView(
           padding: const EdgeInsets.all(16),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -21,7 +29,7 @@ class MenuScreen extends StatelessWidget {
             mainAxisSpacing: 10,
           ),
           children: [
-            /*ElevatedButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -50,13 +58,11 @@ class MenuScreen extends StatelessWidget {
                 Navigator.pushNamed(context, '/settings');
               },
               child: const Text('Deliveries'),
-            ),*/
+            ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          currentIndex: 0,
-          onTap: () {},
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.stacked_bar_chart), label: 'Stats'),
             BottomNavigationBarItem(icon: Icon(Icons.local_dining_sharp), label: 'Dishes'),

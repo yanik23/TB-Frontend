@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),*/
       theme: ThemeData(colorScheme: kColorScheme),
-      home: const MenuScreen(),
+      home: const WelcomeScreen(),
     );
   }
 }

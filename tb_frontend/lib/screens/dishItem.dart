@@ -51,7 +51,7 @@ class DishItem extends StatelessWidget {
               child: Container(
                 color: Colors.black54,
                 padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 48),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                 child: Column(children: [
                   Text(
                     dish.name,
@@ -74,6 +74,8 @@ class DishItem extends StatelessWidget {
                         DishItemTrait(Icons.local_fire_department, '${dish.calories}'),
                         const Spacer(),
                         DishItemTrait(Icons.format_size, dish.currentSize),
+                        const Spacer(),
+                        DishItemTrait(Icons.category, dish.currentType)
                       ]
                   )
                 ]),
