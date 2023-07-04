@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/data/dummyDishes.dart';
-import 'package:tb_frontend/screens/dishesScreen.dart';
+import 'clients/clientsScreen.dart';
+import 'dishes/dishesScreen.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -49,7 +50,13 @@ class MenuScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/favorites');
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) {
+                      return ClientsScreen();
+                    },
+                  ),
+                );
               },
               child: const Text('Clients'),
             ),

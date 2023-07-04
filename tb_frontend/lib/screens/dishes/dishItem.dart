@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../models/dish.dart';
+import '../../models/dish.dart';
 import 'dishItemTrait.dart';
 
 
@@ -11,15 +11,6 @@ class DishItem extends StatelessWidget {
   final Function(BuildContext context, Dish dish) onSelect;
 
   const DishItem(this.dish, this.onSelect, {super.key});
-
-
-  /*String get complexityText {
-    return dish.complexity.name[0].toUpperCase() + dish.complexity.name.substring(1);
-  }
-
-  String get affordabilityText {
-    return dish.affordability.name[0].toUpperCase() + dish.affordability.name.substring(1);
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +42,7 @@ class DishItem extends StatelessWidget {
               child: Container(
                 color: Colors.black54,
                 padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Column(children: [
                   Text(
                     dish.name,

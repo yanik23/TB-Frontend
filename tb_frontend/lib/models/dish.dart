@@ -1,8 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
+
+import 'package:tb_frontend/utils/SecureStorageManager.dart';
+
+import '../utils/Constants.dart';
 
 
 
@@ -60,32 +67,40 @@ class Dish {
 
   factory Dish.fromJson(Map<String, dynamic> json) {
     return Dish(
-      id: 1,
+      id: json['id'],
       name: json['dishName'],
       currentType: json['dishType'],
       currentSize: json['dishSize'],
       price: json['price'],
-      calories: 100,
-      isAvailable: true,
-
+      calories: json['calories'],
+      isAvailable: json['available'],
     );
 
   }
 }
 
-Future<List<Dish>> fetchDishes() async {
-  final response = await http.get(Uri.parse('http://10.0.2.2:8080/dishes'),
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMZW9uYXJkbyIsInJvbGVzIjpbIkVNUExPWUVFIl0sImV4cCI6MTY4ODQwMzA5Nn0.gEGn7p2RNTbvwYg6qObut5Mn06Ic2Lgb2onFywI2rdRxLXEZZmXjAIw0zimx0oTmAYrvMdQGF-3p-WZ7Q1ph2A',
-      });
 
-  if (response.statusCode == 200) {
-    // If the server returned a 200 OK response, parse the JSON.
-    final List<dynamic> responseData = jsonDecode(response.body);
-    return responseData.map((json) => Dish.fromJson(json)).toList();
+Future<List<Dish>> fetchDishes() async {
+
+  final result = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(result != null) {
+    log("=================================> TOKEN: $result");
+    final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
+        headers: {
+          HttpHeaders
+              .authorizationHeader: result,
+        });
+    if (response.statusCode == 200) {
+      // If the server returned a 200 OK response, parse the JSON.
+      final List<dynamic> responseData = jsonDecode(response.body);
+      return responseData.map((json) => Dish.fromJson(json)).toList();
+    } else {
+      // If the server did not return a 200 OK response, throw an exception.
+      throw Exception('Failed to load dishes');
+    }
   } else {
-    // If the server did not return a 200 OK response, throw an exception.
-    throw Exception('Failed to load dishes');
+    throw Exception('Failed to load token');
   }
 }
 

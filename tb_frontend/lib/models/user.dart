@@ -7,6 +7,8 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 
+import 'package:tb_frontend/utils/Constants.dart';
+
 class User {
   final String name;
   final String password;
@@ -28,7 +30,7 @@ class User {
 
 Future<String> login(String name, String password) async {
   final response = await http.post(
-    Uri.parse('http://10.0.2.2:8080/login'),
+    Uri.parse('http://$ipAddress/login'),
     headers: <String, String>{
       'Content-Type': 'application/json',
     },

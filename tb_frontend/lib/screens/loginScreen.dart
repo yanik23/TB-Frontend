@@ -3,7 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
-//import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../utils/SecureStorageManager.dart';
 
 import '../models/user.dart';
 import 'menuScreen.dart';
@@ -21,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-  //final _storage = const FlutterSecureStorage();
+  //final _secureStorage = const FlutterSecureStorage();
 
   late String token;
   
@@ -125,12 +126,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
 
+                    log("=============== validate ===============");
+
                     final Future<String> futureToken = login(
                         _usernameController.text, _passwordController.text);
 
                     if (futureToken != null) {
                       futureToken.then((token) {
                         if (token != null) {
+                          log("================ storing in secure storage ================");
+                          SecureStorageManager.write("KEY_USERNAME", _usernameController.text);
+                          SecureStorageManager.write("KEY_PASSWORD", _passwordController.text);
+                          SecureStorageManager.write("KEY_TOKEN", token);
+
                           log(token);
                           _menuScreen();
                         }

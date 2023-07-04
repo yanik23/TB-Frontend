@@ -1,23 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:tb_frontend/utils/Constants.dart';
 
-Future<List<Client>> fetchAlbums() async {
-  final response = await http
-      .get(Uri.parse('http://10.0.2.2:8080/clients'));
+import '../utils/SecureStorageManager.dart';
 
-  if (response.statusCode == 200) {
-    // If the server returned a 200 OK response, parse the JSON.
-    final List<dynamic> responseData = jsonDecode(response.body);
-    return responseData.map((json) => Client.fromJson(json)).toList();
-  } else {
-    // If the server did not return a 200 OK response, throw an exception.
-    throw Exception('Failed to load albums');
-  }
-}
+
 
 class Client {
   final int id;
@@ -39,5 +32,30 @@ class Client {
       json['zipCode'],
       json['city'],
     );
+  }
+}
+
+Future<List<Client>> fetchClients() async {
+
+  final result = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(result != null) {
+    log("=================================> TOKEN: $result");
+    final response = await http
+        .get(Uri.parse('http://$ipAddress/clients'),
+    headers: {
+          HttpHeaders.authorizationHeader: result,
+    });
+
+    if (response.statusCode == 200) {
+      // If the server returned a 200 OK response, parse the JSON.
+      final List<dynamic> responseData = jsonDecode(response.body);
+      return responseData.map((json) => Client.fromJson(json)).toList();
+    } else {
+      // If the server did not return a 200 OK response, throw an exception.
+      throw Exception('Failed to load clients');
+    }
+  } else {
+    throw Exception('Failed to load JWT');
   }
 }
