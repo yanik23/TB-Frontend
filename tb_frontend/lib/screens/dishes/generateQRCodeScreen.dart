@@ -1,5 +1,9 @@
 
+import 'dart:async';
+import 'dart:async';
+import 'dart:async';
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 //import 'package:barcode_widget/barcode_widget.dart';
@@ -12,6 +16,11 @@ import 'package:image/image.dart' as img;
 import 'package:barcode_image/barcode_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../models/dish.dart';
 
@@ -19,10 +28,13 @@ class GenerateQRCodeScreen extends StatelessWidget {
 
   final Dish dish;
 
+  //final qrLogoImage = await qrImageProvider.load();
+
+
 
   const GenerateQRCodeScreen(this.dish, {super.key});
 
-  Future<String> get _localPath async {
+  /*Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
     return directory.path;
@@ -31,14 +43,19 @@ class GenerateQRCodeScreen extends StatelessWidget {
   Future<File> get _localFile async {
     final path = await _localPath;
     return File('$path/counter.txt');
+  }*/
+
+  Future<void> writeToFile(ByteData data, String path) async {
+    final buffer = data.buffer;
+    await File(path).writeAsBytes(
+        buffer.asUint8List(data.offsetInBytes, data.lengthInBytes)
+    );
   }
 
-  /*Future<File> writeCounter(int counter) async {
-    final file = await _localFile;
+  String get qrCodeData {
+    return '{"dishId": ${dish.id}, "dishName": "${dish.name}", "dishDescription": "${dish.description}", "dishPrice": ${dish.price}}';
+  }
 
-    // Write the file
-    return file.writeAsString('$counter');
-  }*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,57 +64,57 @@ class GenerateQRCodeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () {
+            onPressed: () async{
 
-              /*final image = img.Image(width: 350, height: 350);
-              img.fill(image, color: img.ColorRgb8(255, 255, 255));
-              drawBarcode(image, Barcode.qrCode(), 'Hello World', font: img.arial24);*/
-
-              // Encode the resulting image to the PNG image format.
-              //final png = img.encodePng(image);
-
-             // final path =  _localPath;
+              final qrValidationResult = QrValidator.validate(
+                data: qrCodeData,
+                version: QrVersions.auto,
+                errorCorrectionLevel: QrErrorCorrectLevel.L,
 
 
-             // log('==============================$path');
+              );
 
-              //final path = '${directory.path}/$fileName';
+              qrValidationResult.status == QrValidationStatus.valid
+                  ? log('QR Code is valid')
+                  : log('QR Code is NOT valid');
 
-             // File(path as String).writeAsBytesSync(png);
-              /*// Convert the QR code image to PNG format
-              final qrCodeImage = img.decodeImage(image!.buffer.asUint8List());*/
+              final qrCode = qrValidationResult.qrCode;
 
-              // Show a dialog with the PNG file path
-              /*showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('PNG Exported'),
-                  content: Text('The QR code has been exported as a PNG image at: $path'),
-                  actions: [
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              );*/
+              if (qrCode == null) {
+                log('QR Code is null');
+                return;
+              }
+              final painter = QrPainter.withQr(
+                qr: qrCode,
+                color: const Color(0xFF000000),
+                gapless: true,
+              );
+
+              Directory tempDir = await getApplicationDocumentsDirectory();
+              String tempPath = tempDir.path;
+              final ts = DateTime.now().millisecondsSinceEpoch.toString();
+              String path = '$tempPath/$ts.png';
+
+              final picData = await painter.toImageData(2048, format: ImageByteFormat.png);
+              await writeToFile(picData!, path);
+
             },
           ),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
 
         child: Center(
           child: QrImageView(
-            data: '{"dishId": ${dish.id}, "dishName": "${dish.name}", "dishDescription": "${dish.description}", "dishPrice": ${dish.price}}',
+            data: qrCodeData,
             version: QrVersions.auto,
             size: 320,
             gapless: false,
             backgroundColor: Colors.white,
             embeddedImage: const AssetImage('assets/images/bokafood-logo-3.png'),
-            embeddedImageStyle: QrEmbeddedImageStyle(
-              size: const Size(50, 50),
+            embeddedImageStyle: const QrEmbeddedImageStyle(
+              size: Size(50, 50),
             ),
           ),
         )

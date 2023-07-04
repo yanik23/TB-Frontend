@@ -6,6 +6,7 @@ import 'package:tb_frontend/models/client.dart';
 import 'clientDetailsScreen.dart';
 import 'clientItem.dart';
 import 'createClientScreen.dart';
+import 'dart:async';
 
 class ClientsScreen extends StatelessWidget {
 

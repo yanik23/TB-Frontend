@@ -12,29 +12,51 @@ class Ingredient {
   final int id;
   final String name;
   final String type;
-  final String? description;
-  final String? supplier;
+  final String description;
+  final String supplier;
 
 
-  const Ingredient(this.id, this.name, this.type, {this.description, this.supplier});
+  const Ingredient(this.id, this.name, this.type, { required this.description, required this.supplier});
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
     return Ingredient(
       json['id'],
       json['name'],
-      json['type'],
+      json['currentType'],
       description: json['description'],
       supplier: json['supplier'],
     );
   }
 }
 
-Future<List<Ingredient>> fetchDishes() async {
 
+Future<Ingredient> fetchIngredient(int id) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    final response = await http.get(
+        Uri.parse('http://$ipAddress/ingredients/$id'),
+        headers: {
+          HttpHeaders
+              .authorizationHeader: token,
+        });
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response, then parse the JSON.
+      return Ingredient.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response, then throw an exception.
+      throw Exception('Failed to load ingredient');
+    }
+  } else {
+    throw Exception('Failed to load token');
+  }
+}
+
+Future<List<Ingredient>> fetchIngredients() async {
   final result = await SecureStorageManager.read('KEY_TOKEN');
 
   if(result != null) {
-    final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
+    final response = await http.get(Uri.parse('http://$ipAddress/ingredients'),
         headers: {
           HttpHeaders
               .authorizationHeader: result,
@@ -45,7 +67,7 @@ Future<List<Ingredient>> fetchDishes() async {
       return responseData.map((json) => Ingredient.fromJson(json)).toList();
     } else {
       // If the server did not return a 200 OK response, throw an exception.
-      throw Exception('Failed to load dishes');
+      throw Exception('Failed to load ingredients');
     }
   } else {
     throw Exception('Failed to load token');

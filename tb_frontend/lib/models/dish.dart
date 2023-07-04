@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -75,27 +77,87 @@ class Dish {
       calories: json['calories'],
       isAvailable: json['available'],
     );
-
   }
+
+  factory Dish.fromServerJson(Map<String, dynamic> json) {
+    return Dish(
+      id: json['id'],
+      name: json['name'],
+      currentType: json['currentType'],
+      currentSize: json['currentSize'],
+      price: json['price'],
+      calories: json['calories'],
+      isAvailable: json['available'],
+      description: json['description'],
+      fats: json['fats'],
+      saturatedFats: json['saturatedFats'],
+      sodium: json['sodium'],
+      carbohydrates: json['carbohydrates'],
+      fibers: json['fibers'],
+      sugars: json['sugars'],
+      proteins: json['proteins'],
+      calcium: json['calcium'],
+      iron: json['iron'],
+      potassium: json['potassium'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'dishName': name,
+      'dishType': currentType,
+      'dishSize': currentSize,
+      'price': price,
+      'calories': calories,
+      'available': isAvailable,
+    };
+  }
+
+
 }
 
+Future<Dish> fetchDish(int id) async {
+    final token = await SecureStorageManager.read('KEY_TOKEN');
+
+    if(token != null) {
+      final response = await http.get(Uri.parse('http://$ipAddress/dishes/$id'),
+          headers: {
+            HttpHeaders
+                .authorizationHeader: token,
+          });
+      if (response.statusCode == 200) {
+        // If the server returned a 200 OK response, parse the JSON.
+        final responseData = jsonDecode(response.body);
+        return Dish.fromServerJson(responseData);
+      } else {
+        // If the server did not return a 200 OK response, throw an exception.
+        throw Exception('Failed to load dish');
+      }
+    } else {
+      throw Exception('Failed to load token');
+    }
+
+}
 
 Future<List<Dish>> fetchDishes() async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
 
-  final result = await SecureStorageManager.read('KEY_TOKEN');
-
-  if(result != null) {
-    log("=================================> TOKEN: $result");
+  if(token != null) {
+    log("=================================> TOKEN: $token");
     final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
         headers: {
           HttpHeaders
-              .authorizationHeader: result,
+              .authorizationHeader: token,
         });
     if (response.statusCode == 200) {
       // If the server returned a 200 OK response, parse the JSON.
       final List<dynamic> responseData = jsonDecode(response.body);
       return responseData.map((json) => Dish.fromJson(json)).toList();
     } else {
+      log("=================================> ERROR: ${response.statusCode}");
+      final List<dynamic> responseData = jsonDecode(response.body);
+      log("=================================> ERROR: $responseData");
       // If the server did not return a 200 OK response, throw an exception.
       throw Exception('Failed to load dishes');
     }
@@ -103,4 +165,6 @@ Future<List<Dish>> fetchDishes() async {
     throw Exception('Failed to load token');
   }
 }
+
+//Future<DishDTO>
 

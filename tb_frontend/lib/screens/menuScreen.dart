@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/data/dummyDishes.dart';
+import 'package:tb_frontend/screens/ingredients/ingredientsScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
 
@@ -44,7 +45,13 @@ class MenuScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/dishs');
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) {
+                      return IngredientsScreen();
+                    },
+                  ),
+                );
               },
               child: const Text('Ingredients'),
             ),
