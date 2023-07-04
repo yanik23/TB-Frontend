@@ -10,13 +10,17 @@ import 'clientItem.dart';
 import 'createClientScreen.dart';
 import 'dart:async';
 
-class ClientsScreen extends StatelessWidget {
+class ClientsScreen extends StatefulWidget {
 
 
 
   const ClientsScreen({super.key});
 
+  @override
+  State<ClientsScreen> createState() => _ClientsScreenState();
+}
 
+class _ClientsScreenState extends State<ClientsScreen> {
   void _selectClient(BuildContext context, Client client) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -24,6 +28,7 @@ class ClientsScreen extends StatelessWidget {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     log("=================================BINDING CLIENTS SCREEN===============================");
@@ -35,7 +40,7 @@ class ClientsScreen extends StatelessWidget {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) => Dismissible(
-              key: ValueKey(snapshot.data![index].id),
+              key: UniqueKey(),
               onDismissed: (direction) {
                 // onRemoveExpense(expenses[index]);
                 showDialog(context: context,
@@ -46,8 +51,10 @@ class ClientsScreen extends StatelessWidget {
                         TextButton(
                           child: const Text("No"),
                           onPressed: () {
-                            ClientItem(snapshot.data![index], _selectClient);
-                            Navigator.of(ctx).pop();
+                            setState(() {
+                              ClientItem(snapshot.data![index], _selectClient);
+                              Navigator.of(ctx).pop();
+                            });
                           },
                         ),
                         TextButton(
