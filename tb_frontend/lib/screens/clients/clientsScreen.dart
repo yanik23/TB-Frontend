@@ -1,5 +1,7 @@
 
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/models/client.dart';
 
@@ -10,9 +12,9 @@ import 'dart:async';
 
 class ClientsScreen extends StatelessWidget {
 
-  late Future<List<Client>> clients = fetchClients();
 
-  ClientsScreen({super.key});
+
+  const ClientsScreen({super.key});
 
 
   void _selectClient(BuildContext context, Client client) {
@@ -24,15 +26,43 @@ class ClientsScreen extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
+    log("=================================BINDING CLIENTS SCREEN===============================");
+    late Future<List<Client>> clients = fetchClients();
     Widget content = FutureBuilder<List<Client>>(
       future: clients,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ListView.builder(
             itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return ClientItem(snapshot.data![index], _selectClient);
-            },
+            itemBuilder: (context, index) => Dismissible(
+              key: ValueKey(snapshot.data![index].id),
+              onDismissed: (direction) {
+                // onRemoveExpense(expenses[index]);
+                showDialog(context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text("Delete Client"),
+                      content: const Text("Are you sure you want to delete this client?"),
+                      actions: [
+                        TextButton(
+                          child: const Text("No"),
+                          onPressed: () {
+                            ClientItem(snapshot.data![index], _selectClient);
+                            Navigator.of(ctx).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text("Yes"),
+                          onPressed: () {
+                            deleteClient(snapshot.data![index].id);
+                            Navigator.of(ctx).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                );
+              },
+              child: ClientItem(snapshot.data![index], _selectClient),
+            ),
           );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");

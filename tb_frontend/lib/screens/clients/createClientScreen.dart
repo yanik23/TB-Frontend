@@ -116,9 +116,8 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                           _zipCode,
                           _city,
                         );
-
                         // Do something with the new client object (e.g., save to database)
-                        print('New client: $newClient');
+                        createClient(newClient);
                       }
                     },
                   ),
