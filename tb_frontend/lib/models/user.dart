@@ -29,22 +29,33 @@ class User {
 
 
 Future<String> login(String name, String password) async {
-  final response = await http.post(
-    Uri.parse('http://$ipAddress/login'),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode(<String, String>{
-      'username': name,
-      'password': password,
-    }),
-  );
+  try {
+    final response = await http.post(
+      Uri.parse('http://$ipAddress/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'username': name,
+        'password': password,
+      }),
+    );
 
-  if (response.statusCode == 200) {
-    log("============================> GOT 200!");
-    return response.headers['authorization']!;
-  } else {
-    log("==============================> ${response.statusCode}");
+    if (response.statusCode == 200) {
+      log("============================> GOT 200!");
+      return response.headers['authorization']!;
+    } else {
+      log("==============================> ${response.statusCode}");
+      throw Exception('Failed to login');
+    }
+  } on TimeoutException catch (e) {
+    log("==============================> $e");
+    throw Exception('Failed to login');
+  } on SocketException catch (e) {
+    log("==============================> $e");
+    throw Exception('Failed to login');
+  } catch (e) {
+    log("==============================> $e");
     throw Exception('Failed to login');
   }
 }

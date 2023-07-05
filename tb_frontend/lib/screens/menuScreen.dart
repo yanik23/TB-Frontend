@@ -73,6 +73,19 @@ class MenuScreen extends StatelessWidget {
               },
               child: const Text('Deliveries'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/settings');
+              },
+              child: const Text('Stats'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/settings');
+              },
+              child: const Text('QR'),
+            ),
+
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

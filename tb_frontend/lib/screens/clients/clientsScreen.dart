@@ -41,7 +41,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
   void _selectClient(BuildContext context, Client client) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => const ClientDetailsScreen(),
+        builder: (ctx) => ClientDetailsScreen(client),
       ),
     );
   }

@@ -108,6 +108,7 @@ Future<List<Client>> fetchClients() async {
       log('=================================> ERROR: Timeout');
       throw Exception('Failed to load clients cause timeout');
     } catch (e) {
+      //quand le token n'est plus valide on arrive dans cette erreur.
       log('=================================> ERROR: $e');
       throw Exception('Failed to load clients cause unknown error');
     }

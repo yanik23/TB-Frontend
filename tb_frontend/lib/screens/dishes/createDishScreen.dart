@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:tb_frontend/screens/dishes/dishIngredientsSelectionScreen.dart';
 
 import '../../models/dish.dart';
 
@@ -32,6 +33,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
   double? calcium;
   double? iron;
   double? potassium;
+
+  bool? _checked = false;
 
   final DishType _selectedDishType = DishType.meat;
   final DishSize _selectedDishSize = DishSize.fit;
@@ -258,6 +261,22 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
               // Add more text fields for other properties here
               const SizedBox(height: 16.0),
+              ElevatedButton(onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => IngredientSelectionScreen()),
+                );
+                /*showModalBottomSheet(context: context, builder: (ctx) =>
+                    CheckboxListTile(
+                        title: Text('Add ingrediends'),
+                        value: false,
+                        onChanged: (value) {})
+                );*/
+
+              },
+                  child: Text('Add ingrediends'),
+              ),
+              const SizedBox(height: 16.0),
+
               ElevatedButton(
                   child: Text('Create Dish'),
                   onPressed: () {
