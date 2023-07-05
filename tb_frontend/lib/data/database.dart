@@ -22,6 +22,8 @@ class DBHelper {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS Client (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          status TEXT NOT NULL,
+          remoteId INTEGER,
           name TEXT NOT NULL UNIQUE,
           addressName TEXT NOT NULL,
           addressNumber INTEGER NOT NULL,

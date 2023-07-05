@@ -17,12 +17,26 @@ class ClientsScreen extends StatefulWidget {
 
 class _ClientsScreenState extends State<ClientsScreen> {
 
+  //List<Client> clients = [];
   late Future<List<Client>> clients;
+
+  List<Client> localClients = [];
 
   @override
   void initState() {
+    log("=================================INITIALIZING CLIENTS SCREEN============================");
     super.initState();
     clients = fetchClients();
+
+    clients.then((value) => {
+      localClients.addAll(value),
+
+      localClients.forEach((element) {
+        element.status = "ok";
+        element.remoteId = 23;
+        insertClient(element);
+      })
+    });
   }
   void _selectClient(BuildContext context, Client client) {
     Navigator.of(context).push(
@@ -33,7 +47,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
   }
 
   void _createClient() async{
-    final newClient = Navigator.of(context).push(
+    final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => const CreateClientScreen(),
       ),
@@ -41,16 +55,33 @@ class _ClientsScreenState extends State<ClientsScreen> {
     if(newClient != null) {
       log("=================================NEW CLIENT CREATED=================================");
       setState(() {
-        clients = fetchClients();
+        //clients = fetchClients();
+        localClients.add(newClient);
+        newClient.status = "new";
+        insertClient(newClient);
       });
     }
   }
 
   Future _refreshClients() async {
+    log("=================================REFRESHING CLIENTS=================================");
+    setState(() {
+      clients = fetchClients();
+      clients.then((value) => {
+        localClients.clear(),
+        localClients.addAll(value)
+      });
+    });
+  }
+
+  void _deleteClient(Client client) async {
+    log("=================================DELETING CLIENT=================================");
+    deleteClient(client.id);
     setState(() {
       clients = fetchClients();
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +94,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
           return RefreshIndicator(
             onRefresh: _refreshClients,//_refreshClients,
             child: ListView.builder(
-              itemCount: snapshot.data!.length,
+              itemCount: localClients.length,
               itemBuilder: (context, index) => Dismissible(
                 key: UniqueKey(),
                 onDismissed: (direction) {
@@ -79,7 +110,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                           child: const Text("No"),
                           onPressed: () {
                             setState(() {
-                              ClientItem(snapshot.data![index], _selectClient);
+                              ClientItem(localClients[index], _selectClient);
                               Navigator.of(ctx).pop();
                             });
                           },
@@ -87,7 +118,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                         TextButton(
                           child: const Text("Yes"),
                           onPressed: () {
-                            deleteClient(snapshot.data![index].id);
+                            deleteClient(localClients[index].id);
                             Navigator.of(ctx).pop();
                           },
                         ),
@@ -95,7 +126,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                     ),
                   );
                 },
-                child: ClientItem(snapshot.data![index], _selectClient),
+                child: ClientItem(localClients[index], _selectClient),
               ),
             ),
           );
@@ -105,7 +136,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
         return const CircularProgressIndicator();
       },
     );
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Clients"),

@@ -123,9 +123,16 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                         } catch (e) {
                           log('Client not created');
                         }
-                        Future<Client> client = createClient(newClient);
+                        try {
 
+                        } catch (e) {
+                          log('=======================Client not created=======================');
+                        }
+
+                        Future<Client> client = createClient(newClient);
                         client.whenComplete(() => Navigator.of(context).pop(client));
+
+
                         //Navigator.of(context).pop(client);
 
 
