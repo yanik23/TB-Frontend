@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../models/client.dart';
@@ -117,7 +119,18 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                           _city,
                         );
                         // Do something with the new client object (e.g., save to database)
-                        createClient(newClient);
+                        try {
+                        } catch (e) {
+                          log('Client not created');
+                        }
+                        Future<Client> client = createClient(newClient);
+
+                        client.whenComplete(() => Navigator.of(context).pop(client));
+                        //Navigator.of(context).pop(client);
+
+
+                        // Go back to the previous screen
+
                       }
                     },
                   ),

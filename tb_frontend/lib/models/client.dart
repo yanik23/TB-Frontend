@@ -58,11 +58,9 @@ Future<Client> fetchClient(int id) async {
 }
 
 Future<List<Client>> fetchClients() async {
-
   final result = await SecureStorageManager.read('KEY_TOKEN');
 
   if(result != null) {
-    log("=================================> TOKEN: $result");
     final response = await http
         .get(Uri.parse('http://$ipAddress/clients'),
     headers: {
@@ -100,13 +98,15 @@ Future<Client> createClient(Client client) async {
         'city': client.city,
       }),
     );
-
     if (response.statusCode == 201) {
       return Client.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 403) {
+      throw Exception('You are not authorized to create a client');
     } else {
       throw Exception('Failed to create client');
     }
   } else {
+    log('Failed to load token');
     throw Exception('Failed to load token');
   }
 }

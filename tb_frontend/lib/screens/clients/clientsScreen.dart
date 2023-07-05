@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -11,9 +9,6 @@ import 'createClientScreen.dart';
 import 'dart:async';
 
 class ClientsScreen extends StatefulWidget {
-
-
-
   const ClientsScreen({super.key});
 
   @override
@@ -21,6 +16,14 @@ class ClientsScreen extends StatefulWidget {
 }
 
 class _ClientsScreenState extends State<ClientsScreen> {
+
+  late Future<List<Client>> clients;
+
+  @override
+  void initState() {
+    super.initState();
+    clients = fetchClients();
+  }
   void _selectClient(BuildContext context, Client client) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -29,24 +32,48 @@ class _ClientsScreenState extends State<ClientsScreen> {
     );
   }
 
+  void _createClient() async{
+    final newClient = Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => const CreateClientScreen(),
+      ),
+    );
+    if(newClient != null) {
+      log("=================================NEW CLIENT CREATED=================================");
+      setState(() {
+        clients = fetchClients();
+      });
+    }
+  }
+
+  Future _refreshClients() async {
+    setState(() {
+      clients = fetchClients();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     log("=================================BINDING CLIENTS SCREEN===============================");
-    late Future<List<Client>> clients = fetchClients();
+    //late Future<List<Client>> clients = fetchClients();
     Widget content = FutureBuilder<List<Client>>(
       future: clients,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) => Dismissible(
-              key: UniqueKey(),
-              onDismissed: (direction) {
-                // onRemoveExpense(expenses[index]);
-                showDialog(context: context,
+          return RefreshIndicator(
+            onRefresh: _refreshClients,//_refreshClients,
+            child: ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) => Dismissible(
+                key: UniqueKey(),
+                onDismissed: (direction) {
+                  // onRemoveExpense(expenses[index]);
+                  showDialog(
+                    context: context,
                     builder: (ctx) => AlertDialog(
                       title: const Text("Delete Client"),
-                      content: const Text("Are you sure you want to delete this client?"),
+                      content: const Text(
+                          "Are you sure you want to delete this client?"),
                       actions: [
                         TextButton(
                           child: const Text("No"),
@@ -66,9 +93,10 @@ class _ClientsScreenState extends State<ClientsScreen> {
                         ),
                       ],
                     ),
-                );
-              },
-              child: ClientItem(snapshot.data![index], _selectClient),
+                  );
+                },
+                child: ClientItem(snapshot.data![index], _selectClient),
+              ),
             ),
           );
         } else if (snapshot.hasError) {
@@ -89,13 +117,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) {
-                    return const CreateClientScreen();
-                  },
-                ),
-              );
+              _createClient();
             },
           ),
         ],
@@ -104,4 +126,3 @@ class _ClientsScreenState extends State<ClientsScreen> {
     );
   }
 }
-
