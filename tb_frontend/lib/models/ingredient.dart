@@ -12,11 +12,13 @@ import 'dart:io';
 
 enum IngredientType {
   meat,
+  fish,
+  starch,
   vegetable,
   fruit,
-  dairy,
   grain,
   spice,
+  sauce,
   other,
 }
 

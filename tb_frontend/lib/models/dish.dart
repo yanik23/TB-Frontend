@@ -106,6 +106,17 @@ class Dish {
       'calories': calories,
       'isAvailable': isAvailable,
       'description': description,
+      'fats': fats,
+      'saturatedFats': saturatedFats,
+      'sodium': sodium,
+      'carbohydrates': carbohydrates,
+      'fibers': fibers,
+      'sugars': sugars,
+      'proteins': proteins,
+      'calcium': calcium,
+      'iron': iron,
+      'potassium': potassium,
+      'ingredients': ingredients != null ? ingredients!.map((i) => i.toJson()).toList() : null,
     };
   }
 

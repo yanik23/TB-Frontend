@@ -42,7 +42,7 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'Please enter a name';
+                    return 'Please enter a valid name';
                   }
                   return null;
                 },
@@ -68,7 +68,7 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                 ).toList(),
                 validator: (value) {
                   if (value == null) {
-                    return 'Please select a Type';
+                    return 'Please select a valid Type';
                   }
                   return null;
                 },

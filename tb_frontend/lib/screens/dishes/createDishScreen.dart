@@ -9,11 +9,12 @@ import '../../models/dish.dart';
 import '../../models/ingredient.dart';
 
 class IngredientCheck {
+  int id;
   String name;
   bool isChecked;
   double? weight;
 
-  IngredientCheck(this.name, this.isChecked, {this.weight});
+  IngredientCheck(this.id, this.name, this.isChecked, {this.weight});
 }
 
 class CreateDishScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
       setState(() {
         for (var element in value) {
           log("========================================== ${element.name}");
-          ingredients.add(IngredientCheck(element.name, false));
+          ingredients.add(IngredientCheck(element.id, element.name, false));
         }
       });
     });
@@ -181,8 +182,13 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         value: type,
                         child: Text(type.name.toString().toUpperCase()),
                       ),
-                    )
-                    .toList(),
+                    ).toList(),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select a valid type';
+                  }
+                  return null;
+                },
               ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(labelText: 'Size'),
@@ -198,8 +204,13 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         value: size,
                         child: Text(size.name.toString().toUpperCase()),
                       ),
-                    )
-                    .toList(),
+                    ).toList(),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select a valid size';
+                  }
+                  return null;
+                },
               ),
               SwitchListTile(
                 title: const Text('Is Available'),
@@ -403,7 +414,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
 
-                      ingredientsLessDTO = ingredients.map((e) => IngredientLessDTO(e.name, e.weight)).toList();
+                      ingredientsLessDTO = selectedIngredients.map((e) => IngredientLessDTO(e.id, e.name, e.weight)).toList();
                       // Create an instance of the Dish class using the collected inputs
                       Dish newDish = Dish(
                         id: id,
