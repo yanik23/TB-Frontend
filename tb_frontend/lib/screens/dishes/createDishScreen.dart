@@ -46,6 +46,9 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
   bool? _checked = false;
 
+
+  TextEditingController nameController = TextEditingController();
+
   final DishType _selectedDishType = DishType.meat;
   final DishSize _selectedDishSize = DishSize.fit;
 
@@ -97,12 +100,14 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
+        child: SingleChildScrollView(
+          child : Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.always,
-          child: ListView(
+          //autovalidateMode: AutovalidateMode.always,
+          child: Column(
             children: [
               TextFormField(
+                controller: nameController,
                 decoration: const InputDecoration(
                   labelText: 'Name',
                   //hintText: 'Enter the name of the dish',
@@ -114,11 +119,11 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   //log("========================================== {value}");
                   return null;
                 },
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     name = value;
                   });
-                },*/
+                },
               ),
 
               TextFormField(
@@ -130,11 +135,11 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   }
                   return null;
                 },
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     price = double.parse(value);
                   });
-                },*/
+                },
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Calories'),
@@ -145,11 +150,11 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   }
                   return null;
                 },
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     calories = int.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
@@ -211,107 +216,101 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Fats'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     fats = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Saturated Fats'),
                 keyboardType: TextInputType.number,
-               /* onChanged: (value) {
+                 onChanged: (value) {
                   setState(() {
                     saturatedFats = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Sodium'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     sodium = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Carbohydrates'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     carbohydrates = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Fibers'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     fibers = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Sugars'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     sugars = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Proteins'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     proteins = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Calcium'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     calcium = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Iron'),
                 keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'Please enter a valid number of iron';
-                  }
-                  return null;
-                },
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     iron = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Potassium'),
                 keyboardType: TextInputType.number,
-                /*onChanged: (value) {
+                onChanged: (value) {
                   setState(() {
                     potassium = double.parse(value);
                   });
-                },*/
+                },
               ),
 
               // Add more text fields for other properties here
@@ -439,6 +438,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
