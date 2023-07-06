@@ -29,19 +29,17 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Client Input'),
+        title: const Text('Client Input'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
-        //child: ListView(
-          child: //[
+        padding: const EdgeInsets.all(16.0),
+          child:
             Form(
               key: _formKey,
               child: ListView(
-                //crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: const InputDecoration(labelText: 'Name'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a name';
@@ -53,7 +51,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                     },
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Address Name'),
+                    decoration: const InputDecoration(labelText: 'Address Name'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an address name';
@@ -65,7 +63,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                     },
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Address Number'),
+                    decoration: const InputDecoration(labelText: 'Address Number'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -78,7 +76,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                     },
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'ZIP Code'),
+                    decoration: const InputDecoration(labelText: 'ZIP Code'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -91,7 +89,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                     },
                   ),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'City'),
+                    decoration: const InputDecoration(labelText: 'City'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a city';
@@ -102,9 +100,9 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                       _city = value!;
                     },
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
-                    child: Text('Save'),
+                    child: const Text('Save'),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();

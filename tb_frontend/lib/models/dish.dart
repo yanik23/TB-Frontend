@@ -105,9 +105,9 @@ class Dish {
       'price': price,
       'calories': calories,
       'isAvailable': isAvailable,
+      'description': description,
     };
   }
-
 
 }
 
@@ -138,7 +138,6 @@ Future<List<Dish>> fetchDishes() async {
   final token = await SecureStorageManager.read('KEY_TOKEN');
 
   if(token != null) {
-    log("=================================> TOKEN: $token");
     final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
         headers: {
           HttpHeaders
@@ -149,9 +148,6 @@ Future<List<Dish>> fetchDishes() async {
       final List<dynamic> responseData = jsonDecode(response.body);
       return responseData.map((json) => Dish.fromJson(json)).toList();
     } else {
-      log("=================================> ERROR: ${response.statusCode}");
-      final List<dynamic> responseData = jsonDecode(response.body);
-      log("=================================> ERROR: $responseData");
       // If the server did not return a 200 OK response, throw an exception.
       throw Exception('Failed to load dishes');
     }
@@ -173,22 +169,15 @@ Future<Dish> createDish(Dish dish) async {
           },
           body: jsonEncode(dish.toJson()));
       if (response.statusCode == 201) {
-        log("================================================= got 200");
-        // If the server returned a 200 OK response, parse the JSON.
         final responseData = jsonDecode(response.body);
         return Dish.fromServerJson(responseData);
       } else {
-        log("=================================> ERROR: ${response.statusCode}");
-        // If the server did not return a 200 OK response, throw an exception.
         throw Exception('Failed to create dish');
       }
     } catch (e) {
-      log("=================================> ERROR: $e");
       throw Exception('Failed to create dish');
     }
-
   } else {
-    log("=================================> ERROR: token is null");
     throw Exception('Failed to load token');
   }
 }

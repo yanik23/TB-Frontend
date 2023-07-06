@@ -8,6 +8,18 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 
+
+
+enum IngredientType {
+  meat,
+  vegetable,
+  fruit,
+  dairy,
+  grain,
+  spice,
+  other,
+}
+
 class Ingredient {
   final int id;
   final String name;

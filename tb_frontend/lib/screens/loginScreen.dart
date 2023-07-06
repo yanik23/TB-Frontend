@@ -47,6 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool isAvailable = true;
+
   void _menuScreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -84,13 +86,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 maxLength: 50,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Enter your email',
+                  labelText: 'Username',
+                  hintText: 'Enter your username',
                   icon: Icon(Icons.email),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty /*|| !emailRegex.hasMatch(value)*/) {
-                    return 'Please enter a valid email';
+                    return 'Please enter a valid username';
                   }
                   return null;
                 },
@@ -118,6 +120,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     return 'Please enter a valid password';
                   }
                   return null;
+                },
+              ),
+              SwitchListTile(
+                title: const Text('Is Available'),
+                value: isAvailable,
+                onChanged: (value) {
+                  setState(() {
+                    isAvailable = value;
+                  });
                 },
               ),
               const SizedBox(height: 12),
