@@ -1,9 +1,20 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:tb_frontend/screens/dishes/dishIngredientsSelectionScreen.dart';
+//import 'package:tb_frontend/models/ingredient.dart';
+//import 'package:tb_frontend/screens/dishes/dishIngredientsSelectionScreen.dart';
 
+import '../../dto/ingredientLessDTO.dart';
 import '../../models/dish.dart';
+import '../../models/ingredient.dart';
+
+class IngredientCheck {
+  String name;
+  bool isChecked;
+  double? weight;
+
+  IngredientCheck(this.name, this.isChecked, {this.weight});
+}
 
 class CreateDishScreen extends StatefulWidget {
   const CreateDishScreen({super.key});
@@ -14,7 +25,6 @@ class CreateDishScreen extends StatefulWidget {
 
 class _CreateDishScreenState extends State<CreateDishScreen> {
   final _formKey = GlobalKey<FormState>();
-
   int id = 0;
   String name = '';
   String? description;
@@ -39,6 +49,46 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
   final DishType _selectedDishType = DishType.meat;
   final DishSize _selectedDishSize = DishSize.fit;
 
+  List<IngredientCheck> ingredients = [];
+  List<IngredientCheck> selectedIngredients = [];
+  List<IngredientLessDTO> ingredientsLessDTO = [];
+
+  void _toggleIngredient(int index, bool value) {
+    setState(() {
+      ingredients[index].isChecked = value;
+    });
+  }
+
+  void _onAddPressed() {
+    selectedIngredients =
+        ingredients.where((ingredient) => ingredient.isChecked).toList();
+
+    // Do something with the selectedIngredients
+    print(selectedIngredients);
+
+    // Close the bottom sheet
+    Navigator.pop(context);
+  }
+
+  void _loadIngredients() async {
+    log("========================================== _loadIngredients");
+    fetchIngredients().then((value) {
+      ingredients.clear();
+      setState(() {
+        for (var element in value) {
+          log("========================================== ${element.name}");
+          ingredients.add(IngredientCheck(element.name, false));
+        }
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadIngredients();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +101,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
           key: _formKey,
           //autovalidateMode: AutovalidateMode.onUserInteraction,
           child: ListView(
+
             children: [
               TextFormField(
                 decoration: const InputDecoration(
@@ -71,10 +122,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 },
               ),
 
-
-
               TextFormField(
-                decoration: InputDecoration(labelText: 'Price'),
+                decoration: const InputDecoration(labelText: 'Price'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
@@ -89,7 +138,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Calories'),
+                decoration: const InputDecoration(labelText: 'Calories'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
@@ -105,7 +154,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Description (Optional)'),
+                decoration:
+                    const InputDecoration(labelText: 'Description (Optional)'),
                 onChanged: (value) {
                   setState(() {
                     description = value;
@@ -114,7 +164,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               DropdownButtonFormField(
-                decoration: InputDecoration(labelText: 'Type'),
+                decoration: const InputDecoration(labelText: 'Type'),
                 //value: _selectedDishType,
                 onChanged: (value) {
                   setState(() {
@@ -124,14 +174,14 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 items: DishType.values
                     .map(
                       (type) => DropdownMenuItem(
-                    value: type,
-                    child: Text(type.name.toString().toUpperCase()),
-                  ),
-                )
+                        value: type,
+                        child: Text(type.name.toString().toUpperCase()),
+                      ),
+                    )
                     .toList(),
               ),
               DropdownButtonFormField(
-                decoration: InputDecoration(labelText: 'Size'),
+                decoration: const InputDecoration(labelText: 'Size'),
                 //value: _selectedDishSize,
                 onChanged: (value) {
                   setState(() {
@@ -141,14 +191,14 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 items: DishSize.values
                     .map(
                       (size) => DropdownMenuItem(
-                    value: size,
-                    child: Text(size.name.toString().toUpperCase()),
-                  ),
-                )
+                        value: size,
+                        child: Text(size.name.toString().toUpperCase()),
+                      ),
+                    )
                     .toList(),
               ),
               SwitchListTile(
-                title: Text('Is Available'),
+                title: const Text('Is Available'),
                 value: isAvailable,
                 onChanged: (value) {
                   setState(() {
@@ -157,10 +207,10 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 },
               ),
               const SizedBox(height: 16.0),
-              Text('Nutritional Informations (Optional)'),
+              const Text('Nutritional Informations (Optional)'),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Fats'),
+                decoration: const InputDecoration(labelText: 'Fats'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -170,7 +220,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Saturated Fats'),
+                decoration: const InputDecoration(labelText: 'Saturated Fats'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -180,7 +230,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Sodium'),
+                decoration: const InputDecoration(labelText: 'Sodium'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -190,7 +240,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Carbohydrates'),
+                decoration: const InputDecoration(labelText: 'Carbohydrates'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -200,7 +250,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Fibers'),
+                decoration: const InputDecoration(labelText: 'Fibers'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -210,7 +260,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Sugars'),
+                decoration: const InputDecoration(labelText: 'Sugars'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -220,7 +270,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Proteins'),
+                decoration: const InputDecoration(labelText: 'Proteins'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -230,7 +280,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Calcium'),
+                decoration: const InputDecoration(labelText: 'Calcium'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -240,7 +290,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Iron'),
+                decoration: const InputDecoration(labelText: 'Iron'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -250,7 +300,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
 
               TextFormField(
-                decoration: InputDecoration(labelText: 'Potassium'),
+                decoration: const InputDecoration(labelText: 'Potassium'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -261,27 +311,95 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
               // Add more text fields for other properties here
               const SizedBox(height: 16.0),
-              ElevatedButton(onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => IngredientSelectionScreen()),
-                );
-                /*showModalBottomSheet(context: context, builder: (ctx) =>
-                    CheckboxListTile(
-                        title: Text('Add ingrediends'),
-                        value: false,
-                        onChanged: (value) {})
-                );*/
 
-              },
-                  child: Text('Add ingrediends'),
-              ),
+              Row(children: [
+                const Text('List of ingredients (Optional) : '),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: () {
+                    log("========================================== button pressed");
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) {
+                            return Column(
+                              children: <Widget>[
+                                Text('Select Ingredients',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    )),
+                                Expanded(
+                                  child: ListView.builder(
+                                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16.0),
+                                    itemCount: ingredients.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Column(children: <Widget>[
+                                        CheckboxListTile(
+                                          title: Text(ingredients[index].name),
+                                          value: ingredients[index].isChecked,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _toggleIngredient(index, value!);
+                                            });
+                                          },
+                                        ),
+                                        TextFormField(
+                                          decoration: const InputDecoration(
+                                              labelText: 'Quantity'),
+                                          keyboardType: TextInputType.number,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              ingredients[index].weight = double.parse(value);
+                                            });
+                                          },
+                                        ),
+                                        const SizedBox(height: 16.0),
+                                      ]);
+                                    },
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    ElevatedButton(
+                                      onPressed: _onAddPressed,
+                                      child: Text('Add'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: const Text('Add ingredients'),
+                ),
+                const SizedBox(height: 16.0),
+              ]),
               const SizedBox(height: 16.0),
-
               ElevatedButton(
-                  child: Text('Create Dish'),
+                  child: const Text('Create Dish'),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
+
+                      ingredientsLessDTO = ingredients.map((e) => IngredientLessDTO(e.name, e.weight)).toList();
                       // Create an instance of the Dish class using the collected inputs
                       Dish newDish = Dish(
                         id: id,
@@ -302,10 +420,15 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         calcium: calcium,
                         iron: iron,
                         potassium: potassium,
+                        ingredients: ingredientsLessDTO,
                       );
 
+
                       // Do something with the newDish object, like saving it to a database or passing it to another screen
-                      print(newDish);
+
+                      Future<Dish> dish = createDish(newDish);
+                      dish.whenComplete(() => Navigator.of(context).pop(dish));
+
                     }
                   }),
             ],

@@ -18,7 +18,17 @@ class Ingredient {
 
   const Ingredient(this.id, this.name, this.type, { required this.description, required this.supplier});
 
-  factory Ingredient.fromJson(Map<String, dynamic> json) {
+  factory Ingredient.fullFromJson(Map<String, dynamic> json) {
+    return Ingredient(
+      json['id'],
+      json['name'],
+      json['currentType'],
+      description: json['description'],
+      supplier: json['supplier'],
+    );
+  }
+
+  factory Ingredient.lightFromJson(Map<String, dynamic> json) {
     return Ingredient(
       json['id'],
       json['name'],
@@ -42,7 +52,7 @@ Future<Ingredient> fetchIngredient(int id) async {
         });
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response, then parse the JSON.
-      return Ingredient.fromJson(jsonDecode(response.body));
+      return Ingredient.fullFromJson(jsonDecode(response.body));
     } else {
       // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to load ingredient');
@@ -64,7 +74,7 @@ Future<List<Ingredient>> fetchIngredients() async {
     if (response.statusCode == 200) {
       // If the server returned a 200 OK response, parse the JSON.
       final List<dynamic> responseData = jsonDecode(response.body);
-      return responseData.map((json) => Ingredient.fromJson(json)).toList();
+      return responseData.map((json) => Ingredient.fullFromJson(json)).toList();
     } else {
       // If the server did not return a 200 OK response, throw an exception.
       throw Exception('Failed to load ingredients');

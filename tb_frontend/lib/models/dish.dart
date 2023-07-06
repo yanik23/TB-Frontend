@@ -1,19 +1,11 @@
 import 'dart:async';
-import 'dart:async';
 import 'dart:developer';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:tb_frontend/dto/ingredientLessDTO.dart';
 import 'dart:convert';
-import 'dart:async';
 import 'dart:io';
-
 import 'package:tb_frontend/utils/SecureStorageManager.dart';
-
 import '../utils/Constants.dart';
-
-
 
 enum DishType {
   meat,
@@ -44,6 +36,7 @@ class Dish {
   double? calcium;
   double? iron;
   double? potassium;
+  List<IngredientLessDTO>? ingredients;
 
 
   Dish({
@@ -65,14 +58,15 @@ class Dish {
     this.calcium,
     this.iron,
     this.potassium,
+    this.ingredients,
   });
 
   factory Dish.fromJson(Map<String, dynamic> json) {
     return Dish(
       id: json['id'],
-      name: json['dishName'],
-      currentType: json['dishType'],
-      currentSize: json['dishSize'],
+      name: json['name'],
+      currentType: json['currentType'],
+      currentSize: json['currentSize'],
       price: json['price'],
       calories: json['calories'],
       isAvailable: json['available'],
@@ -99,18 +93,18 @@ class Dish {
       calcium: json['calcium'],
       iron: json['iron'],
       potassium: json['potassium'],
+      //ingredients: json['ingredients'] != null ? (json['ingredients'] as List).map((i) => Ingredient.fromJson(i)).toList() : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'dishName': name,
-      'dishType': currentType,
-      'dishSize': currentSize,
+      'name': name,
+      'currentType': currentType.split('.').last,
+      'currentSize': currentSize.toString().split('.').last,
       'price': price,
       'calories': calories,
-      'available': isAvailable,
+      'isAvailable': isAvailable,
     };
   }
 
@@ -166,5 +160,37 @@ Future<List<Dish>> fetchDishes() async {
   }
 }
 
-//Future<DishDTO>
+Future<Dish> createDish(Dish dish) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    try {
+      final response = await http.post(Uri.parse('http://$ipAddress/dishes'),
+          headers: {
+            HttpHeaders
+                .authorizationHeader: token,
+            HttpHeaders.contentTypeHeader: 'application/json'
+          },
+          body: jsonEncode(dish.toJson()));
+      if (response.statusCode == 201) {
+        log("================================================= got 200");
+        // If the server returned a 200 OK response, parse the JSON.
+        final responseData = jsonDecode(response.body);
+        return Dish.fromServerJson(responseData);
+      } else {
+        log("=================================> ERROR: ${response.statusCode}");
+        // If the server did not return a 200 OK response, throw an exception.
+        throw Exception('Failed to create dish');
+      }
+    } catch (e) {
+      log("=================================> ERROR: $e");
+      throw Exception('Failed to create dish');
+    }
+
+  } else {
+    log("=================================> ERROR: token is null");
+    throw Exception('Failed to load token');
+  }
+}
+
 
