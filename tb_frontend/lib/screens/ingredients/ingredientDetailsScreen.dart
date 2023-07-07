@@ -58,7 +58,12 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: WillPopScope(
+        onWillPop: () async {
+          Navigator.of(context).pop(ingredient);
+          return true;
+        },
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<Ingredient>(
           future: ingredient,
@@ -134,6 +139,7 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
             return const CircularProgressIndicator();
           },
         )
+      ),
       ),
     );
   }

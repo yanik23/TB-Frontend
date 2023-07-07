@@ -9,23 +9,29 @@ import 'ingredientItem.dart';
 
 
 class IngredientsScreen extends StatefulWidget {
-
-
-  IngredientsScreen({super.key});
+  const IngredientsScreen({super.key});
 
   @override
   State<IngredientsScreen> createState() => _IngredientsScreenState();
 }
 
+
 class _IngredientsScreenState extends State<IngredientsScreen> {
   late Future<List<Ingredient>> ingredients;
   List<Ingredient> localIngredients = [];
-
-
+  
   @override
   void initState() {
     super.initState();
     ingredients = fetchIngredients();
+    ingredients.then((value) => {
+      localIngredients.addAll(value),
+      /*localIngredients.forEach((element) {
+        element.status = "ok";
+        element.remoteId = 23;
+        insertIngredient(element);
+      })*/
+    });
   }
 
   void _selectIngredient(BuildContext context, Ingredient dish) async {
@@ -99,14 +105,18 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
                           actions: [
                             TextButton(
                               onPressed: () {
+                                setState(() {
+                                  IngredientItem(snapshot.data![index], _selectIngredient);
+                                });
                                 Navigator.of(ctx).pop();
                               },
                               child: const Text("No"),
                             ),
                             TextButton(
                               onPressed: () {
-                                Navigator.of(ctx).pop();
                                 _deleteIngredient(snapshot.data![index]);
+                                Navigator.of(ctx).pop();
+
                               },
                               child: const Text("Yes"),
                             ),

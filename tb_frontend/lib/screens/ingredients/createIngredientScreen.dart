@@ -114,24 +114,25 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
+
+
+                    Ingredient newIngredient = Ingredient(
+                      _id,
+                      _name,
+                      _currentType,
+                      description: _description,
+                      supplier: _supplier,
+                    );
+
+                    Future<Ingredient> resultIngredient;
+                    if (widget.ingredient == null) {
+                      resultIngredient = createIngredient(newIngredient);
+                    } else {
+                      resultIngredient = updateIngredient(newIngredient);
+                    }
+                    resultIngredient.whenComplete(() =>
+                        Navigator.of(context).pop(resultIngredient));
                   }
-
-                  Ingredient newIngredient = Ingredient(
-                    _id,
-                    _name,
-                    _currentType,
-                    description: _description,
-                    supplier: _supplier,
-                  );
-
-                  Future<Ingredient> resultIngredient;
-                  if (widget.ingredient == null) {
-                    resultIngredient = createIngredient(newIngredient);
-                  } else {
-                    resultIngredient = updateIngredient(newIngredient);
-                  }
-                  resultIngredient.whenComplete(() => Navigator.of(context).pop(resultIngredient));
-
                 },
                 child: const Text('Submit'),
               ),
