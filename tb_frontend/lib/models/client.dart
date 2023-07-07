@@ -148,6 +148,36 @@ Future<Client> createClient(Client client) async {
   }
 }
 
+Future<Client> updateClient(Client client) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    final response = await http.put(
+      Uri.parse('http://$ipAddress/clients/${client.id}'),
+      headers: {
+        HttpHeaders.authorizationHeader: token,
+        HttpHeaders.contentTypeHeader: 'application/json'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'name': client.name,
+        'addressName': client.addressName,
+        'addressNumber': client.addressNumber,
+        'zipCode': client.zipCode,
+        'city': client.city,
+      }),
+    );
+    if (response.statusCode == 200) {
+      return Client.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 403) {
+      throw Exception('You are not authorized to update a client');
+    } else {
+      throw Exception('Failed to update client');
+    }
+  } else {
+    throw Exception('Failed to load token');
+  }
+}
+
 Future<http.Response> deleteClient(int id) async {
   final token = await SecureStorageManager.read('KEY_TOKEN');
 

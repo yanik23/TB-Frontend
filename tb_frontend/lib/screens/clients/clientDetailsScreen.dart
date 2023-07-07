@@ -1,35 +1,38 @@
 
 import 'package:flutter/material.dart';
-
 import '../../models/client.dart';
+import 'createClientScreen.dart';
 
-
-class ClientDetailsScreen extends StatelessWidget {
-  //static const routeName = '/dish-details-screen';
-
+class ClientDetailsScreen extends StatefulWidget {
   final Client tempClient;
 
-  late Future<Client> client = fetchClient(tempClient.id);
 
-  ClientDetailsScreen(this.tempClient, {super.key});
+  const ClientDetailsScreen(this.tempClient, {super.key});
 
+  @override
+  State<ClientDetailsScreen> createState() => _ClientDetailsScreenState();
+}
+
+class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
+  late Future<Client> client;
+  //Client localClient
+
+
+  @override void initState() {
+    // TODO: implement initState
+    super.initState();
+    client = fetchClient(widget.tempClient.id);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dish Details'),
+        title: const Text('Client Details'),
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code),
             onPressed: () {
-              /*Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) {
-                    return GenerateQRCodeScreen(dish);
-                  },
-                ),
-              );*/
             },
           ),
         ],
@@ -40,20 +43,14 @@ class ClientDetailsScreen extends StatelessWidget {
             future: client,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                final localClient = snapshot.data!;
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    /*TextFormField(
-                    initialValue: snapshot.data!.name,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    readOnly: _isEditable,
-                  ),*/
                     Text(
-                      snapshot.data!.name,
+                      localClient.name,
                       style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -71,7 +68,7 @@ class ClientDetailsScreen extends StatelessWidget {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    Text("${snapshot.data!.addressName} ${snapshot.data!.addressNumber}"),
+                    Text("${localClient.addressName} ${localClient.addressNumber}"),
                     const SizedBox(height: 16.0),
                     Text(
                       'Zip Code:',
@@ -82,12 +79,13 @@ class ClientDetailsScreen extends StatelessWidget {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    Text('${snapshot.data!.city} ${snapshot.data!.zipCode}'),
+                    Text('${localClient.city} ${localClient.zipCode}'),
                     const SizedBox(height: 32.0),
 
                     ElevatedButton(onPressed: () {
-
                       // _isEditable = !_isEditable;
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (ctx) => CreateClientScreen(client: snapshot.data)),);
                     }, child: Text('Edit')),
 
                   ],

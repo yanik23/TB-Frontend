@@ -17,20 +17,15 @@ class ClientsScreen extends StatefulWidget {
 
 class _ClientsScreenState extends State<ClientsScreen> {
 
-  //List<Client> clients = [];
   late Future<List<Client>> clients;
-
   List<Client> localClients = [];
 
   @override
   void initState() {
-    log("=================================INITIALIZING CLIENTS SCREEN============================");
     super.initState();
     clients = fetchClients();
-
     clients.then((value) => {
       localClients.addAll(value),
-
       localClients.forEach((element) {
         element.status = "ok";
         element.remoteId = 23;
@@ -53,7 +48,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
       ),
     );
     if(newClient != null) {
-      log("=================================NEW CLIENT CREATED=================================");
       setState(() {
         //clients = fetchClients();
         localClients.add(newClient);
