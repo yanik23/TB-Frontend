@@ -7,7 +7,8 @@ import '../../models/ingredient.dart';
 
 
 class CreateIngredientScreen extends StatefulWidget {
-  const CreateIngredientScreen({Key? key}) : super(key: key);
+  final Ingredient? ingredient;
+  const CreateIngredientScreen({this.ingredient, super.key});
 
   @override
   State<CreateIngredientScreen> createState() => _CreateIngredientScreenState();
@@ -16,17 +17,31 @@ class CreateIngredientScreen extends StatefulWidget {
 class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  int id = 0;
-  String name = '';
-  String? description;
-  String currentType = '';
-  String supplier = '';
+  int _id = 0;
+  String _name = '';
+  String _currentType = '';
+  String? _description;
+  String? _supplier = '';
+
+  @override
+  void initState() {
+    if (widget.ingredient != null) {
+      super.initState();
+      setState(() {
+        _id = widget.ingredient!.id;
+        _name = widget.ingredient!.name;
+        _description = widget.ingredient!.description;
+        _currentType = widget.ingredient!.type;
+        _supplier = widget.ingredient!.supplier;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Ingredient'),
+        title: const Text('Create Ingredient'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,8 +53,9 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Name',
-                  //hintText: 'Enter the name of the dish',
+                  hintText: 'Enter the ingredient name',
                 ),
+                initialValue: _name,
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
                     return 'Please enter a valid name';
@@ -47,16 +63,17 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  name = value!;
+                  _name = value!;
                 },
               ),
 
               DropdownButtonFormField(
-                decoration: const InputDecoration(labelText: 'Type'),
-                //value: _selectedDishSize,
+                decoration: const InputDecoration(
+                    labelText: 'Type',
+                    hintText: 'Select the type of ingredient'),
                 onChanged: (value) {
                   setState(() {
-                    currentType = value.toString().toUpperCase();
+                    _currentType = value.toString().toUpperCase();
                   });
                 },
                 items: IngredientType.values
@@ -76,31 +93,21 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Description (Optional)',
-                  //hintText: 'Enter the name of the dish',
+                  hintText: 'Enter the description',
                 ),
-                /*validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },*/
+                initialValue: _description,
                 onSaved: (value) {
-                  description = value!;
+                  _description = value!;
                 },
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Supplier (Optional)',
-                  //hintText: 'Enter the name of the dish',
+                  hintText: 'Enter the supplier',
                 ),
-                /*validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'Please enter a supplier';
-                  }
-                  return null;
-                },*/
+                initialValue: _supplier,
                 onSaved: (value) {
-                  supplier = value!;
+                  _supplier = value!;
                 },
               ),
               ElevatedButton(
@@ -108,6 +115,23 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                   }
+
+                  Ingredient newIngredient = Ingredient(
+                    _id,
+                    _name,
+                    _currentType,
+                    description: _description,
+                    supplier: _supplier,
+                  );
+
+                  Future<Ingredient> resultIngredient;
+                  if (widget.ingredient == null) {
+                    resultIngredient = createIngredient(newIngredient);
+                  } else {
+                    resultIngredient = updateIngredient(newIngredient);
+                  }
+                  resultIngredient.whenComplete(() => Navigator.of(context).pop(resultIngredient));
+
                 },
                 child: const Text('Submit'),
               ),

@@ -3,17 +3,41 @@
 import 'package:flutter/material.dart';
 
 import '../../models/ingredient.dart';
+import 'createIngredientScreen.dart';
 
-class IngredientDetailsScreen extends StatelessWidget {
+class IngredientDetailsScreen extends StatefulWidget {
   //static const routeName = '/dish-details-screen';
 
   final Ingredient tempIngredient;
 
-  late Future<Ingredient> ingredient = fetchIngredient(tempIngredient.id);
-
   IngredientDetailsScreen(this.tempIngredient, {super.key});
 
+  @override
+  State<IngredientDetailsScreen> createState() => _IngredientDetailsScreenState();
+}
 
+class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
+  late Future<Ingredient> ingredient;
+
+  @override
+  void initState() {
+    super.initState();
+    ingredient = fetchIngredient(widget.tempIngredient.id);
+  }
+
+  
+  void _editIngredient(Ingredient i) async {
+    final updatedIngredient = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => CreateIngredientScreen(ingredient: i),
+      ),
+    );
+    if(updatedIngredient != null) {
+      setState(() {
+        ingredient = fetchIngredient(updatedIngredient.id);
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,8 +121,7 @@ class IngredientDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 32.0),
 
                   ElevatedButton(onPressed: () {
-
-                    // _isEditable = !_isEditable;
+                    _editIngredient(snapshot.data!);
                   }, child: Text('Edit')),
 
                 ],

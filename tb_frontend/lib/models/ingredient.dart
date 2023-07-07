@@ -26,11 +26,11 @@ class Ingredient {
   final int id;
   final String name;
   final String type;
-  final String description;
-  final String supplier;
+  final String? description;
+  final String? supplier;
 
 
-  const Ingredient(this.id, this.name, this.type, { required this.description, required this.supplier});
+  const Ingredient(this.id, this.name, this.type, { this.description, this.supplier});
 
   factory Ingredient.fullFromJson(Map<String, dynamic> json) {
     return Ingredient(
@@ -54,7 +54,7 @@ class Ingredient {
 
   Map<String, dynamic> toJson() => {
     'name': name,
-    'currentType': type,
+    'currentType': type.split('.').last,
     'description': description,
     'supplier': supplier,
   };
@@ -105,7 +105,7 @@ Future<List<Ingredient>> fetchIngredients() async {
   }
 }
 
-Future<Ingredient> insertIngredient(Ingredient ingredient) async {
+Future<Ingredient> createIngredient(Ingredient ingredient) async {
   final token = await SecureStorageManager.read('KEY_TOKEN');
 
   if(token != null) {

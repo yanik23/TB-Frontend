@@ -65,7 +65,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 initialValue: _name,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a name';
+                    return 'Please enter a valid name';
                   }
                   return null;
                 },
