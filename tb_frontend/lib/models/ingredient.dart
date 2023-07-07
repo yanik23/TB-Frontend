@@ -51,6 +51,13 @@ class Ingredient {
       supplier: json['supplier'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'currentType': type,
+    'description': description,
+    'supplier': supplier,
+  };
 }
 
 
@@ -97,3 +104,86 @@ Future<List<Ingredient>> fetchIngredients() async {
     throw Exception('Failed to load token');
   }
 }
+
+Future<Ingredient> insertIngredient(Ingredient ingredient) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    final response = await http.post(
+      Uri.parse('http://$ipAddress/ingredients'),
+      headers: {
+        HttpHeaders
+            .authorizationHeader: token,
+        HttpHeaders
+            .contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode(ingredient.toJson()),
+    );
+
+    if (response.statusCode == 201) {
+      // If the server did return a 201 CREATED response, then parse the JSON.
+      return Ingredient.fullFromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response, then throw an exception.
+      throw Exception('Failed to create ingredient');
+    }
+  } else {
+    throw Exception('Failed to load token');
+  }
+}
+
+
+Future<Ingredient> updateIngredient(Ingredient ingredient) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    final response = await http.put(
+      Uri.parse('http://$ipAddress/ingredients/${ingredient.id}'),
+      headers: {
+        HttpHeaders
+            .authorizationHeader: token,
+        HttpHeaders
+            .contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode(ingredient.toJson()),
+      /*body: jsonEncode(<String, dynamic>{
+        'name': ingredient.name,
+        'currentType': ingredient.type,
+        'description': ingredient.description,
+        'supplier': ingredient.supplier,
+      }),*/
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response, then parse the JSON.
+      return Ingredient.fullFromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response, then throw an exception.
+      throw Exception('Failed to update ingredient');
+    }
+  } else {
+    throw Exception('Failed to load token');
+  }
+}
+
+Future<void> deleteIngredient(int id) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    final response = await http.delete(
+      Uri.parse('http://$ipAddress/ingredients/$id'),
+      headers: {
+        HttpHeaders
+            .authorizationHeader: token,
+      },
+    );
+
+    if (response.statusCode != 204) {
+      // If the server did not return a 204 NO CONTENT response, then throw an exception.
+      throw Exception('Failed to delete ingredient');
+    }
+  } else {
+    throw Exception('Failed to load token');
+  }
+}
+
