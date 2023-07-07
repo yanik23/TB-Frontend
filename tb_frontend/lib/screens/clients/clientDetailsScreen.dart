@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 import '../../models/client.dart';
 import 'createClientScreen.dart';
 
 class ClientDetailsScreen extends StatefulWidget {
   final Client tempClient;
-
 
   const ClientDetailsScreen(this.tempClient, {super.key});
 
@@ -17,11 +15,24 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
   late Future<Client> client;
   //Client localClient
 
-
-  @override void initState() {
+  @override
+  void initState() {
     // TODO: implement initState
     super.initState();
     client = fetchClient(widget.tempClient.id);
+  }
+
+  void _editClient(Client c) async {
+    final newClient = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => CreateClientScreen(client: c),
+      ),
+    );
+    if (newClient != null) {
+      setState(() {
+        client = fetchClient(newClient.id);
+      });
+    }
   }
 
   @override
@@ -32,12 +43,16 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code),
-            onPressed: () {
-            },
+            onPressed: () {},
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: WillPopScope(
+        onWillPop: () async {
+          Navigator.of(context).pop(client);
+          return true;
+        },
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: FutureBuilder<Client>(
             future: client,
@@ -48,7 +63,6 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Text(
                       localClient.name,
                       style: TextStyle(
@@ -68,7 +82,8 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    Text("${localClient.addressName} ${localClient.addressNumber}"),
+                    Text(
+                        "${localClient.addressName} ${localClient.addressNumber}"),
                     const SizedBox(height: 16.0),
                     Text(
                       'Zip Code:',
@@ -81,13 +96,18 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
                     ),
                     Text('${localClient.city} ${localClient.zipCode}'),
                     const SizedBox(height: 32.0),
-
-                    ElevatedButton(onPressed: () {
-                      // _isEditable = !_isEditable;
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (ctx) => CreateClientScreen(client: snapshot.data)),);
-                    }, child: Text('Edit')),
-
+                    ElevatedButton(
+                        onPressed: () {
+                          // _isEditable = !_isEditable;
+                          /*Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) =>
+                                  CreateClientScreen(client: snapshot.data),
+                            ),
+                          );*/
+                          _editClient(localClient);
+                        },
+                        child: Text('Edit')),
                   ],
                 );
               } else if (snapshot.hasError) {
@@ -97,7 +117,7 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
               // By default, show a loading spinner.
               return const CircularProgressIndicator();
             },
-          )
+          ),),
       ),
     );
   }

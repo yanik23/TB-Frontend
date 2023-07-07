@@ -33,12 +33,18 @@ class _ClientsScreenState extends State<ClientsScreen> {
       })
     });
   }
-  void _selectClient(BuildContext context, Client client) {
-    Navigator.of(context).push(
+  void _selectClient(BuildContext context, Client client) async {
+    final updatedClient = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => ClientDetailsScreen(client),
       ),
     );
+    if(updatedClient != null) {
+      setState(() {
+        localClients.remove(client);
+        localClients.add(updatedClient);
+      });
+    }
   }
 
   void _createClient() async{
