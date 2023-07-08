@@ -36,14 +36,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
       });
     }
   }
-  /*if(client != null) {
-    _id = widget.client!.id;
-    _name = widget.client!.name;
-    _addressName = widget.client!.addressName;
-    _addressNumber = widget.client!.addressNumber;
-    _zipCode = widget.client!.zipCode;
-    _city = widget.client!.city;
-  }*/
+
 
   @override
   Widget build(BuildContext context) {

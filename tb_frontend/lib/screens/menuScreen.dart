@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/data/dummyDishes.dart';
+import 'package:tb_frontend/screens/deliveries/deliveriesScreen.dart';
 import 'package:tb_frontend/screens/ingredients/ingredientsScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
@@ -69,13 +70,17 @@ class MenuScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/settings');
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) {
+                    return const DeliveriesScreen();
+                  }),
+                );
               },
               child: const Text('Deliveries'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/settings');
+
               },
               child: const Text('Stats'),
             ),
@@ -85,19 +90,21 @@ class MenuScreen extends StatelessWidget {
               },
               child: const Text('QR'),
             ),
-
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.stacked_bar_chart), label: 'Stats'),
-            BottomNavigationBarItem(icon: Icon(Icons.local_dining_sharp), label: 'Dishes'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.stacked_bar_chart), label: 'Stats'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.local_dining_sharp), label: 'Dishes'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Clients'),
-            BottomNavigationBarItem(icon: Icon(Icons.fastfood), label: 'Ingredients'),
-            BottomNavigationBarItem(icon: Icon(Icons.delivery_dining), label: 'Deliveries'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.fastfood), label: 'Ingredients'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.delivery_dining), label: 'Deliveries'),
             BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'QR'),
-
           ],
         ));
   }

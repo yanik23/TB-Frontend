@@ -19,7 +19,7 @@ class IngredientsScreen extends StatefulWidget {
 class _IngredientsScreenState extends State<IngredientsScreen> {
   late Future<List<Ingredient>> ingredients;
   List<Ingredient> localIngredients = [];
-  
+
   @override
   void initState() {
     super.initState();

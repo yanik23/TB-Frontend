@@ -1,18 +1,17 @@
 
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../../models/client.dart';
+import '../../models/delivery.dart';
 
-class ClientItem extends StatelessWidget {
-  final Client client;
-  final Function(BuildContext context, Client client) onSelect;
 
-  const ClientItem(this.client, this.onSelect, {super.key});
+
+
+class DeliveryItem extends StatelessWidget {
+  final Delivery delivery;
+  final Function(BuildContext context, Delivery delivery) onSelect;
+
+  const DeliveryItem(this.delivery, this.onSelect, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class ClientItem extends StatelessWidget {
       elevation: 4,
       child: InkWell(
         onTap: () {
-          onSelect(context, client);
+          onSelect(context, delivery);
         },
         splashColor:
         Theme.of(context).colorScheme.onBackground.withOpacity(0.9),
@@ -34,7 +33,7 @@ class ClientItem extends StatelessWidget {
               placeholder: MemoryImage(kTransparentImage),
               image: const AssetImage('assets/images/bokafood-logo.png'),
               fit: BoxFit.cover,
-              height: 200,
+              height: 80,
               width: double.infinity,
             ),
             Positioned(
@@ -44,10 +43,10 @@ class ClientItem extends StatelessWidget {
               child: Container(
                 color: Colors.black54,
                 padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Column(children: [
                   Text(
-                    client.name,
+                    'delivery id : ${delivery.id}',
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     softWrap: true, //so the text is wrapped well if needed
@@ -62,20 +61,9 @@ class ClientItem extends StatelessWidget {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const Icon(Icons.person, color: Colors.white,),
                         Text(
-                          "${client.addressName}  ",
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          softWrap: true, //so the text is wrapped well if needed
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          client.addressNumber.toString(),
+                          delivery.username,
                           maxLines: 2,
                           textAlign: TextAlign.center,
                           softWrap: true, //so the text is wrapped well if needed
@@ -87,8 +75,9 @@ class ClientItem extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
+                        const Icon(Icons.delivery_dining, color: Colors.white,),
                         Text(
-                          "${client.zipCode}  ",
+                          delivery.clientName,
                           maxLines: 2,
                           textAlign: TextAlign.center,
                           softWrap: true, //so the text is wrapped well if needed
@@ -99,8 +88,10 @@ class ClientItem extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
+                        const Spacer(),
+                        const Icon(Icons.calendar_month, color: Colors.white,),
                         Text(
-                          client.city,
+                          delivery.formattedDate,
                           maxLines: 2,
                           textAlign: TextAlign.center,
                           softWrap: true, //so the text is wrapped well if needed
@@ -111,6 +102,7 @@ class ClientItem extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
+
 
                         /*DishItemTrait(Icons.monetization_on, '${dish.price} CHF'),
                         const Spacer(),
