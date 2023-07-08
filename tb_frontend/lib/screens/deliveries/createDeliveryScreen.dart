@@ -22,7 +22,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   int _id = 0;
   String _username = '';
   String _clientName = '';
-  late DateTime _date;
+  late DateTime _date = DateTime.now();
   int _quantityRemained = 0;
   int _quantityDelivered = 0;
 

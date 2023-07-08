@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tb_frontend/data/dummyDishes.dart';
 import 'package:tb_frontend/screens/deliveries/deliveriesScreen.dart';
 import 'package:tb_frontend/screens/ingredients/ingredientsScreen.dart';
+import 'package:tb_frontend/screens/statistics/statisticsScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
 
@@ -32,7 +33,7 @@ class MenuScreen extends StatelessWidget {
             mainAxisSpacing: 10,
           ),
           children: [
-            ElevatedButton(
+            TextButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -42,33 +43,45 @@ class MenuScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Dishes'),
+              icon: const Icon(Icons.local_dining_sharp, size: 36),
+              label: const Text('Dishes'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey,
+              ),
             ),
-            ElevatedButton(
+            TextButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (ctx) {
-                      return IngredientsScreen();
+                      return const IngredientsScreen();
                     },
                   ),
                 );
               },
-              child: const Text('Ingredients'),
+              icon: const Icon(Icons.fastfood, size: 36),
+              label: const Text('Ingredients'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey,
+              ),
             ),
-            ElevatedButton(
+            TextButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (ctx) {
-                      return ClientsScreen();
+                      return const ClientsScreen();
                     },
                   ),
                 );
               },
-              child: const Text('Clients'),
+              icon: const Icon(Icons.person, size: 36),
+              label: const Text('Clients'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey,
+              ),
             ),
-            ElevatedButton(
+            TextButton.icon(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (ctx) {
@@ -76,19 +89,36 @@ class MenuScreen extends StatelessWidget {
                   }),
                 );
               },
-              child: const Text('Deliveries'),
+              icon: const Icon(Icons.delivery_dining, size: 36),
+              label: const Text('Deliveries'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey,
+              ),
             ),
-            ElevatedButton(
+            TextButton.icon(
               onPressed: () {
-
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) {
+                    return const StatisticsScreen();
+                  }),
+                );
               },
-              child: const Text('Stats'),
+              //child: const Text('Stats'),
+              icon: const Icon(Icons.stacked_bar_chart, size: 36),
+              label: const Text('Stats'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey,
+              ),
             ),
-            ElevatedButton(
+            TextButton.icon(
               onPressed: () {
                 Navigator.pushNamed(context, '/settings');
               },
-              child: const Text('QR'),
+              icon: const Icon(Icons.photo_camera_rounded, size: 36),
+              label: const Text('QR Scanner'),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey,
+              ),
             ),
           ],
         ),
