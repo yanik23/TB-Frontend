@@ -1,5 +1,6 @@
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/generateQRCodeScreen.dart';
 
@@ -166,35 +167,58 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                     buildNutritionRow('Iron', snapshot.data!.iron?.toStringAsFixed(2) ?? 'N/A'),
                     buildNutritionRow('Potassium', snapshot.data!.potassium?.toStringAsFixed(2) ?? 'N/A'),
                     const SizedBox(height: 32.0),
+                    Text(
+                      'Ingredients:',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Container(
+                      width: double.infinity,
+                      constraints: const BoxConstraints(maxHeight: 300.0),
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: localDish.ingredients?.length ?? 0,
+                          itemBuilder: (context, index) =>
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 5.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(localDish.ingredients?[index].name ?? 'N/A', style: TextStyle(
+                                      fontSize: 18.0,
+                                      //fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),),
+                                  ),
+                                  const Spacer(),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.balance, color: Colors.orangeAccent),
+                                        const SizedBox(width: 8.0),
+                                        Text(localDish.ingredients?[index].weight != null ? '${localDish.ingredients?[index].weight}g' : 'N/A'),
+                                        const Spacer(),
+                                        /*const Text("Remained: "),
+                                        Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),
+                                        const Spacer(),
+                                        const Text("Delivered: "),
+                                        Text(localDelivery.dishes?[index].quantityDelivered.toString() ?? 'N/A'),*/
+                                      ],
+                                    ),
+                                  ),
 
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: localDish.ingredients?.length ?? 0,
-                      itemBuilder: (context, index) =>
-                        Column(
-                          children: [
-                            Text(localDish.ingredients?[index].name ?? 'N/A', style: TextStyle(
-                              fontSize: 18.0,
-                              //fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),),
-                            Row(
-                              children: [
-                                const Icon(Icons.balance, color: Colors.orangeAccent),
-                                const SizedBox(width: 8.0),
-                                Text(localDish.ingredients?[index].weight != null ? '${localDish.ingredients?[index].weight}g' : 'N/A'),
-                                const Spacer(),
-                                /*const Text("Remained: "),
-                                Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),
-                                const Spacer(),
-                                const Text("Delivered: "),
-                                Text(localDelivery.dishes?[index].quantityDelivered.toString() ?? 'N/A'),*/
-                              ],
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 16.0),
-                          ],
                         ),
+                      ),
                     ),
                     ElevatedButton(
                         onPressed: () {
