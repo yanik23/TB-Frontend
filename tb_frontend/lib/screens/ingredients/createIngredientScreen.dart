@@ -67,10 +67,13 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                 },
               ),
 
-              DropdownButtonFormField(
+              DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
                     labelText: 'Type',
                     hintText: 'Select the type of ingredient'),
+                value: _currentType == ''
+                    ? null
+                    : _currentType,
                 onChanged: (value) {
                   setState(() {
                     _currentType = value.toString().toUpperCase();
@@ -79,7 +82,9 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                 items: IngredientType.values
                     .map(
                       (type) => DropdownMenuItem(
-                    value: type,
+                    value: type.toString() == _currentType
+                        ? _currentType
+                        : type.name.toString().toUpperCase(),
                     child: Text(type.name.toString().toUpperCase()),
                   ),
                 ).toList(),

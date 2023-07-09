@@ -19,7 +19,7 @@ class IngredientsScreen extends StatefulWidget {
 class _IngredientsScreenState extends State<IngredientsScreen> {
   late Future<List<Ingredient>> ingredients;
   List<Ingredient> localIngredients = [];
-  List<Ingredient> items = [];
+  List<Ingredient> searchedIngredients = [];
 
   bool _showSearchBar = false;
 
@@ -31,7 +31,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
     ingredients = fetchIngredients();
     ingredients.then((value) => {
       localIngredients.addAll(value),
-      items.addAll(value)
+      searchedIngredients.addAll(value)
       /*localIngredients.forEach((element) {
         element.status = "ok";
         element.remoteId = 23;
@@ -50,6 +50,8 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
       setState(() {
         localIngredients.remove(dish);
         localIngredients.add(updatedIngredient);
+        searchedIngredients.remove(dish);
+        searchedIngredients.add(updatedIngredient);
       });
     }
   }
@@ -64,6 +66,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
       setState(() {
         //ingredients = fetchIngredients();
         localIngredients.add(newIngredient);
+        searchedIngredients.add(newIngredient);
         //newIngredient.status = "new";
         //insertIngredient(newIngredient);
       });
@@ -76,6 +79,8 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
       ingredients.then((value) => {
         localIngredients.clear(),
         localIngredients.addAll(value),
+        searchedIngredients.clear(),
+        searchedIngredients.addAll(value)
       });
     });
   }
@@ -114,7 +119,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
 
   void filterSearchResults(String query) {
     setState(() {
-      items = localIngredients
+      searchedIngredients = localIngredients
           .where((item) => item.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
@@ -153,7 +158,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
 
                 Expanded(
                   child: ListView.builder(
-                    itemCount: items.length,
+                    itemCount: searchedIngredients.length,
                     itemBuilder: (context, index) {
                       return Dismissible(
                         key: UniqueKey(),
@@ -166,7 +171,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
                                   TextButton(
                                     onPressed: () {
                                       setState(() {
-                                        IngredientItem(items[index], _selectIngredient);
+                                        IngredientItem(searchedIngredients[index], _selectIngredient);
                                       });
                                       Navigator.of(ctx).pop();
                                     },
@@ -174,7 +179,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      _deleteIngredient(items[index]);
+                                      _deleteIngredient(searchedIngredients[index]);
                                       Navigator.of(ctx).pop();
 
                                     },
@@ -184,7 +189,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
                               ),
                             );
                           },
-                          child: IngredientItem(items[index], _selectIngredient));
+                          child: IngredientItem(searchedIngredients[index], _selectIngredient));
                     },
                   ),
                 ),

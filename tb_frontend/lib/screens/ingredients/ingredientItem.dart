@@ -62,7 +62,7 @@ class IngredientItem extends StatelessWidget {
                       children: [
                         const Icon(Icons.category, size: 17, color: Colors.white),
                         const SizedBox(width: 8),
-                        Text(ingredient.type, style: const TextStyle(color: Colors.white)),
+                        Text(ingredient.type.toString(), style: const TextStyle(color: Colors.white)),
                       ]
                   )
                 ]),

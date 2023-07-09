@@ -418,77 +418,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 ElevatedButton(
                   onPressed: () {
                     log("========================================== button pressed");
-                    
                     _addIngredientsToDish();
-                    /*showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return Column(
-                              children: <Widget>[
-                                Text('Select Ingredients',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    )),
-                                Expanded(
-                                  child: ListView.builder(
-                                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16.0),
-                                    itemCount: ingredients.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Column(children: <Widget>[
-                                        CheckboxListTile(
-                                          title: Text(ingredients[index].name),
-                                          value: ingredients[index].isChecked,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _toggleIngredient(index, value!);
-                                            });
-                                          },
-                                        ),
-                                        TextFormField(
-                                          decoration: const InputDecoration(
-                                              labelText: 'Quantity'),
-                                          keyboardType: TextInputType.number,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              ingredients[index].weight = double.parse(value);
-                                            });
-                                          },
-                                        ),
-                                        const SizedBox(height: 16.0),
-                                      ]);
-                                    },
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    ElevatedButton(
-                                      onPressed: _onAddPressed,
-                                      child: const Text('Add'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    );*/
                   },
                   child: const Text('Add ingredients'),
                 ),
@@ -528,8 +458,15 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
                       // Do something with the newDish object, like saving it to a database or passing it to another screen
 
-                      Future<Dish> dish = createDish(newDish);
-                      dish.whenComplete(() => Navigator.of(context).pop(dish));
+                      Future<Dish> resultDish = createDish(newDish);
+
+
+                      if(widget.dish != null){
+                        resultDish = updateDish(newDish);
+                      } else {
+                        resultDish = createDish(newDish);
+                      }
+                      resultDish.whenComplete(() => Navigator.of(context).pop(resultDish));
 
                     }
                   }),

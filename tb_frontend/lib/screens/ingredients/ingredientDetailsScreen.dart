@@ -111,7 +111,7 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  Text(snapshot.data!.type),
+                  Text(snapshot.data!.type.toString().split('.').last),
                   const SizedBox(height: 16.0),
                   Text(
                     'Supplier:',
