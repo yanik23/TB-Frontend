@@ -16,9 +16,10 @@ class Delivery {
   String username;
   String clientName;
   DateTime deliveryDate;
+  String? details;
   List<DishForDeliveryDTO>? dishes;
 
-  Delivery(this.id, this.username, this.clientName, this.deliveryDate, this.dishes);
+  Delivery(this.id, this.username, this.clientName, this.deliveryDate, this.details, this.dishes);
 
   get formattedDate {
     return '${deliveryDate.day}/${deliveryDate.month}/${deliveryDate.year}';
@@ -30,6 +31,7 @@ class Delivery {
       json['userName'],
       json['clientName'],
       DateTime.parse(json['deliveryDate']),
+      json['details'],
       json['dishes'] != null ? (json['dishes'] as List).map((i) => DishForDeliveryDTO.fromJson(i)).toList() : null,
     );
   }

@@ -111,6 +111,17 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                     Text(localDelivery.formattedDate),
                     const SizedBox(height: 16.0),
                     Text(
+                      'Delivery details:',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    Text(localDelivery.details??"N/A"),
+                    const SizedBox(height: 16.0),
+                    Text(
                       'Dishes delivered:',
                       style: TextStyle(
                         fontSize: 18.0,
@@ -119,6 +130,8 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
+                    const SizedBox(height: 16.0),
+
                     const SizedBox(height: 16.0),
                     ListView.builder(
                       shrinkWrap: true,

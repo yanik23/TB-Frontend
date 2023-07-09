@@ -23,6 +23,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   String _username = '';
   String _clientName = '';
   late DateTime _date = DateTime.now();
+  String _deliveryDetails = '';
   int _quantityRemained = 0;
   int _quantityDelivered = 0;
 
@@ -144,6 +145,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                       _username,
                       _clientName,
                       _date,
+                      _deliveryDetails,
                       []
                     );
                     // Do something with the new delivery object (e.g., save to database)
