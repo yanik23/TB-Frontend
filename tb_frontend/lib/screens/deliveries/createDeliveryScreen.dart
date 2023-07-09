@@ -6,7 +6,8 @@ import '../../models/delivery.dart';
 import 'package:intl/intl.dart';
 
 
-final formatter = DateFormat.yMd();
+//final formatter = DateFormat.yMd();
+final formatter = DateFormat('dd/MM/yyyy');
 
 class CreateDeliveryScreen extends StatefulWidget {
   final Delivery? delivery;

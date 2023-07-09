@@ -1,11 +1,12 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../models/delivery.dart';
 
 
-
+final formatter = DateFormat('dd/MM/yyyy');
 
 class DeliveryItem extends StatelessWidget {
   final Delivery delivery;
@@ -91,7 +92,7 @@ class DeliveryItem extends StatelessWidget {
                         const Spacer(),
                         const Icon(Icons.calendar_month, color: Colors.white,),
                         Text(
-                          delivery.formattedDate,
+                          formatter.format(delivery.deliveryDate),
                           maxLines: 2,
                           textAlign: TextAlign.center,
                           softWrap: true, //so the text is wrapped well if needed

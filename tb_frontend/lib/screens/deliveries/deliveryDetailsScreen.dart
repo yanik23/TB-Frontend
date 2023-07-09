@@ -108,7 +108,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    Text(localDelivery.formattedDate),
+                    Text(formatter.format(localDelivery.deliveryDate)),
                     const SizedBox(height: 16.0),
                     Text(
                       'Delivery details:',

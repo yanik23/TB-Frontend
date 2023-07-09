@@ -3,6 +3,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:tb_frontend/screens/welcomeScreen.dart';
 
 import 'createDishScreen.dart';
 
@@ -59,31 +60,41 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
         children: <Widget>[
           Expanded(
             child: ListView.builder(
+              shrinkWrap: true,
               itemCount: selectedIngredients.length,
               itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: <Widget>[
-                    CheckboxListTile(
-                      title: Text(selectedIngredients[index].name),
-                      value: selectedIngredients[index].isChecked,
-                      onChanged: (value) {
-                        _toggleIngredient(index, value!);
-                      },
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Quantity',
+                return Row(
+                    children: [
+                      Expanded(
+                        child: CheckboxListTile(
+                          activeColor: kColorScheme.primary,
+                          title: Text(selectedIngredients[index].name),
+                          value: selectedIngredients[index].isChecked,
+                          onChanged: (value) {
+                            _toggleIngredient(index, value!);
+                          },
+                        ),
                       ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedIngredients[index].weight = double.parse(value);
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16.0),
-                  ],
-                );
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Quantity (g)',
+                              hintText: 'Enter quantity',
+                            ),
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedIngredients[index].weight = double.parse(value);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                    ],
+                  );
               },
             ),
           ),
