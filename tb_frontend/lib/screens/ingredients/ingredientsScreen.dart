@@ -130,12 +130,12 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
           filterSearchResults(value);
         },
         controller: editingController,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           labelText: "Search",
           hintText: "Search",
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(25.0)),
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
         ),
       ),
@@ -150,21 +150,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
             child: Column(
               children: <Widget>[
                 if (_showSearchBar) searchBar,
-                /*Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    onChanged: (value) {
-                      filterSearchResults(value);
-                    },
-                    controller: editingController,
-                    decoration: InputDecoration(
-                        labelText: "Search",
-                        hintText: "Search",
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(25.0)))),
-                  ),
-                ),*/
+
                 Expanded(
                   child: ListView.builder(
                     itemCount: items.length,

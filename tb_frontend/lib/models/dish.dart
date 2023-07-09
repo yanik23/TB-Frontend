@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:tb_frontend/dto/ingredientForDishDTO.dart';
 import 'package:tb_frontend/dto/ingredientLessDTO.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -92,7 +93,7 @@ class Dish {
       calcium: json['calcium'],
       iron: json['iron'],
       potassium: json['potassium'],
-      //ingredients: json['ingredients'] != null ? (json['ingredients'] as List).map((i) => Ingredient.fromJson(i)).toList() : null,
+      ingredients: json['ingredients'] != null ? (json['ingredients'] as List).map((i) => IngredientLessDTO.fromJson(i)).toList() : null,
     );
   }
 
@@ -186,6 +187,55 @@ Future<Dish> createDish(Dish dish) async {
       }
     } catch (e) {
       throw Exception('Failed to create dish');
+    }
+  } else {
+    throw Exception('Failed to load token');
+  }
+}
+
+Future<Dish> updateDish(Dish dish) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    try {
+      final response = await http.put(Uri.parse('http://$ipAddress/dishes/${dish.id}'),
+          headers: {
+            HttpHeaders
+                .authorizationHeader: token,
+            HttpHeaders.contentTypeHeader: 'application/json'
+          },
+          body: jsonEncode(dish.toJson()));
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return Dish.fromServerJson(responseData);
+      } else {
+        throw Exception('Failed to update dish');
+      }
+    } catch (e) {
+      throw Exception('Failed to update dish');
+    }
+  } else {
+    throw Exception('Failed to load token');
+  }
+}
+
+Future<void> deleteDish(int id) async {
+  final token = await SecureStorageManager.read('KEY_TOKEN');
+
+  if(token != null) {
+    try {
+      final response = await http.delete(Uri.parse('http://$ipAddress/dishes/$id'),
+          headers: {
+            HttpHeaders
+                .authorizationHeader: token,
+          });
+      if (response.statusCode == 204) {
+        return;
+      } else {
+        throw Exception('Failed to delete dish');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete dish');
     }
   } else {
     throw Exception('Failed to load token');

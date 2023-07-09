@@ -18,7 +18,8 @@ class IngredientCheck {
 }
 
 class CreateDishScreen extends StatefulWidget {
-  const CreateDishScreen({super.key});
+  final Dish? dish;
+  const CreateDishScreen({this.dish, super.key});
 
   @override
   _CreateDishScreenState createState() => _CreateDishScreenState();
@@ -26,29 +27,29 @@ class CreateDishScreen extends StatefulWidget {
 
 class _CreateDishScreenState extends State<CreateDishScreen> {
   final _formKey = GlobalKey<FormState>();
-  int id = 0;
-  String name = '';
-  String? description;
-  String currentType = '';
-  String currentSize = '';
-  double price = 0.0;
-  bool isAvailable = false;
-  int calories = 0;
-  double? fats;
-  double? saturatedFats;
-  double? sodium;
-  double? carbohydrates;
-  double? fibers;
-  double? sugars;
-  double? proteins;
-  double? calcium;
-  double? iron;
-  double? potassium;
-
-  bool? _checked = false;
 
 
-  TextEditingController nameController = TextEditingController();
+  int _id = 0;
+  String _name = '';
+  String? _description;
+  String _currentType = '';
+  String _currentSize = '';
+  double _price = 0.0;
+  bool _isAvailable = false;
+  int _calories = 0;
+  double? _fats;
+  double? _saturatedFats;
+  double? _sodium;
+  double? _carbohydrates;
+  double? _fibers;
+  double? _sugars;
+  double? _proteins;
+  double? _calcium;
+  double? _iron;
+  double? _potassium;
+
+
+  //TextEditingController nameController = TextEditingController();
 
   final DishType _selectedDishType = DishType.meat;
   final DishSize _selectedDishSize = DishSize.fit;
@@ -56,6 +57,35 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
   List<IngredientCheck> ingredients = [];
   List<IngredientCheck> selectedIngredients = [];
   List<IngredientLessDTO> ingredientsLessDTO = [];
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadIngredients();
+    if (widget.dish != null) {
+      _id = widget.dish!.id;
+      _name = widget.dish!.name;
+      _description = widget.dish!.description;
+      _currentType = widget.dish!.currentType;
+      _currentSize = widget.dish!.currentSize;
+      _price = widget.dish!.price;
+      _isAvailable = widget.dish!.isAvailable;
+      _calories = widget.dish!.calories;
+      _fats = widget.dish!.fats;
+      _saturatedFats = widget.dish!.saturatedFats;
+      _sodium = widget.dish!.sodium;
+      _carbohydrates = widget.dish!.carbohydrates;
+      _fibers = widget.dish!.fibers;
+      _sugars = widget.dish!.sugars;
+      _proteins = widget.dish!.proteins;
+      _calcium = widget.dish!.calcium;
+      _iron = widget.dish!.iron;
+      _potassium = widget.dish!.potassium;
+      ingredientsLessDTO = widget.dish!.ingredients!;
+    }
+  }
+
 
   void _toggleIngredient(int index, bool value) {
     setState(() {
@@ -87,48 +117,46 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadIngredients();
-  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Dish'),
+        title: const Text('Create Dish'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child : Form(
           key: _formKey,
-          //autovalidateMode: AutovalidateMode.always,
           child: Column(
             children: [
               TextFormField(
-                controller: nameController,
+                //controller: nameController,
                 decoration: const InputDecoration(
                   labelText: 'Name',
-                  //hintText: 'Enter the name of the dish',
+                  hintText: 'Enter the dish name',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
                     return 'Please enter a name';
                   }
-                  //log("========================================== {value}");
                   return null;
                 },
+                initialValue: _name,
                 onChanged: (value) {
                   setState(() {
-                    name = value;
+                    _name = value;
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Price'),
+                decoration: const InputDecoration(
+                    labelText: 'Price',
+                    hintText: 'Enter the dish price',
+                ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
@@ -136,15 +164,20 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   }
                   return null;
                 },
+                initialValue: _price == 0 ? '' : _price.toString(),
                 onChanged: (value) {
                   setState(() {
-                    price = double.parse(value);
+                    _price = double.parse(value);
                   });
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Calories'),
+                decoration: const InputDecoration(
+                    labelText: 'Calories',
+                    hintText: 'Enter the dish calories',
+                ),
                 keyboardType: TextInputType.number,
+                initialValue: _calories == 0 ? '' : _calories.toString(),
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
                     return 'Please enter a valid number of calories';
@@ -153,19 +186,22 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 },
                 onChanged: (value) {
                   setState(() {
-                    calories = int.parse(value);
+                    _calories = int.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration:
-                    const InputDecoration(labelText: 'Description (Optional)'),
-                /*onChanged: (value) {
+                decoration: const InputDecoration(
+                    labelText: 'Description (Optional)',
+                    hintText: 'Enter the dish description',
+                ),
+                initialValue: _description,
+                onChanged: (value) {
                   setState(() {
-                    description = value;
+                    _description = value;
                   });
-                },*/
+                },
               ),
 
               DropdownButtonFormField(
@@ -173,7 +209,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 //value: _selectedDishType,
                 onChanged: (value) {
                   setState(() {
-                    currentType = value.toString().toUpperCase();
+                    _currentType = value.toString().toUpperCase();
                   });
                 },
                 items: DishType.values
@@ -195,7 +231,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 //value: _selectedDishSize,
                 onChanged: (value) {
                   setState(() {
-                    currentSize = value.toString().toUpperCase();
+                    _currentSize = value.toString().toUpperCase();
                   });
                 },
                 items: DishSize.values
@@ -214,10 +250,10 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ),
               SwitchListTile(
                 title: const Text('Is Available'),
-                value: isAvailable,
+                value: _isAvailable,
                 onChanged: (value) {
                   setState(() {
-                    isAvailable = value;
+                    _isAvailable = value;
                   });
                 },
               ),
@@ -225,101 +261,137 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               const Text('Nutritional Informations (Optional)'),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Fats'),
+                decoration: const InputDecoration(
+                    labelText: 'Fats',
+                    hintText: 'Enter the dish fats',
+                ),
                 keyboardType: TextInputType.number,
+                initialValue: _fats == 0 ? '' : _fats.toString(),
                 onChanged: (value) {
                   setState(() {
-                    fats = double.parse(value);
+                    _fats = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Saturated Fats'),
+                decoration: const InputDecoration(
+                    labelText: 'Saturated Fats',
+                    hintText: 'Enter the dish saturated fats',),
+
                 keyboardType: TextInputType.number,
+                initialValue: _saturatedFats == 0 ? '' : _saturatedFats.toString(),
                  onChanged: (value) {
                   setState(() {
-                    saturatedFats = double.parse(value);
+                    _saturatedFats = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Sodium'),
+                decoration: const InputDecoration(
+                    labelText: 'Sodium',
+                    hintText: 'Enter the dish sodium',
+                ),
                 keyboardType: TextInputType.number,
+                initialValue: _sodium == 0 ? '' : _sodium.toString(),
                 onChanged: (value) {
                   setState(() {
-                    sodium = double.parse(value);
+                    _sodium = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Carbohydrates'),
+                decoration: const InputDecoration(
+                    labelText: 'Carbohydrates',
+                    hintText: 'Enter the dish carbohydrates',
+                ),
                 keyboardType: TextInputType.number,
+                initialValue: _carbohydrates == 0 ? '' : _carbohydrates.toString(),
                 onChanged: (value) {
                   setState(() {
-                    carbohydrates = double.parse(value);
+                    _carbohydrates = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Fibers'),
+                decoration: const InputDecoration(
+                    labelText: 'Fibers',
+                    hintText: 'Enter the dish fibers',
+                ),
                 keyboardType: TextInputType.number,
+                initialValue: _fibers == 0 ? '' : _fibers.toString(),
                 onChanged: (value) {
                   setState(() {
-                    fibers = double.parse(value);
+                    _fibers = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Sugars'),
+                decoration: const InputDecoration(
+                  labelText: 'Sugars',
+                  hintText: 'Enter the dish sugars',
+                ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
-                    sugars = double.parse(value);
+                    _sugars = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Proteins'),
+                decoration: const InputDecoration(
+                  labelText: 'Proteins',
+                    hintText: 'Enter the dish proteins',
+                ),
                 keyboardType: TextInputType.number,
+                initialValue: _proteins == 0 ? '' : _proteins.toString(),
                 onChanged: (value) {
                   setState(() {
-                    proteins = double.parse(value);
+                    _proteins = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Calcium'),
+                decoration: const InputDecoration(
+                    labelText: 'Calcium',
+                    hintText: 'Enter the dish calcium',),
                 keyboardType: TextInputType.number,
+                initialValue: _calcium == 0 ? '' : _calcium.toString(),
                 onChanged: (value) {
                   setState(() {
-                    calcium = double.parse(value);
+                    _calcium = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Iron'),
+                decoration: const InputDecoration(
+                    labelText: 'Iron',
+                    hintText: 'Enter the dish iron',),
                 keyboardType: TextInputType.number,
+                initialValue: _iron == 0 ? '' : _iron.toString(),
                 onChanged: (value) {
                   setState(() {
-                    iron = double.parse(value);
+                    _iron = double.parse(value);
                   });
                 },
               ),
 
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Potassium'),
+                decoration: const InputDecoration(
+                    labelText: 'Potassium',
+                    hintText: 'Enter the dish potassium',),
                 keyboardType: TextInputType.number,
+                initialValue: _potassium == 0 ? '' : _potassium.toString(),
                 onChanged: (value) {
                   setState(() {
-                    potassium = double.parse(value);
+                    _potassium = double.parse(value);
                   });
                 },
               ),
@@ -417,24 +489,24 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                       ingredientsLessDTO = selectedIngredients.map((e) => IngredientLessDTO(e.id, e.name, e.weight)).toList();
                       // Create an instance of the Dish class using the collected inputs
                       Dish newDish = Dish(
-                        id: id,
-                        name: name,
-                        description: description,
-                        currentType: currentType,
-                        currentSize: currentSize,
-                        price: price,
-                        isAvailable: isAvailable,
-                        calories: calories,
-                        fats: fats,
-                        saturatedFats: saturatedFats,
-                        sodium: sodium,
-                        carbohydrates: carbohydrates,
-                        fibers: fibers,
-                        sugars: sugars,
-                        proteins: proteins,
-                        calcium: calcium,
-                        iron: iron,
-                        potassium: potassium,
+                        id: _id,
+                        name: _name,
+                        description: _description,
+                        currentType: _currentType,
+                        currentSize: _currentSize,
+                        price: _price,
+                        isAvailable: _isAvailable,
+                        calories: _calories,
+                        fats: _fats,
+                        saturatedFats: _saturatedFats,
+                        sodium: _sodium,
+                        carbohydrates: _carbohydrates,
+                        fibers: _fibers,
+                        sugars: _sugars,
+                        proteins: _proteins,
+                        calcium: _calcium,
+                        iron: _iron,
+                        potassium: _potassium,
                         ingredients: ingredientsLessDTO,
                       );
 
