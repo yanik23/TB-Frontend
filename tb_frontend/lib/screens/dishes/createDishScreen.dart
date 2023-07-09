@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:tb_frontend/screens/dishes/addIngredientsToDishScreen.dart';
 //import 'package:tb_frontend/models/ingredient.dart';
 //import 'package:tb_frontend/screens/dishes/dishIngredientsSelectionScreen.dart';
 
@@ -117,7 +118,19 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     });
   }
 
-
+  void _addIngredientsToDish() async {
+    log("========================================== _addIngredientsToDish");
+    final newIngredients = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddIngredientsToDishScreen(ingredients),
+      ),
+    );
+    if (newIngredients != null) {
+      setState(() {
+        selectedIngredients = newIngredients;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +279,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish fats',
                 ),
                 keyboardType: TextInputType.number,
-                initialValue: _fats == 0 ? '' : _fats.toString(),
+                initialValue: _fats == null ? '' : _fats.toString(),
                 onChanged: (value) {
                   setState(() {
                     _fats = double.parse(value);
@@ -280,7 +293,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish saturated fats',),
 
                 keyboardType: TextInputType.number,
-                initialValue: _saturatedFats == 0 ? '' : _saturatedFats.toString(),
+                initialValue: _saturatedFats == null ? '' : _saturatedFats.toString(),
                  onChanged: (value) {
                   setState(() {
                     _saturatedFats = double.parse(value);
@@ -294,7 +307,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish sodium',
                 ),
                 keyboardType: TextInputType.number,
-                initialValue: _sodium == 0 ? '' : _sodium.toString(),
+                initialValue: _sodium == null ? '' : _sodium.toString(),
                 onChanged: (value) {
                   setState(() {
                     _sodium = double.parse(value);
@@ -308,7 +321,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish carbohydrates',
                 ),
                 keyboardType: TextInputType.number,
-                initialValue: _carbohydrates == 0 ? '' : _carbohydrates.toString(),
+                initialValue: _carbohydrates == null ? '' : _carbohydrates.toString(),
                 onChanged: (value) {
                   setState(() {
                     _carbohydrates = double.parse(value);
@@ -322,7 +335,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish fibers',
                 ),
                 keyboardType: TextInputType.number,
-                initialValue: _fibers == 0 ? '' : _fibers.toString(),
+                initialValue: _fibers == null ? '' : _fibers.toString(),
                 onChanged: (value) {
                   setState(() {
                     _fibers = double.parse(value);
@@ -349,7 +362,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish proteins',
                 ),
                 keyboardType: TextInputType.number,
-                initialValue: _proteins == 0 ? '' : _proteins.toString(),
+                initialValue: _proteins == null ? '' : _proteins.toString(),
                 onChanged: (value) {
                   setState(() {
                     _proteins = double.parse(value);
@@ -362,7 +375,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     labelText: 'Calcium',
                     hintText: 'Enter the dish calcium',),
                 keyboardType: TextInputType.number,
-                initialValue: _calcium == 0 ? '' : _calcium.toString(),
+                initialValue: _calcium == null ? '' : _calcium.toString(),
                 onChanged: (value) {
                   setState(() {
                     _calcium = double.parse(value);
@@ -375,7 +388,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     labelText: 'Iron',
                     hintText: 'Enter the dish iron',),
                 keyboardType: TextInputType.number,
-                initialValue: _iron == 0 ? '' : _iron.toString(),
+                initialValue: _iron == null ? '' : _iron.toString(),
                 onChanged: (value) {
                   setState(() {
                     _iron = double.parse(value);
@@ -388,7 +401,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     labelText: 'Potassium',
                     hintText: 'Enter the dish potassium',),
                 keyboardType: TextInputType.number,
-                initialValue: _potassium == 0 ? '' : _potassium.toString(),
+                initialValue: _potassium == null ? '' : _potassium.toString(),
                 onChanged: (value) {
                   setState(() {
                     _potassium = double.parse(value);
@@ -405,7 +418,9 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 ElevatedButton(
                   onPressed: () {
                     log("========================================== button pressed");
-                    showModalBottomSheet(
+                    
+                    _addIngredientsToDish();
+                    /*showModalBottomSheet(
                       context: context,
                       builder: (BuildContext context) {
                         return StatefulBuilder(
@@ -473,7 +488,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                           },
                         );
                       },
-                    );
+                    );*/
                   },
                   child: const Text('Add ingredients'),
                 ),

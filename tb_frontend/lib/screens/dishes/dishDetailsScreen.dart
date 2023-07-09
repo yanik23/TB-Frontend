@@ -183,7 +183,7 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                               children: [
                                 const Icon(Icons.balance, color: Colors.orangeAccent),
                                 const SizedBox(width: 8.0),
-                                Text('${localDish.ingredients?[index].weight}g' ?? 'N/A'),
+                                Text(localDish.ingredients?[index].weight != null ? '${localDish.ingredients?[index].weight}g' : 'N/A'),
                                 const Spacer(),
                                 /*const Text("Remained: "),
                                 Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),
