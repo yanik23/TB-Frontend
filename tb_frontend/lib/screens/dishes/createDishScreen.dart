@@ -29,7 +29,6 @@ class CreateDishScreen extends StatefulWidget {
 class _CreateDishScreenState extends State<CreateDishScreen> {
   final _formKey = GlobalKey<FormState>();
 
-
   int _id = 0;
   String _name = '';
   String? _description;
@@ -49,7 +48,6 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
   double? _iron;
   double? _potassium;
 
-
   //TextEditingController nameController = TextEditingController();
 
   final DishType _selectedDishType = DishType.meat;
@@ -58,7 +56,6 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
   List<IngredientCheck> ingredients = [];
   List<IngredientCheck> selectedIngredients = [];
   List<IngredientLessDTO> ingredientsLessDTO = [];
-
 
   @override
   void initState() {
@@ -86,15 +83,14 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
       ingredientsLessDTO = widget.dish!.ingredients!;
       selectedIngredients = ingredientsLessDTO
           .map((ingredient) => IngredientCheck(
-        ingredient.id,
-        ingredient.name,
-        true,
-        weight: ingredient.weight,
-      )).toList();
+                ingredient.id,
+                ingredient.name,
+                true,
+                weight: ingredient.weight,
+              ))
+          .toList();
     }
-
   }
-
 
   void _toggleIngredient(int index, bool value) {
     setState(() {
@@ -130,7 +126,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     log("========================================== _addIngredientsToDish");
     final newIngredients = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddIngredientsToDishScreen(ingredients, selectedIngredients),
+        builder: (context) =>
+            AddIngredientsToDishScreen(ingredients, selectedIngredients),
       ),
     );
     if (newIngredients != null) {
@@ -149,339 +146,357 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child : Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                //controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  hintText: 'Enter the dish name',
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  //controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    hintText: 'Enter the dish name',
+                  ),
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.trim().isEmpty) {
+                      return 'Please enter a name';
+                    }
+                    return null;
+                  },
+                  initialValue: _name,
+                  onChanged: (value) {
+                    setState(() {
+                      _name = value;
+                    });
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'Please enter a name';
-                  }
-                  return null;
-                },
-                initialValue: _name,
-                onChanged: (value) {
-                  setState(() {
-                    _name = value;
-                  });
-                },
-              ),
 
-              TextFormField(
-                decoration: const InputDecoration(
+                TextFormField(
+                  decoration: const InputDecoration(
                     labelText: 'Price',
                     hintText: 'Enter the dish price',
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.trim().isEmpty) {
+                      return 'Please enter a valid price';
+                    }
+                    return null;
+                  },
+                  initialValue: _price == 0 ? '' : _price.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _price = double.parse(value);
+                    });
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'Please enter a valid price';
-                  }
-                  return null;
-                },
-                initialValue: _price == 0 ? '' : _price.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _price = double.parse(value);
-                  });
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
+                TextFormField(
+                  decoration: const InputDecoration(
                     labelText: 'Calories',
                     hintText: 'Enter the dish calories',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _calories == 0 ? '' : _calories.toString(),
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.trim().isEmpty) {
+                      return 'Please enter a valid number of calories';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      _calories = int.parse(value);
+                    });
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                initialValue: _calories == 0 ? '' : _calories.toString(),
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return 'Please enter a valid number of calories';
-                  }
-                  return null;
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _calories = int.parse(value);
-                  });
-                },
-              ),
 
-              TextFormField(
-                decoration: const InputDecoration(
+                TextFormField(
+                  decoration: const InputDecoration(
                     labelText: 'Description (Optional)',
                     hintText: 'Enter the dish description',
-                ),
-                initialValue: _description,
-                onChanged: (value) {
-                  setState(() {
-                    _description = value;
-                  });
-                },
-              ),
-
-              DropdownButtonFormField(
-                decoration: const InputDecoration(labelText: 'Type'),
-                //value: _selectedDishType,
-                onChanged: (value) {
-                  setState(() {
-                    _currentType = value.toString().toUpperCase();
-                  });
-                },
-                items: DishType.values
-                    .map(
-                      (type) => DropdownMenuItem(
-                        value: type,
-                        child: Text(type.name.toString().toUpperCase()),
-                      ),
-                    ).toList(),
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please select a valid type';
-                  }
-                  return null;
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(labelText: 'Size'),
-                //value: _selectedDishSize,
-                onChanged: (value) {
-                  setState(() {
-                    _currentSize = value.toString().toUpperCase();
-                  });
-                },
-                items: DishSize.values
-                    .map(
-                      (size) => DropdownMenuItem(
-                        value: size,
-                        child: Text(size.name.toString().toUpperCase()),
-                      ),
-                    ).toList(),
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please select a valid size';
-                  }
-                  return null;
-                },
-              ),
-              SwitchListTile(
-                title: const Text('Is Available'),
-                value: _isAvailable,
-                onChanged: (value) {
-                  setState(() {
-                    _isAvailable = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 16.0),
-              const Text('Nutritional Informations (Optional)'),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Fats',
-                    hintText: 'Enter the dish fats',
-                ),
-                keyboardType: TextInputType.number,
-                initialValue: _fats == null ? '' : _fats.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _fats = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Saturated Fats',
-                    hintText: 'Enter the dish saturated fats',),
-
-                keyboardType: TextInputType.number,
-                initialValue: _saturatedFats == null ? '' : _saturatedFats.toString(),
-                 onChanged: (value) {
-                  setState(() {
-                    _saturatedFats = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Sodium',
-                    hintText: 'Enter the dish sodium',
-                ),
-                keyboardType: TextInputType.number,
-                initialValue: _sodium == null ? '' : _sodium.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _sodium = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Carbohydrates',
-                    hintText: 'Enter the dish carbohydrates',
-                ),
-                keyboardType: TextInputType.number,
-                initialValue: _carbohydrates == null ? '' : _carbohydrates.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _carbohydrates = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Fibers',
-                    hintText: 'Enter the dish fibers',
-                ),
-                keyboardType: TextInputType.number,
-                initialValue: _fibers == null ? '' : _fibers.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _fibers = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Sugars',
-                  hintText: 'Enter the dish sugars',
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    _sugars = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Proteins',
-                    hintText: 'Enter the dish proteins',
-                ),
-                keyboardType: TextInputType.number,
-                initialValue: _proteins == null ? '' : _proteins.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _proteins = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Calcium',
-                    hintText: 'Enter the dish calcium',),
-                keyboardType: TextInputType.number,
-                initialValue: _calcium == null ? '' : _calcium.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _calcium = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Iron',
-                    hintText: 'Enter the dish iron',),
-                keyboardType: TextInputType.number,
-                initialValue: _iron == null ? '' : _iron.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _iron = double.parse(value);
-                  });
-                },
-              ),
-
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Potassium',
-                    hintText: 'Enter the dish potassium',),
-                keyboardType: TextInputType.number,
-                initialValue: _potassium == null ? '' : _potassium.toString(),
-                onChanged: (value) {
-                  setState(() {
-                    _potassium = double.parse(value);
-                  });
-                },
-              ),
-
-              // Add more text fields for other properties here
-              const SizedBox(height: 16.0),
-
-              Row(children: [
-                const Text('List of ingredients (Optional) : '),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: () {
-                    log("========================================== button pressed");
-                    _addIngredientsToDish();
+                  ),
+                  initialValue: _description,
+                  onChanged: (value) {
+                    setState(() {
+                      _description = value;
+                    });
                   },
-                  child: const Text('Add ingredients'),
+                ),
+
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                      labelText: 'Type', hintText: 'Select the dish type'),
+                  value: _currentType == ''
+                      ? null
+                      : _currentType,
+                  onChanged: (value) {
+                    setState(() {
+                      _currentType = value.toString().toUpperCase();
+                    });
+                  },
+                  items: DishType.values
+                      .map(
+                        (type) => DropdownMenuItem(
+                          value: type.toString() == _currentType
+                              ? _currentType
+                              : type.name.toString().toUpperCase(),
+                          child: Text(type.name.toString().toUpperCase()),
+                        ),
+                      )
+                      .toList(),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a valid type';
+                    }
+                    return null;
+                  },
+                ),
+                DropdownButtonFormField(
+                  decoration: const InputDecoration(labelText: 'Size'),
+                  value: _currentSize == '' ? null : _currentSize,
+                  onChanged: (value) {
+                    setState(() {
+                      _currentSize = value.toString().toUpperCase();
+                    });
+                  },
+                  items: DishSize.values
+                      .map(
+                        (size) => DropdownMenuItem(
+                          value: size.toString() == _currentSize
+                              ? _currentSize
+                              : size.name.toString().toUpperCase(),
+                          child: Text(size.name.toString().toUpperCase()),
+                        ),
+                      )
+                      .toList(),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a valid size';
+                    }
+                    return null;
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Is Available'),
+                  value: _isAvailable,
+                  onChanged: (value) {
+                    setState(() {
+                      _isAvailable = value;
+                    });
+                  },
                 ),
                 const SizedBox(height: 16.0),
-              ]),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                  child: const Text('Create Dish'),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
+                const Text('Nutritional Informations (Optional)'),
 
-                      ingredientsLessDTO = selectedIngredients.map((e) => IngredientLessDTO(e.id, e.name, e.weight)).toList();
-                      // Create an instance of the Dish class using the collected inputs
-                      Dish newDish = Dish(
-                        id: _id,
-                        name: _name,
-                        description: _description,
-                        currentType: _currentType,
-                        currentSize: _currentSize,
-                        price: _price,
-                        isAvailable: _isAvailable,
-                        calories: _calories,
-                        fats: _fats,
-                        saturatedFats: _saturatedFats,
-                        sodium: _sodium,
-                        carbohydrates: _carbohydrates,
-                        fibers: _fibers,
-                        sugars: _sugars,
-                        proteins: _proteins,
-                        calcium: _calcium,
-                        iron: _iron,
-                        potassium: _potassium,
-                        ingredients: ingredientsLessDTO,
-                      );
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Fats',
+                    hintText: 'Enter the dish fats',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _fats == null ? '' : _fats.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _fats = double.parse(value);
+                    });
+                  },
+                ),
 
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Saturated Fats',
+                    hintText: 'Enter the dish saturated fats',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue:
+                      _saturatedFats == null ? '' : _saturatedFats.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _saturatedFats = double.parse(value);
+                    });
+                  },
+                ),
 
-                      // Do something with the newDish object, like saving it to a database or passing it to another screen
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Sodium',
+                    hintText: 'Enter the dish sodium',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _sodium == null ? '' : _sodium.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _sodium = double.parse(value);
+                    });
+                  },
+                ),
 
-                      Future<Dish> resultDish;
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Carbohydrates',
+                    hintText: 'Enter the dish carbohydrates',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue:
+                      _carbohydrates == null ? '' : _carbohydrates.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _carbohydrates = double.parse(value);
+                    });
+                  },
+                ),
 
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Fibers',
+                    hintText: 'Enter the dish fibers',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _fibers == null ? '' : _fibers.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _fibers = double.parse(value);
+                    });
+                  },
+                ),
 
-                      if(widget.dish != null){
-                        resultDish = updateDish(newDish);
-                      } else {
-                        resultDish = createDish(newDish);
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Sugars',
+                    hintText: 'Enter the dish sugars',
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      _sugars = double.parse(value);
+                    });
+                  },
+                ),
+
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Proteins',
+                    hintText: 'Enter the dish proteins',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _proteins == null ? '' : _proteins.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _proteins = double.parse(value);
+                    });
+                  },
+                ),
+
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Calcium',
+                    hintText: 'Enter the dish calcium',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _calcium == null ? '' : _calcium.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _calcium = double.parse(value);
+                    });
+                  },
+                ),
+
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Iron',
+                    hintText: 'Enter the dish iron',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _iron == null ? '' : _iron.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _iron = double.parse(value);
+                    });
+                  },
+                ),
+
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Potassium',
+                    hintText: 'Enter the dish potassium',
+                  ),
+                  keyboardType: TextInputType.number,
+                  initialValue: _potassium == null ? '' : _potassium.toString(),
+                  onChanged: (value) {
+                    setState(() {
+                      _potassium = double.parse(value);
+                    });
+                  },
+                ),
+
+                // Add more text fields for other properties here
+                const SizedBox(height: 16.0),
+
+                Row(children: [
+                  const Text('List of ingredients (Optional) : '),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: () {
+                      _addIngredientsToDish();
+                    },
+                    child: const Text('Add ingredients'),
+                  ),
+                  const SizedBox(height: 16.0),
+                ]),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                    child: const Text('Create Dish'),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+
+                        ingredientsLessDTO = selectedIngredients
+                            .map((e) =>
+                                IngredientLessDTO(e.id, e.name, e.weight))
+                            .toList();
+                        // Create an instance of the Dish class using the collected inputs
+                        Dish newDish = Dish(
+                          id: _id,
+                          name: _name,
+                          description: _description,
+                          currentType: _currentType,
+                          currentSize: _currentSize,
+                          price: _price,
+                          isAvailable: _isAvailable,
+                          calories: _calories,
+                          fats: _fats,
+                          saturatedFats: _saturatedFats,
+                          sodium: _sodium,
+                          carbohydrates: _carbohydrates,
+                          fibers: _fibers,
+                          sugars: _sugars,
+                          proteins: _proteins,
+                          calcium: _calcium,
+                          iron: _iron,
+                          potassium: _potassium,
+                          ingredients: ingredientsLessDTO,
+                        );
+
+                        Future<Dish> resultDish;
+
+                        if (widget.dish != null) {
+                          resultDish = updateDish(newDish);
+                        } else {
+                          resultDish = createDish(newDish);
+                        }
+                        resultDish.whenComplete(
+                            () => Navigator.of(context).pop(resultDish));
                       }
-                      resultDish.whenComplete(() => Navigator.of(context).pop(resultDish));
-
-                    }
-                  }),
-            ],
+                    }),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
