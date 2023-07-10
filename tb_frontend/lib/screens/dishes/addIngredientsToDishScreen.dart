@@ -2,6 +2,8 @@
 
 
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
 
@@ -9,8 +11,9 @@ import 'createDishScreen.dart';
 
 class AddIngredientsToDishScreen extends StatefulWidget {
   final List<IngredientCheck> ingredients;
+  final List<IngredientCheck> selectedIngredients;
 
-  const AddIngredientsToDishScreen(this.ingredients, {super.key});
+  const AddIngredientsToDishScreen(this.ingredients, this.selectedIngredients, {super.key});
 
   @override
   State<AddIngredientsToDishScreen> createState() => _AddIngredientsToDishScreenState();
@@ -23,7 +26,25 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
   @override
   void initState() {
     super.initState();
-    selectedIngredients = List.from(widget.ingredients);
+    if(widget.selectedIngredients.isNotEmpty) {
+      //selectedIngredients = List.from(widget.selectedIngredients);
+      selectedIngredients = List.from(widget.ingredients);
+      for (var element in selectedIngredients) {
+        /*if(widget.selectedIngredients.contains(element)){
+          log("==contains so setting true for ${element.name}");
+          element.isChecked = true;
+        }*/
+        element.isChecked = widget.selectedIngredients.where((el) => element.id == el.id).isNotEmpty;
+        //element.weight = widget.selectedIngredients.where((el) => element.id == el.id).f;
+        if(widget.selectedIngredients.where((el) => element.id == el.id).isNotEmpty){
+          element.weight = widget.selectedIngredients.where((el) => element.id == el.id).first.weight;
+        }
+      }
+    } else {
+      log("==not contains ===========================");
+      selectedIngredients = List.from(widget.ingredients);
+    }
+    //selectedIngredients = List.from(widget.ingredients);
   }
 
   void _toggleIngredient(int index, bool value) {
@@ -83,6 +104,7 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
                               labelText: 'Quantity (g)',
                               hintText: 'Enter quantity',
                             ),
+                            initialValue: selectedIngredients[index].weight != null ? selectedIngredients[index].weight.toString() : '',
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
                               setState(() {

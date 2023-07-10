@@ -229,7 +229,7 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                                   CreateClientScreen(client: snapshot.data),
                             ),
                           );*/
-                          _editDish(snapshot.data!);
+                          _editDish(localDish);
                         },
                         child: const Text('Edit')),
                   ],

@@ -84,7 +84,15 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
       _iron = widget.dish!.iron;
       _potassium = widget.dish!.potassium;
       ingredientsLessDTO = widget.dish!.ingredients!;
+      selectedIngredients = ingredientsLessDTO
+          .map((ingredient) => IngredientCheck(
+        ingredient.id,
+        ingredient.name,
+        true,
+        weight: ingredient.weight,
+      )).toList();
     }
+
   }
 
 
@@ -122,7 +130,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     log("========================================== _addIngredientsToDish");
     final newIngredients = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddIngredientsToDishScreen(ingredients),
+        builder: (context) => AddIngredientsToDishScreen(ingredients, selectedIngredients),
       ),
     );
     if (newIngredients != null) {
@@ -458,7 +466,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
                       // Do something with the newDish object, like saving it to a database or passing it to another screen
 
-                      Future<Dish> resultDish = createDish(newDish);
+                      Future<Dish> resultDish;
 
 
                       if(widget.dish != null){
