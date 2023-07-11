@@ -10,16 +10,19 @@ import '../../models/client.dart';
 import '../../models/delivery.dart';
 import 'package:intl/intl.dart';
 
+import 'addDishesToDeliveryScreen.dart';
+
 
 
 
 class DishCheck {
-  final Dish dish;
+  int id;
+  String name;
   bool isChecked;
   int quantityRemained;
   int quantityDelivered;
 
-  DishCheck(this.dish, this.isChecked, this.quantityRemained, this.quantityDelivered);
+  DishCheck(this.id, this.name, this.isChecked, this.quantityRemained, this.quantityDelivered);
 }
 //final formatter = DateFormat.yMd();
 final formatter = DateFormat('dd/MM/yyyy');
@@ -40,21 +43,26 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   String _clientName = '';
   late DateTime _date = DateTime.now();
   String _deliveryDetails = '';
-  int _quantityRemained = 0;
-  int _quantityDelivered = 0;
 
   List<Client> _clients = [];
   Client? selectedClient;
+
+
+  List<DishCheck> _dishes = [];
+  List<DishCheck> selectedDishes = [];
 
   @override
   void initState() {
     super.initState();
     _loadClients();
+    _loadDishes();
     if (widget.delivery != null) {
       setState(() {
         _id = widget.delivery!.id;
         _username = widget.delivery!.username;
         _clientName = widget.delivery!.clientName;
+        // TODO check date
+        selectedDishes = widget.delivery!.dishes!.map((e) => DishCheck(e.id, e.name, true, e.quantityRemained, e.quantityDelivered)).toList();
 
       });
     }
@@ -64,6 +72,16 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     fetchClients().then((value) {
       setState(() {
         _clients.addAll(value);
+      });
+    });
+  }
+
+  void _loadDishes() async {
+    fetchDishes().then((value) {
+      setState(() {
+        for(var dish in value) {
+          _dishes.add(DishCheck(dish.id, dish.name, false, 0, 0));
+        }
       });
     });
   }
@@ -93,6 +111,19 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     if (newClient != null) {
       setState(() {
         selectedClient = newClient;
+      });
+    }
+  }
+
+  void _addDishesToDelivery() async {
+    final newDishes = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddDishesToDeliveryScreen(_dishes, selectedDishes),
+      ),
+    );
+    if (newDishes != null) {
+      setState(() {
+        selectedDishes = newDishes;
       });
     }
   }
@@ -161,7 +192,9 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                 children: [
                   const Text('List of dishes :'),
                   const Spacer(),
-                  ElevatedButton(onPressed: () {}, child: const Text('Add Dishes')),
+                  ElevatedButton(onPressed: () {
+                    _addDishesToDelivery();
+                  }, child: const Text('Add Dishes')),
                 ],
               ),
 

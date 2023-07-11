@@ -17,8 +17,7 @@ class AddIngredientsToDishScreen extends StatefulWidget {
       _AddIngredientsToDishScreenState();
 }
 
-class _AddIngredientsToDishScreenState
-    extends State<AddIngredientsToDishScreen> {
+class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen> {
   List<IngredientCheck> selectedIngredients = [];
   bool _showSearchBar = false;
 
@@ -37,8 +36,7 @@ class _AddIngredientsToDishScreenState
             .where((el) => element.id == el.id)
             .isNotEmpty;
         //element.weight = widget.selectedIngredients.where((el) => element.id == el.id).f;
-        if (widget.selectedIngredients
-            .where((el) => element.id == el.id)
+        if (widget.selectedIngredients.where((el) => element.id == el.id)
             .isNotEmpty) {
           element.weight = widget.selectedIngredients
               .where((el) => element.id == el.id)
