@@ -11,6 +11,16 @@ import '../../models/delivery.dart';
 import 'package:intl/intl.dart';
 
 
+
+
+class DishCheck {
+  final Dish dish;
+  bool isChecked;
+  int quantityRemained;
+  int quantityDelivered;
+
+  DishCheck(this.dish, this.isChecked, this.quantityRemained, this.quantityDelivered);
+}
 //final formatter = DateFormat.yMd();
 final formatter = DateFormat('dd/MM/yyyy');
 
@@ -116,10 +126,11 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   _username = value!;
                 },
               ),
+              const SizedBox(height: 16.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const Text('Delivery date : '),
+                  const Spacer(),
                   Text(
                     _date == null
                         ? 'No date selected'
@@ -131,39 +142,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   ),
                 ],
               ),
-
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Quantity remained from last time',
-                    hintText: 'Enter the quantity remained from last time'),
-                initialValue: _quantityRemained == 0 ? '' : _quantityRemained.toString(),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a valid quantity remained';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _quantityRemained = int.parse(value!);
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Quantity delivered',
-                    hintText: 'Enter the quantity delivered'),
-                initialValue: _quantityDelivered == 0 ? '' : _quantityDelivered.toString(),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a valid quantity delivered';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _quantityDelivered = int.parse(value!);
-                },
-              ),
-
-
+              const SizedBox(height: 16.0),
               Row(
                 children: [
                   Text(
@@ -177,8 +156,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   }, child: const Text('Add Client')),
                 ],
               ),
-
-
+              const SizedBox(height: 16.0),
               Row(
                 children: [
                   const Text('List of dishes :'),
