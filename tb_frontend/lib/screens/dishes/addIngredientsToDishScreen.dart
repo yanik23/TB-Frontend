@@ -1,7 +1,3 @@
-
-
-
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -13,20 +9,23 @@ class AddIngredientsToDishScreen extends StatefulWidget {
   final List<IngredientCheck> ingredients;
   final List<IngredientCheck> selectedIngredients;
 
-  const AddIngredientsToDishScreen(this.ingredients, this.selectedIngredients, {super.key});
+  const AddIngredientsToDishScreen(this.ingredients, this.selectedIngredients,
+      {super.key});
 
   @override
-  State<AddIngredientsToDishScreen> createState() => _AddIngredientsToDishScreenState();
+  State<AddIngredientsToDishScreen> createState() =>
+      _AddIngredientsToDishScreenState();
 }
 
-class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen> {
+class _AddIngredientsToDishScreenState
+    extends State<AddIngredientsToDishScreen> {
   List<IngredientCheck> selectedIngredients = [];
   bool _showSearchBar = false;
 
   @override
   void initState() {
     super.initState();
-    if(widget.selectedIngredients.isNotEmpty) {
+    if (widget.selectedIngredients.isNotEmpty) {
       //selectedIngredients = List.from(widget.selectedIngredients);
       selectedIngredients = List.from(widget.ingredients);
       for (var element in selectedIngredients) {
@@ -34,10 +33,17 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
           log("==contains so setting true for ${element.name}");
           element.isChecked = true;
         }*/
-        element.isChecked = widget.selectedIngredients.where((el) => element.id == el.id).isNotEmpty;
+        element.isChecked = widget.selectedIngredients
+            .where((el) => element.id == el.id)
+            .isNotEmpty;
         //element.weight = widget.selectedIngredients.where((el) => element.id == el.id).f;
-        if(widget.selectedIngredients.where((el) => element.id == el.id).isNotEmpty){
-          element.weight = widget.selectedIngredients.where((el) => element.id == el.id).first.weight;
+        if (widget.selectedIngredients
+            .where((el) => element.id == el.id)
+            .isNotEmpty) {
+          element.weight = widget.selectedIngredients
+              .where((el) => element.id == el.id)
+              .first
+              .weight;
         }
       }
     } else {
@@ -54,8 +60,9 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
   }
 
   void _onAddPressed() {
-    List<IngredientCheck> si =
-    selectedIngredients.where((ingredient) => ingredient.isChecked).toList();
+    List<IngredientCheck> si = selectedIngredients
+        .where((ingredient) => ingredient.isChecked)
+        .toList();
 
     Navigator.pop(context, si);
   }
@@ -63,20 +70,16 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Ingredients'),
-          actions: [
-      IconButton(
-      icon: const Icon(Icons.search),
-      onPressed: () {
-        setState(() {
-          _showSearchBar = !_showSearchBar;
-        });
-      },
-    ),
-    ]
-      ),
-
+      appBar: AppBar(title: const Text('Select Ingredients'), actions: [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            setState(() {
+              _showSearchBar = !_showSearchBar;
+            });
+          },
+        ),
+      ]),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -85,38 +88,42 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
               itemCount: selectedIngredients.length,
               itemBuilder: (BuildContext context, int index) {
                 return Row(
-                    children: [
-                      Expanded(
-                        child: CheckboxListTile(
-                          activeColor: kColorScheme.primary,
-                          title: Text(selectedIngredients[index].name),
-                          value: selectedIngredients[index].isChecked,
+                  children: [
+                    Expanded(
+                      child: CheckboxListTile(
+                        activeColor: kColorScheme.primary,
+                        title: Text(selectedIngredients[index].name),
+                        value: selectedIngredients[index].isChecked,
+                        onChanged: (value) {
+                          _toggleIngredient(index, value!);
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Quantity (g)',
+                            hintText: 'Enter quantity',
+                          ),
+                          initialValue:
+                              selectedIngredients[index].weight != null
+                                  ? selectedIngredients[index].weight.toString()
+                                  : '',
+                          keyboardType: TextInputType.number,
                           onChanged: (value) {
-                            _toggleIngredient(index, value!);
+                            setState(() {
+                              selectedIngredients[index].weight =
+                                  double.parse(value);
+                            });
                           },
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Quantity (g)',
-                              hintText: 'Enter quantity',
-                            ),
-                            initialValue: selectedIngredients[index].weight != null ? selectedIngredients[index].weight.toString() : '',
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedIngredients[index].weight = double.parse(value);
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                    ],
-                  );
+                    ),
+                    const SizedBox(height: 16.0),
+                  ],
+                );
               },
             ),
           ),
@@ -139,5 +146,4 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
       ),
     );
   }
-
 }

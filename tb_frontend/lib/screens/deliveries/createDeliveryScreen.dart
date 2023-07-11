@@ -1,7 +1,12 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+import 'package:tb_frontend/models/dish.dart';
+import 'package:tb_frontend/models/ingredient.dart';
+import 'package:tb_frontend/screens/deliveries/addClientToDeliveryScreen.dart';
+
+import '../../models/client.dart';
 import '../../models/delivery.dart';
 import 'package:intl/intl.dart';
 
@@ -28,11 +33,14 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   int _quantityRemained = 0;
   int _quantityDelivered = 0;
 
+  List<Client> _clients = [];
+  Client? selectedClient;
 
   @override
   void initState() {
+    super.initState();
+    _loadClients();
     if (widget.delivery != null) {
-      super.initState();
       setState(() {
         _id = widget.delivery!.id;
         _username = widget.delivery!.username;
@@ -40,6 +48,14 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
 
       });
     }
+  }
+
+  void _loadClients() async {
+    fetchClients().then((value) {
+      setState(() {
+        _clients.addAll(value);
+      });
+    });
   }
 
   void _showDatePicker() {
@@ -55,6 +71,20 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
         });
       }
     });
+  }
+
+
+  void _addClientToDelivery() async {
+    final newClient = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddClientToDeliveryScreen(_clients, selectedClient),
+      ),
+    );
+    if (newClient != null) {
+      setState(() {
+        selectedClient = newClient;
+      });
+    }
   }
 
 
@@ -132,6 +162,31 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   _quantityDelivered = int.parse(value!);
                 },
               ),
+
+
+              Row(
+                children: [
+                  Text(
+                    selectedClient == null
+                        ? 'No client selected'
+                        : 'Delivery to :${selectedClient!.name}',
+                  ),
+                  const Spacer(),
+                  ElevatedButton(onPressed: () {
+                    _addClientToDelivery();
+                  }, child: const Text('Add Client')),
+                ],
+              ),
+
+
+              Row(
+                children: [
+                  const Text('List of dishes :'),
+                  const Spacer(),
+                  ElevatedButton(onPressed: () {}, child: const Text('Add Dishes')),
+                ],
+              ),
+
 
               const SizedBox(height: 16.0),
               ElevatedButton(
