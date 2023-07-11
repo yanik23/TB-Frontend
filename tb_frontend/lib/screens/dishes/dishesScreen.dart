@@ -71,7 +71,9 @@ class _DishesScreenState extends State<DishesScreen> {
     setState(() {
       dishes = fetchDishes();
       dishes.then((value) => {
+        localDishes.clear(),
         localDishes.addAll(value),
+        searchedDishes.clear(),
         searchedDishes.addAll(value)
       });
     });
