@@ -45,7 +45,8 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   String _deliveryDetails = '';
 
   List<Client> _clients = [];
-  Client? selectedClient;
+  //Client? selectedClient;
+  String selectedClient = '';
 
 
   List<DishCheck> _dishes = [];
@@ -62,6 +63,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
         _username = widget.delivery!.username;
         _clientName = widget.delivery!.clientName;
         // TODO check date
+        selectedClient= widget.delivery!.clientName;
         selectedDishes = widget.delivery!.dishes!.map((e) => DishCheck(e.id, e.name, true, e.quantityRemained, e.quantityDelivered)).toList();
 
       });
@@ -179,7 +181,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   Text(
                     selectedClient == null
                         ? 'No client selected'
-                        : 'Delivery to :${selectedClient!.name}',
+                        : 'Delivery to : $selectedClient',
                   ),
                   const Spacer(),
                   ElevatedButton(onPressed: () {

@@ -17,7 +17,7 @@ import '../welcomeScreen.dart';
 class AddClientToDeliveryScreen extends StatefulWidget {
 
   List<Client> clients;
-  Client? selectedClient;
+  String? selectedClient;
 
   AddClientToDeliveryScreen(this.clients, this.selectedClient, {super.key});
 
@@ -62,7 +62,7 @@ class _AddClientToDeliveryScreenState extends State<AddClientToDeliveryScreen> {
                     children: [
                       Expanded(
                         child: RadioListTile(
-                          value: widget.clients[index],
+                          value: widget.clients[index].name,
                           groupValue: widget.selectedClient,
                           activeColor: kColorScheme.primary,
                           title: Text(widget.clients[index].name, style: TextStyle(
