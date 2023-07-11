@@ -163,7 +163,7 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).pop();
                 },
                 child: const Text('Cancel'),
               ),

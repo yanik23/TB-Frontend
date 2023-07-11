@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../dto/dishForDeliveryDTO.dart';
 import '../utils/SecureStorageManager.dart';
@@ -10,6 +11,9 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:tb_frontend/utils/Constants.dart';
+
+
+final formatter = DateFormat('dd/MM/yyyy');
 
 class Delivery {
   int id;
@@ -30,6 +34,7 @@ class Delivery {
       json['id'],
       json['userName'],
       json['clientName'],
+      //DateTime.parse((json['deliveryDate'].toString().replaceAll('/', '-'))),
       DateTime.parse(json['deliveryDate']),
       json['details'],
       json['dishes'] != null ? (json['dishes'] as List).map((i) => DishForDeliveryDTO.fromJson(i)).toList() : null,
@@ -40,8 +45,9 @@ class Delivery {
     'id': id,
     'userName': username,
     'clientName': clientName,
-    'deliveryDate': deliveryDate,
-    'dishes': dishes,
+    'deliveryDate': deliveryDate.toIso8601String(),
+    'details': details ?? '',
+    'dishes': dishes != null ? dishes!.map((e) => e.toJson()).toList() : null, //will add ingredients of dishes too.
   };
 
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 
 import 'package:flutter/material.dart';
+import 'package:tb_frontend/dto/dishForDeliveryDTO.dart';
 import 'package:tb_frontend/models/dish.dart';
 import 'package:tb_frontend/models/ingredient.dart';
 import 'package:tb_frontend/screens/deliveries/addClientToDeliveryScreen.dart';
@@ -10,6 +11,7 @@ import '../../models/client.dart';
 import '../../models/delivery.dart';
 import 'package:intl/intl.dart';
 
+import '../../utils/SecureStorageManager.dart';
 import 'addDishesToDeliveryScreen.dart';
 
 
@@ -25,10 +27,11 @@ class DishCheck {
   DishCheck(this.id, this.name, this.isChecked, this.quantityRemained, this.quantityDelivered);
 }
 //final formatter = DateFormat.yMd();
-final formatter = DateFormat('dd/MM/yyyy');
+//final formatter = DateFormat('dd/MM/yyyy');
 
 class CreateDeliveryScreen extends StatefulWidget {
   final Delivery? delivery;
+
   const CreateDeliveryScreen({this.delivery, super.key});
 
   @override
@@ -39,22 +42,24 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   final _formKey = GlobalKey<FormState>();
 
   int _id = 0;
-  String _username = '';
+  String _username = "";
   String _clientName = '';
   late DateTime _date = DateTime.now();
   String _deliveryDetails = '';
 
   List<Client> _clients = [];
   //Client? selectedClient;
-  String selectedClient = '';
+  //String selectedClient = '';
 
 
   List<DishCheck> _dishes = [];
   List<DishCheck> selectedDishes = [];
 
+
   @override
   void initState() {
     super.initState();
+    _loadUser();
     _loadClients();
     _loadDishes();
     if (widget.delivery != null) {
@@ -62,10 +67,21 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
         _id = widget.delivery!.id;
         _username = widget.delivery!.username;
         _clientName = widget.delivery!.clientName;
+        _deliveryDetails = widget.delivery!.details!;
         // TODO check date
-        selectedClient= widget.delivery!.clientName;
+        _date = widget.delivery!.deliveryDate;
+        //selectedClient= widget.delivery!.clientName;
         selectedDishes = widget.delivery!.dishes!.map((e) => DishCheck(e.id, e.name, true, e.quantityRemained, e.quantityDelivered)).toList();
 
+      });
+    }
+  }
+
+  void _loadUser() async {
+    final username = await SecureStorageManager.read('KEY_USERNAME');
+    if(username != null) {
+      setState(() {
+        _username = username;
       });
     }
   }
@@ -91,7 +107,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   void _showDatePicker() {
     showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: widget.delivery?.deliveryDate ?? DateTime.now(),
       firstDate: DateTime(2021),
       lastDate: DateTime.now(),
     ).then((value) {
@@ -107,12 +123,12 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   void _addClientToDelivery() async {
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddClientToDeliveryScreen(_clients, selectedClient),
+        builder: (context) => AddClientToDeliveryScreen(_clients, _clientName)
       ),
     );
     if (newClient != null) {
       setState(() {
-        selectedClient = newClient;
+        _clientName = newClient;
       });
     }
   }
@@ -148,15 +164,15 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   labelText: 'Delivery details (Optional)',
                   hintText: 'Enter some delivery details',
                 ),
-                initialValue: _username,
-                validator: (value) {
+                initialValue: _deliveryDetails,
+                /*validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a valid delivery details';
                   }
                   return null;
-                },
+                },*/
                 onSaved: (value) {
-                  _username = value!;
+                  _deliveryDetails = value!;
                 },
               ),
               const SizedBox(height: 16.0),
@@ -179,9 +195,9 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
               Row(
                 children: [
                   Text(
-                    selectedClient == null
+                    _clientName == null
                         ? 'No client selected'
-                        : 'Delivery to : $selectedClient',
+                        : 'Delivery to : $_clientName',
                   ),
                   const Spacer(),
                   ElevatedButton(onPressed: () {
@@ -215,7 +231,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                       _clientName,
                       _date,
                       _deliveryDetails,
-                      []
+                      selectedDishes.map((e) => DishForDeliveryDTO(e.id, e.name, 0, e.quantityRemained ,e.quantityDelivered)).toList(),
                     );
                     // Do something with the new delivery object (e.g., save to database)
                     try {} catch (e) {
