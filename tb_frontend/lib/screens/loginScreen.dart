@@ -50,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isAvailable = true;
 
   void _menuScreen() {
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) =>
@@ -137,26 +138,62 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
 
-                    log("=============== validate ===============");
 
-                    final Future<String> futureToken = login(
-                        _usernameController.text, _passwordController.text);
+                    const snackBar = SnackBar(
+                      content: Text('trying to login...'),
+                      duration: Duration(seconds: 2),
+                      /*action: SnackBarAction(
+                        label: 'UNDO',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),*/
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    try {
+                      final Future<String> futureToken = login(
+                          _usernameController.text, _passwordController.text);
 
                     if (futureToken != null) {
                       futureToken.then((token) {
-                        if (token != null) {
-                          log("================ storing in secure storage ================");
-                          SecureStorageManager.write("KEY_USERNAME", _usernameController.text);
-                          SecureStorageManager.write("KEY_PASSWORD", _passwordController.text);
-                          SecureStorageManager.write("KEY_TOKEN", token);
+                        log('bla===== $futureToken');
+                        SecureStorageManager.write("KEY_USERNAME", _usernameController.text);
+                        SecureStorageManager.write("KEY_PASSWORD", _passwordController.text);
+                        SecureStorageManager.write("KEY_TOKEN", token);
 
-                          log(token);
-                          _menuScreen();
-                        }
+                        log(token);
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        _menuScreen();
+                      }).catchError((e) {
+                        final snackBar = SnackBar(
+                          content: Text(e.message.toString()),
+                          /*action: SnackBarAction(
+                        label: 'UNDO',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),*/
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        log(e.toString());
                       });
                     }
                     else {
                       log('Token is null');
+                    }
+
+                    } catch (e) {
+                      const snackBar = SnackBar(
+                        content: Text('failed to login'),
+                        /*action: SnackBarAction(
+                        label: 'UNDO',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),*/
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      log(e.toString());
                     }
                     /*FutureBuilder<String>(
                     future: _futureToken,

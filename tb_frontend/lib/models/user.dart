@@ -39,23 +39,23 @@ Future<String> login(String name, String password) async {
         'username': name,
         'password': password,
       }),
-    );
+    ).timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
       log("============================> GOT 200!");
       return response.headers['authorization']!;
     } else {
       log("==============================> ${response.statusCode}");
-      throw Exception('Failed to login');
+      throw Exception(response.body);
     }
   } on TimeoutException catch (e) {
     log("==============================> $e");
-    throw Exception('Failed to login');
+    throw Exception('Failed to login, timeout');
   } on SocketException catch (e) {
     log("==============================> $e");
     throw Exception('Failed to login');
   } catch (e) {
     log("==============================> $e");
-    throw Exception('Failed to login');
+    throw Exception(e);
   }
 }
