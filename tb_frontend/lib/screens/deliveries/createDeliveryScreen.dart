@@ -45,7 +45,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   String _username = "";
   String _clientName = '';
   late DateTime _date = DateTime.now();
-  String _deliveryDetails = '';
+  String? _deliveryDetails = '';
 
   List<Client> _clients = [];
   //Client? selectedClient;
@@ -67,7 +67,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
         _id = widget.delivery!.id;
         _username = widget.delivery!.username;
         _clientName = widget.delivery!.clientName;
-        _deliveryDetails = widget.delivery!.details!;
+        _deliveryDetails = widget.delivery!.details;
         // TODO check date
         _date = widget.delivery!.deliveryDate;
         //selectedClient= widget.delivery!.clientName;
