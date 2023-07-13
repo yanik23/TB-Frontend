@@ -1,26 +1,14 @@
 
 import 'dart:async';
-import 'dart:async';
-import 'dart:async';
 import 'dart:developer';
-import 'dart:ui';
-
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-//import 'package:barcode_widget/barcode_widget.dart';
-import 'package:pdf/pdf.dart';
 import 'package:flutter/services.dart';
-import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:image/image.dart' as img;
-import 'package:barcode_image/barcode_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:async';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+//import 'package:flutter/widgets.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 import '../../models/dish.dart';
 
@@ -71,7 +59,6 @@ class GenerateQRCodeScreen extends StatelessWidget {
                 version: QrVersions.auto,
                 errorCorrectionLevel: QrErrorCorrectLevel.L,
 
-
               );
 
               qrValidationResult.status == QrValidationStatus.valid
@@ -84,19 +71,59 @@ class GenerateQRCodeScreen extends StatelessWidget {
                 log('QR Code is null');
                 return;
               }
-              final painter = QrPainter.withQr(
-                qr: qrCode,
-                color: const Color(0xFF000000),
-                gapless: true,
-              );
 
-              Directory tempDir = await getApplicationDocumentsDirectory();
-              String tempPath = tempDir.path;
+
+              /*Image? logoImage;
+
+              logoImage = (await {
+                Image.asset('assets/images/bokafood-logo-3.png')
+              }) as ui.Image?;
+
+              logoImage = Image.asset('assets/images/bokafood-logo-3.png');*/
+
+              final ByteData data = await rootBundle.load('assets/images/bokafood-logo-3.png');
+              final ui.Image logoImage = await decodeImageFromList(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+
+              /*ui.Image? logoImage = await ui.Image().resolve(ImageConfiguration(
+                bundle: rootBundle,
+                devicePixelRatio: 1.0,
+              ));*/
+
+              /*final painter = QrPainter.withQr(
+                qr: qrCode,
+                color: const Color(0xFFFFFFFF),
+                gapless: true,
+                //embeddedImage: logoImage,
+                embeddedImageStyle: const QrEmbeddedImageStyle(
+                  size: Size(50, 50),
+                ),
+                //gapless: true,
+              );*/
+
+
+             final image = await QrPainter(
+                data: qrCodeData,
+                version: QrVersions.auto,
+                gapless: true,
+                color: Colors.black,
+                emptyColor: Colors.white,
+                embeddedImage: logoImage,
+                embeddedImageStyle: const QrEmbeddedImageStyle(
+                  size: Size(320, 320),
+                ),
+              ).toImageData(2048, format: ui.ImageByteFormat.png);
+
+              Directory? tempDir = await getApplicationDocumentsDirectory();
+              String? tempPath = tempDir.path;
               final ts = DateTime.now().millisecondsSinceEpoch.toString();
+              log("=====================path : $tempPath/$ts.png");
               String path = '$tempPath/$ts.png';
 
-              final picData = await painter.toImageData(2048, format: ImageByteFormat.png);
+              final picData = image;
               await writeToFile(picData!, path);
+              final buffer = picData.buffer;
+              final result = await ImageGallerySaver.saveImage(Uint8List.fromList(buffer.asUint8List(picData.offsetInBytes, picData.lengthInBytes)), name: "QrCode_$ts");
+              log("=====================result : $result");
 
             },
           ),

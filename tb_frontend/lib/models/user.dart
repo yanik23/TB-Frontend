@@ -55,6 +55,7 @@ Future<String> login(String name, String password) async {
     log("==============================> $e");
     throw Exception('Failed to login');
   } catch (e) {
+
     log("==============================> $e");
     throw Exception(e);
   }

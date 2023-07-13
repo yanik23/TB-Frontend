@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tb_frontend/data/dummyDishes.dart';
 import 'package:tb_frontend/screens/deliveries/deliveriesScreen.dart';
 import 'package:tb_frontend/screens/ingredients/ingredientsScreen.dart';
+import 'package:tb_frontend/screens/scanner/qrScannerScreen.dart';
 import 'package:tb_frontend/screens/statistics/statisticsScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
@@ -112,7 +113,10 @@ class MenuScreen extends StatelessWidget {
             ),
             TextButton.icon(
               onPressed: () {
-                Navigator.pushNamed(context, '/settings');
+                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                  return const QrScannerScreen();
+                }),
+                );
               },
               icon: const Icon(Icons.photo_camera_rounded, size: 36),
               label: const Text('QR Scanner'),
