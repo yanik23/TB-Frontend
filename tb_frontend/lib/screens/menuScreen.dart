@@ -3,12 +3,16 @@ import 'package:tb_frontend/data/dummyDishes.dart';
 import 'package:tb_frontend/screens/deliveries/deliveriesScreen.dart';
 import 'package:tb_frontend/screens/ingredients/ingredientsScreen.dart';
 import 'package:tb_frontend/screens/scanner/qrScannerScreen.dart';
+import 'package:tb_frontend/screens/statistics/statisticMenuScreen.dart';
 import 'package:tb_frontend/screens/statistics/statisticsScreen.dart';
+import 'package:tb_frontend/screens/welcomeScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
 
 class MenuScreen extends StatelessWidget {
-  const MenuScreen({super.key});
+
+  final String username;
+  const MenuScreen(this.username, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,50 @@ class MenuScreen extends StatelessWidget {
             ),
           ],
         ),
-        drawer: const Drawer(),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: kColorScheme.primary,
+                ),
+                child: Text(
+                  'Welcome $username !',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Settings'),
+                onTap: () {
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: const Text('About'),
+                onTap: () {
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) {
+                      return const WelcomeScreen();
+                    }),
+                  );
+                },
+              ),
+            ],
+          )
+        ),
         body: GridView(
           padding: const EdgeInsets.all(16),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -100,7 +147,7 @@ class MenuScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (ctx) {
-                    return const StatisticsScreen();
+                    return const StatisticMenuScreen();
                   }),
                 );
               },

@@ -56,7 +56,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
   void _createClient() async{
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => const CreateClientScreen(),
+        builder: (ctx) => const CreateClientScreen('Create Client'),
       ),
     );
     if(newClient != null) {
@@ -84,36 +84,12 @@ class _ClientsScreenState extends State<ClientsScreen> {
   }
 
   void _deleteClient(Client client) async {
-    log("=================================DELETING CLIENT=================================");
     deleteClient(client.id);
     setState(() {
       clients = fetchClients();
     });
   }
 
-
-  /*void _filterSearchResults(String query) {
-    List<Client> dummySearchList = [];
-    dummySearchList.addAll(localClients);
-    if(query.isNotEmpty) {
-      List<Client> dummyListData = [];
-      dummySearchList.forEach((item) {
-        if(item.name.toLowerCase().contains(query.toLowerCase())) {
-          dummyListData.add(item);
-        }
-      });
-      setState(() {
-        localClients.clear();
-        localClients.addAll(dummyListData);
-      });
-      return;
-    } else {
-      setState(() {
-        localClients.clear();
-        localClients.addAll(dummySearchList);
-      });
-    }
-  }*/
 
   void _filterSearchResults(String query) {
     setState(() {

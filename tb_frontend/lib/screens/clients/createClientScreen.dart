@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import '../../models/client.dart';
+import '../../utils/Constants.dart';
 
 class CreateClientScreen extends StatefulWidget {
   final Client? client;
-  const CreateClientScreen({this.client, super.key});
+  final String title;
+  const CreateClientScreen(this.title, {this.client, super.key});
 
   @override
   State<CreateClientScreen> createState() => _CreateClientScreenState();
@@ -21,6 +23,11 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
   int _addressNumber = 0;
   int _zipCode = 0;
   String _city = '';
+
+
+
+  final RegExp _strRegExp = RegExp(nameRegexPattern);
+  final RegExp _numberRegExp = RegExp(numberRegexPattern);
 
   @override
   void initState() {
@@ -37,12 +44,11 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Client Input'),
+        title: Text(widget.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -56,8 +62,9 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                   hintText: 'Enter the client name',
                 ),
                 initialValue: _name,
+                maxLength: 50,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || !_strRegExp.hasMatch(value)) {
                     return 'Please enter a valid name';
                   }
                   return null;
@@ -70,8 +77,9 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 decoration: const InputDecoration(labelText: 'Address Name',
                     hintText: 'Enter the address name'),
                 initialValue: _addressName,
+                maxLength: 50,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || !_strRegExp.hasMatch(value)) {
                     return 'Please enter an address name';
                   }
                   return null;
@@ -85,8 +93,9 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                     hintText: 'Enter the address number'),
                 initialValue: _addressNumber == 0 ? '' : _addressNumber.toString(),
                 keyboardType: TextInputType.number,
+                maxLength: 10,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || !_numberRegExp.hasMatch(value)) {
                     return 'Please enter an address number';
                   }
                   return null;
@@ -96,12 +105,13 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 },
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'ZIP Code',
                     hintText: 'Enter the ZIP code'),
                 initialValue: _zipCode == 0 ? '' : _zipCode.toString(),
-                keyboardType: TextInputType.number,
+                maxLength: 10,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || !_numberRegExp.hasMatch(value)) {
                     return 'Please enter a ZIP code';
                   }
                   return null;
@@ -114,9 +124,10 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 decoration: const InputDecoration(labelText: 'City',
                     hintText: 'Enter the city'),
                 initialValue: _city,
+                maxLength: 50,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a city';
+                  if (value == null || value.isEmpty || !_strRegExp.hasMatch(value)) {
+                    return 'Please enter a valid city';
                   }
                   return null;
                 },

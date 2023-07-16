@@ -71,7 +71,7 @@ Future<Client> fetchClient(int id) async {
         });
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response, then parse the JSON.
-      return Client.fromJson(jsonDecode(response.body));
+      return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
       // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to load client');
@@ -94,7 +94,7 @@ Future<List<Client>> fetchClients() async {
 
       if (response.statusCode == 200) {
         // If the server returned a 200 OK response, parse the JSON.
-        final List<dynamic> responseData = jsonDecode(response.body);
+        final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
         return responseData.map((json) => Client.fromJson(json)).toList();
       } else {
         // If the server did not return a 200 OK response, throw an exception.
@@ -136,7 +136,7 @@ Future<Client> createClient(Client client) async {
       }),
     );
     if (response.statusCode == 201) {
-      return Client.fromJson(jsonDecode(response.body));
+      return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == 403) {
       throw Exception('You are not authorized to create a client');
     } else {
@@ -167,7 +167,7 @@ Future<Client> updateClient(Client client) async {
       }),
     );
     if (response.statusCode == 200) {
-      return Client.fromJson(jsonDecode(response.body));
+      return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == 403) {
       throw Exception('You are not authorized to update a client');
     } else {

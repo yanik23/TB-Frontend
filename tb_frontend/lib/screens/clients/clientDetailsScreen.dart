@@ -25,7 +25,7 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
   void _editClient(Client c) async {
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => CreateClientScreen(client: c),
+        builder: (ctx) => CreateClientScreen('Edit Client',client: c),
       ),
     );
     if (newClient != null) {
@@ -82,8 +82,7 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    Text(
-                        "${localClient.addressName} ${localClient.addressNumber}"),
+                    Text('${localClient.addressName} ${localClient.addressNumber}'),
                     const SizedBox(height: 16.0),
                     Text(
                       'Zip Code:',
@@ -94,17 +93,10 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    Text('${localClient.city} ${localClient.zipCode}'),
+                    Text('${localClient.zipCode} ${localClient.city}'),
                     const SizedBox(height: 32.0),
                     ElevatedButton(
                         onPressed: () {
-                          // _isEditable = !_isEditable;
-                          /*Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) =>
-                                  CreateClientScreen(client: snapshot.data),
-                            ),
-                          );*/
                           _editClient(localClient);
                         },
                         child: Text('Edit')),

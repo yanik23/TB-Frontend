@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:tb_frontend/data/dummyDishes.dart';
 import 'package:tb_frontend/dto/ingredientForDishDTO.dart';
 import 'package:tb_frontend/dto/ingredientLessDTO.dart';
 import 'dart:convert';
@@ -126,17 +127,23 @@ Future<Dish> fetchDish(int id) async {
     final token = await SecureStorageManager.read('KEY_TOKEN');
 
     if(token != null) {
-      final response = await http.get(Uri.parse('http://$ipAddress/dishes/$id'),
-          headers: {
-            HttpHeaders
-                .authorizationHeader: token,
-          });
-      if (response.statusCode == 200) {
-        // If the server returned a 200 OK response, parse the JSON.
-        final responseData = jsonDecode(response.body);
-        return Dish.fromServerJson(responseData);
-      } else {
-        // If the server did not return a 200 OK response, throw an exception.
+      try {
+        final response = await http.get(
+            Uri.parse('http://$ipAddress/dishes/$id'),
+            headers: {
+              HttpHeaders
+                  .authorizationHeader: token,
+            }).timeout(const Duration(seconds: 3));
+        if (response.statusCode == 200) {
+          // If the server returned a 200 OK response, parse the JSON.
+          final responseData = jsonDecode(response.body);
+          return Dish.fromServerJson(responseData);
+        } else {
+          // If the server did not return a 200 OK response, throw an exception.
+          throw Exception('Failed to load dish');
+        }
+      } catch (e) {
+        return dummyDishes.firstWhere((dish) => dish.id == id);
         throw Exception('Failed to load dish');
       }
     } else {
@@ -149,11 +156,29 @@ Future<List<Dish>> fetchDishes() async {
   final token = await SecureStorageManager.read('KEY_TOKEN');
 
   if(token != null) {
+    try {
+      final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
+          headers: {
+            HttpHeaders
+                .authorizationHeader: token,
+          }).timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        // If the server returned a 200 OK response, parse the JSON.
+        final List<dynamic> responseData = jsonDecode(response.body);
+        return responseData.map((json) => Dish.fromJson(json)).toList();
+      } else {
+        // If the server did not return a 200 OK response, throw an exception.
+        throw Exception('Failed to load dishes');
+      }
+    } catch (e) {
+      return List<Dish>.empty();
+      throw Exception('Failed to load dishes');
+    }
     final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
         headers: {
           HttpHeaders
               .authorizationHeader: token,
-        });
+        }).timeout(const Duration(seconds: 5));
     if (response.statusCode == 200) {
       // If the server returned a 200 OK response, parse the JSON.
       final List<dynamic> responseData = jsonDecode(response.body);

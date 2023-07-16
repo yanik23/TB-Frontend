@@ -34,7 +34,7 @@ class DeliveryItem extends StatelessWidget {
               placeholder: MemoryImage(kTransparentImage),
               image: const AssetImage('assets/images/bokafood-logo.png'),
               fit: BoxFit.cover,
-              height: 80,
+              height: 100,
               width: double.infinity,
             ),
             Positioned(
@@ -76,20 +76,8 @@ class DeliveryItem extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        const Icon(Icons.delivery_dining, color: Colors.white,),
-                        Text(
-                          delivery.clientName,
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          softWrap: true, //so the text is wrapped well if needed
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Spacer(),
+
+
                         const Icon(Icons.calendar_month, color: Colors.white,),
                         Text(
                           formatter.format(delivery.deliveryDate),
@@ -113,8 +101,30 @@ class DeliveryItem extends StatelessWidget {
                         const Spacer(),
                         DishItemTrait(Icons.category, dish.currentType)*/
                       ]
-                  )
+                  ),
+                  const SizedBox(height: 8),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.delivery_dining, color: Colors.white,),
+                      Text(
+                        delivery.clientName,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        softWrap: true, //so the text is wrapped well if needed
+                        overflow: TextOverflow.fade,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  //const Spacer(),
                 ]),
+
               ),
             )
           ],

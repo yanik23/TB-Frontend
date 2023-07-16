@@ -44,7 +44,7 @@ class ClientItem extends StatelessWidget {
               child: Container(
                 color: Colors.black54,
                 padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: Column(children: [
                   Text(
                     client.name,
@@ -59,11 +59,26 @@ class ClientItem extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                     // spacing: double.infinity,
+                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                       // Container(width: double.infinity),
                         Text(
-                          "${client.addressName}  ",
+                          '${client.addressName} ${client.addressNumber}',
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                          softWrap: true, //so the text is wrapped well if needed
+                          overflow: TextOverflow.visible,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          '${client.zipCode} ${client.city}',
                           maxLines: 2,
                           textAlign: TextAlign.center,
                           softWrap: true, //so the text is wrapped well if needed
@@ -74,43 +89,7 @@ class ClientItem extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
-                        Text(
-                          client.addressNumber.toString(),
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          softWrap: true, //so the text is wrapped well if needed
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          "${client.zipCode}  ",
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          softWrap: true, //so the text is wrapped well if needed
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          client.city,
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          softWrap: true, //so the text is wrapped well if needed
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+
 
                         /*DishItemTrait(Icons.monetization_on, '${dish.price} CHF'),
                         const Spacer(),

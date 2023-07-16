@@ -151,11 +151,12 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
             child: Column(
               children: [
                 TextFormField(
-                  //controller: nameController,
                   decoration: const InputDecoration(
                     labelText: 'Name',
                     hintText: 'Enter the dish name',
                   ),
+                  maxLength: 50,
+                  initialValue: _name,
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
@@ -164,14 +165,12 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     }
                     return null;
                   },
-                  initialValue: _name,
                   onChanged: (value) {
                     setState(() {
                       _name = value;
                     });
                   },
                 ),
-
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Price',

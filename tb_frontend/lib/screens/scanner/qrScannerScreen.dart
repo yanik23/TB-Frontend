@@ -28,15 +28,15 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    cameraController.stop();
+    //cameraController.stop();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    cameraController.stop();
-    cameraController.start();
+   /* cameraController.stop();
+    cameraController.start();*/
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +55,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                 }
               },
             ),
-            iconSize: 32.0,
+            //iconSize: 32.0,
             onPressed: () => cameraController.toggleTorch(),
           ),
           /*IconButton(
@@ -86,24 +86,34 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
 
         onDetect: (capture) {
           final List<Barcode> barcodes = capture.barcodes;
-          final Barcode barcode = barcodes.last;
+          Barcode? barcode = barcodes.last;
           final Uint8List? image = capture.image;
           /*for (final barcode in barcodes) {
             debugPrint('Barcode found! ${barcode.rawValue}');
           }*/
           //cameraController.start();
-          if (barcode.rawValue != null) {
+          if (barcode?.rawValue != null) {
+            log("===================stoppping camera");
             cameraController.stop();
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text('Barcode found!'),
                 content:
-                    Text('Type: ${barcode.type}\nData: ${barcode.rawValue}'),
+                    Text('Type: ${barcode?.type}\nData: ${barcode?.rawValue}'),
                 actions: [
                   TextButton(
                     onPressed: () {
+                      log('===========================================hkjhkjh=== starting camera');
                       Navigator.of(context).pop();
+                      setState(() {
+                        log('============================================== starting camera');
+                        cameraController.start();
+                        barcodes.clear();
+                        barcode = null;
+                      });
+
+
                     },
                     child: const Text('OK'),
                   ),
@@ -118,6 +128,11 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
+                      setState(() {
+                        cameraController.start();
+                        barcodes.clear();
+                      });
+
                     },
                     child: const Text('Add to new Delivery'),
                   ),

@@ -64,7 +64,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           OutlinedButton.icon(
             onPressed: _login,
             icon: const Icon(Icons.play_arrow, color: Colors.white),
-            label: const Text('Login', style: TextStyle(color: Colors.white)),
+            label: const Text('Start', style: TextStyle(color: Colors.white)),
           ),
         ]),
       ),

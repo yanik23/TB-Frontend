@@ -84,13 +84,12 @@ Future<Ingredient> fetchIngredient(int id) async {
 }
 
 Future<List<Ingredient>> fetchIngredients() async {
-  final result = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('KEY_TOKEN');
 
-  if(result != null) {
+  if(token != null) {
     final response = await http.get(Uri.parse('http://$ipAddress/ingredients'),
         headers: {
-          HttpHeaders
-              .authorizationHeader: result,
+          HttpHeaders.authorizationHeader: token,
         });
     if (response.statusCode == 200) {
       // If the server returned a 200 OK response, parse the JSON.

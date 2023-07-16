@@ -42,7 +42,7 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dish Details'),
+        title: const Text('Ingredient Details'),
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code),

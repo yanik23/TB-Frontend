@@ -73,6 +73,25 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
     }
   }
 
+  void _deleteIngredient(Ingredient ingredient) async {
+    deleteIngredient(ingredient.id);
+    setState(() {
+      /*localIngredients.remove(ingredient);
+      deleteIngredient(ingredient);*/
+      localIngredients.remove(ingredient);
+      searchedIngredients.remove(ingredient);
+      //ingredients = fetchIngredients();
+    });
+  }
+
+  void filterSearchResults(String query) {
+    setState(() {
+      searchedIngredients = localIngredients
+          .where((item) => item.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   Future _refreshIngredients() async {
     setState(() {
       ingredients = fetchIngredients();
@@ -82,46 +101,6 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
         searchedIngredients.clear(),
         searchedIngredients.addAll(value)
       });
-    });
-  }
-
-  void _deleteIngredient(Ingredient ingredient) async {
-    deleteIngredient(ingredient.id);
-    setState(() {
-      /*localIngredients.remove(ingredient);
-      deleteIngredient(ingredient);*/
-      ingredients = fetchIngredients();
-    });
-  }
-
-  void _filterSearchResults(String query) {
-    List<Ingredient> dummySearchList = [];
-    dummySearchList.addAll(localIngredients);
-    if(query.isNotEmpty) {
-      List<Ingredient> dummyListData = [];
-      dummySearchList.forEach((item) {
-        if(item.name.toLowerCase().contains(query.toLowerCase())) {
-          dummyListData.add(item);
-        }
-      });
-      setState(() {
-        localIngredients.clear();
-        localIngredients.addAll(dummyListData);
-      });
-      return;
-    } else {
-      setState(() {
-        localIngredients.clear();
-        localIngredients.addAll(dummySearchList);
-      });
-    }
-  }
-
-  void filterSearchResults(String query) {
-    setState(() {
-      searchedIngredients = localIngredients
-          .where((item) => item.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
     });
   }
 

@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/createDishScreen.dart';
 import 'package:tb_frontend/screens/dishes/dishDetailsScreen.dart';
+import '../../data/dummyDishes.dart';
 import '../../models/dish.dart';
 import 'dishItem.dart';
 
@@ -33,7 +34,12 @@ class _DishesScreenState extends State<DishesScreen> {
     dishes = fetchDishes();
     dishes.then((value) => {
       localDishes.addAll(value),
-      searchedDishes.addAll(value)
+      searchedDishes.addAll(value),
+
+      if(value.isEmpty) {
+        localDishes.addAll(dummyDishes),
+        searchedDishes.addAll(dummyDishes)
+      }
     });
   }
 
@@ -107,8 +113,8 @@ class _DishesScreenState extends State<DishesScreen> {
         },
         controller: editingController,
         decoration: const InputDecoration(
-          labelText: "Search",
-          hintText: "Search",
+          labelText: 'Search',
+          hintText: 'Search',
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
@@ -136,8 +142,8 @@ class _DishesScreenState extends State<DishesScreen> {
                         onDismissed: (direction) {
                           showDialog(context: context,
                             builder: (ctx) => AlertDialog(
-                              title: const Text("Delete Ingredient"),
-                              content: const Text("Are you sure you want to delete this ingredient?"),
+                              title: const Text('Delete Dish'),
+                              content: const Text('Are you sure you want to delete this Dish?'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -146,7 +152,7 @@ class _DishesScreenState extends State<DishesScreen> {
                                     });
                                     Navigator.of(ctx).pop();
                                   },
-                                  child: const Text("No"),
+                                  child: const Text('No'),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -154,7 +160,7 @@ class _DishesScreenState extends State<DishesScreen> {
                                     Navigator.of(ctx).pop();
 
                                   },
-                                  child: const Text("Yes"),
+                                  child: const Text('Yes'),
                                 ),
                               ],
                             ),
