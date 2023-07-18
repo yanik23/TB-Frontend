@@ -11,7 +11,7 @@ import '../../models/client.dart';
 import '../../models/delivery.dart';
 import 'package:intl/intl.dart';
 
-import '../../utils/SecureStorageManager.dart';
+import '../../utils/secureStorageManager.dart';
 import 'addDishesToDeliveryScreen.dart';
 
 

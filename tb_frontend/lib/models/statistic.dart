@@ -4,8 +4,8 @@
 
 
 
-import '../utils/Constants.dart';
-import '../utils/SecureStorageManager.dart';
+import '../utils/constants.dart';
+import '../utils/secureStorageManager.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -43,13 +43,13 @@ class QuantityDeliveredPerSize {
 }
 
 Future<List<AvgDeliveredPerType>> fetchTotalDeliveriesPerType() async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if (token == null) {
     throw Exception('No token');
   }
   final response = await http.get(
-    Uri.parse('http://$ipAddress/statistics/total-quantities-delivered-per-type'),
+    Uri.parse('$uriPrefix/statistics/total-quantities-delivered-per-type'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       HttpHeaders.authorizationHeader: token,
@@ -65,13 +65,13 @@ Future<List<AvgDeliveredPerType>> fetchTotalDeliveriesPerType() async {
 }
 
 Future<List<AvgDeliveredPerType>> fetchAvgDeliveriesPerType() async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if (token == null) {
     throw Exception('No token');
   }
   final response = await http.get(
-    Uri.parse('http://$ipAddress/statistics/average-quantities-delivered-per-type'),
+    Uri.parse('$uriPrefix/statistics/average-quantities-delivered-per-type'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       HttpHeaders.authorizationHeader: token,
@@ -88,13 +88,13 @@ Future<List<AvgDeliveredPerType>> fetchAvgDeliveriesPerType() async {
 
 
 Future<List<QuantityDeliveredPerSize>> fetchQuantitiesDeliveredPerSize() async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if (token == null) {
     throw Exception('No token');
   }
   final response = await http.get(
-    Uri.parse('http://$ipAddress/statistics/total-quantities-delivered-per-size'),
+    Uri.parse('$uriPrefix/statistics/total-quantities-delivered-per-size'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       HttpHeaders.authorizationHeader: token,

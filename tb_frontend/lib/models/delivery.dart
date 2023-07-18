@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../dto/dishForDeliveryDTO.dart';
-import '../utils/SecureStorageManager.dart';
+import '../utils/secureStorageManager.dart';
 import 'dish.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:tb_frontend/utils/Constants.dart';
+import 'package:tb_frontend/utils/constants.dart';
 
 
 final formatter = DateFormat('dd/MM/yyyy');
@@ -53,12 +53,12 @@ class Delivery {
 }
 
 Future<List<Delivery>> fetchDeliveries() async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     try {
       final response = await http
-          .get(Uri.parse('http://$ipAddress/deliveries'),
+          .get(Uri.parse('$uriPrefix/deliveries'),
           headers: {
             HttpHeaders.authorizationHeader: token,
           });
@@ -89,11 +89,11 @@ Future<List<Delivery>> fetchDeliveries() async {
 }
 
 Future<Delivery> fetchDelivery(int id) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.get(
-        Uri.parse('http://$ipAddress/deliveries/$id'),
+        Uri.parse('$uriPrefix/deliveries/$id'),
         headers: {
           HttpHeaders
               .authorizationHeader: token,
@@ -111,11 +111,11 @@ Future<Delivery> fetchDelivery(int id) async {
 }
 
 Future<Delivery> createDelivery(Delivery delivery) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.post(
-      Uri.parse('http://$ipAddress/deliveries'),
+      Uri.parse('$uriPrefix/deliveries'),
       headers: {
         HttpHeaders.authorizationHeader: token,
         HttpHeaders.contentTypeHeader: 'application/json',
@@ -136,11 +136,11 @@ Future<Delivery> createDelivery(Delivery delivery) async {
 }
 
 Future<Delivery> updateDelivery(Delivery delivery) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.put(
-      Uri.parse('http://$ipAddress/deliveries/${delivery.id}'),
+      Uri.parse('$uriPrefix/deliveries/${delivery.id}'),
       headers: {
         HttpHeaders.authorizationHeader: token,
         HttpHeaders.contentTypeHeader: 'application/json',
@@ -161,11 +161,11 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
 }
 
 Future<void> deleteDelivery(int id) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.delete(
-      Uri.parse('http://$ipAddress/deliveries/$id'),
+      Uri.parse('$uriPrefix/deliveries/$id'),
       headers: {
         HttpHeaders.authorizationHeader: token,
       },

@@ -35,6 +35,8 @@ class DBHelper {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS "user" (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          status TEXT NOT NULL,
+          remoteId INTEGER,
           email TEXT NOT NULL,
           password TEXT NOT NULL,
           name TEXT NOT NULL,
@@ -45,6 +47,8 @@ class DBHelper {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS Delivery (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          status TEXT NOT NULL,
+          remoteId INTEGER,
           idClient INTEGER,
           idUser INTEGER,
           deliveryDate TEXT NOT NULL,
@@ -57,6 +61,8 @@ class DBHelper {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS Dish (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          status TEXT NOT NULL,
+          remoteId INTEGER,
           name TEXT NOT NULL,
           description TEXT,
           currentType TEXT NOT NULL,
@@ -81,6 +87,8 @@ class DBHelper {
         CREATE TABLE IF NOT EXISTS Delivery_Dish (
           idDelivery INTEGER,
           idDish INTEGER,
+          status TEXT NOT NULL,
+          remoteId INTEGER,
           quantityRemained INTEGER NOT NULL,
           quantityDelivered INTEGER NOT NULL,
           FOREIGN KEY (idDelivery) REFERENCES Delivery (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -92,6 +100,8 @@ class DBHelper {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS Ingredient (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          status TEXT NOT NULL,
+          remoteId INTEGER,
           name TEXT NOT NULL UNIQUE,
           currentType TEXT NOT NULL,
           description TEXT,
@@ -103,6 +113,8 @@ class DBHelper {
         CREATE TABLE IF NOT EXISTS Dish_Ingredient (
           idDish INTEGER,
           idIngredient INTEGER,
+          status TEXT NOT NULL,
+          remoteId INTEGER,
           weight REAL,
           FOREIGN KEY (idDish) REFERENCES Dish (id) ON DELETE CASCADE ON UPDATE CASCADE,
           FOREIGN KEY (idIngredient) REFERENCES Ingredient (id) ON DELETE CASCADE ON UPDATE CASCADE,

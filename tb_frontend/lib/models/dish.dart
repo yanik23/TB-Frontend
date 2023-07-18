@@ -5,8 +5,8 @@ import 'package:tb_frontend/dto/ingredientForDishDTO.dart';
 import 'package:tb_frontend/dto/ingredientLessDTO.dart';
 import 'dart:convert';
 import 'dart:io';
-import 'package:tb_frontend/utils/SecureStorageManager.dart';
-import '../utils/Constants.dart';
+import 'package:tb_frontend/utils/secureStorageManager.dart';
+import '../utils/constants.dart';
 
 enum DishType {
   meat,
@@ -124,12 +124,12 @@ class Dish {
 }
 
 Future<Dish> fetchDish(int id) async {
-    final token = await SecureStorageManager.read('KEY_TOKEN');
+    final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
     if(token != null) {
       try {
         final response = await http.get(
-            Uri.parse('http://$ipAddress/dishes/$id'),
+            Uri.parse('$uriPrefix/dishes/$id'),
             headers: {
               HttpHeaders
                   .authorizationHeader: token,
@@ -153,11 +153,11 @@ Future<Dish> fetchDish(int id) async {
 }
 
 Future<List<Dish>> fetchDishes() async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     try {
-      final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
+      final response = await http.get(Uri.parse('$uriPrefix/dishes'),
           headers: {
             HttpHeaders
                 .authorizationHeader: token,
@@ -174,7 +174,7 @@ Future<List<Dish>> fetchDishes() async {
       return List<Dish>.empty();
       throw Exception('Failed to load dishes');
     }
-    final response = await http.get(Uri.parse('http://$ipAddress/dishes'),
+    final response = await http.get(Uri.parse('$uriPrefix/dishes'),
         headers: {
           HttpHeaders
               .authorizationHeader: token,
@@ -193,11 +193,11 @@ Future<List<Dish>> fetchDishes() async {
 }
 
 Future<Dish> createDish(Dish dish) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     try {
-      final response = await http.post(Uri.parse('http://$ipAddress/dishes'),
+      final response = await http.post(Uri.parse('$uriPrefix/dishes'),
           headers: {
             HttpHeaders
                 .authorizationHeader: token,
@@ -219,11 +219,11 @@ Future<Dish> createDish(Dish dish) async {
 }
 
 Future<Dish> updateDish(Dish dish) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     try {
-      final response = await http.put(Uri.parse('http://$ipAddress/dishes/${dish.id}'),
+      final response = await http.put(Uri.parse('$uriPrefix/dishes/${dish.id}'),
           headers: {
             HttpHeaders
                 .authorizationHeader: token,
@@ -245,11 +245,11 @@ Future<Dish> updateDish(Dish dish) async {
 }
 
 Future<void> deleteDish(int id) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     try {
-      final response = await http.delete(Uri.parse('http://$ipAddress/dishes/$id'),
+      final response = await http.delete(Uri.parse('$uriPrefix/dishes/$id'),
           headers: {
             HttpHeaders
                 .authorizationHeader: token,

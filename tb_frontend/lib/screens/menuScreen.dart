@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/data/dummyDishes.dart';
+import 'package:tb_frontend/models/client.dart';
 import 'package:tb_frontend/screens/deliveries/deliveriesScreen.dart';
 import 'package:tb_frontend/screens/ingredients/ingredientsScreen.dart';
 import 'package:tb_frontend/screens/scanner/qrScannerScreen.dart';
@@ -9,10 +10,38 @@ import 'package:tb_frontend/screens/welcomeScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
 
   final String username;
   const MenuScreen(this.username, {super.key});
+
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+
+  @override
+  initState() {
+    super.initState();
+    Future<List<Client>> clients = fetchClients();
+    clients.then((value) => {
+
+      for(int i = 0; i < value.length; i++){
+        value[i].status = "ok",
+        value[i].remoteId = value[i].id,
+        createClientLocally(value[i])
+      }
+      /*value.forEach((element) {
+        element.status = "ok";
+        element.remoteId = 23;
+        insertClientLocally(element);
+      })*/
+      //value.map((e) => e.status = "ok")
+    });
+
+    //createClientsLocally(clients);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +66,7 @@ class MenuScreen extends StatelessWidget {
                   color: kColorScheme.primary,
                 ),
                 child: Text(
-                  'Welcome $username !',
+                  'Welcome ${widget.username} !',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,

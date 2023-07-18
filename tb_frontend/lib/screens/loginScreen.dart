@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../utils/SecureStorageManager.dart';
+import '../utils/secureStorageManager.dart';
 
 import '../models/user.dart';
 import 'menuScreen.dart';
@@ -136,19 +136,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
                     try {
-                      final Future<String> futureToken = login(
+                      final Future<(String, String)> futureTokens = login(
                           _usernameController.text, _passwordController.text);
 
-                      if (futureToken != null) {
-                        futureToken.then((token) {
-                          log('bla===== $futureToken');
+                      if (futureTokens != null) {
+                        futureTokens.then((token) {
+                          log('bla===== $futureTokens');
                           SecureStorageManager.write(
                               "KEY_USERNAME", _usernameController.text);
                           SecureStorageManager.write(
                               "KEY_PASSWORD", _passwordController.text);
-                          SecureStorageManager.write("KEY_TOKEN", token);
+                          SecureStorageManager.write("ACCESS_TOKEN", token.$1);
+                          SecureStorageManager.write(
+                              "REFRESH_TOKEN", token.$2);
 
-                          log(token);
                           ScaffoldMessenger.of(context).removeCurrentSnackBar();
                           _menuScreen(_usernameController.text.toString());
                         }).catchError((e) {

@@ -1,8 +1,8 @@
 
 
-import 'package:tb_frontend/utils/Constants.dart';
+import 'package:tb_frontend/utils/constants.dart';
 
-import '../utils/SecureStorageManager.dart';
+import '../utils/secureStorageManager.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -62,11 +62,11 @@ class Ingredient {
 
 
 Future<Ingredient> fetchIngredient(int id) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.get(
-        Uri.parse('http://$ipAddress/ingredients/$id'),
+        Uri.parse('$uriPrefix/ingredients/$id'),
         headers: {
           HttpHeaders
               .authorizationHeader: token,
@@ -84,10 +84,10 @@ Future<Ingredient> fetchIngredient(int id) async {
 }
 
 Future<List<Ingredient>> fetchIngredients() async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
-    final response = await http.get(Uri.parse('http://$ipAddress/ingredients'),
+    final response = await http.get(Uri.parse('$uriPrefix/ingredients'),
         headers: {
           HttpHeaders.authorizationHeader: token,
         });
@@ -105,11 +105,11 @@ Future<List<Ingredient>> fetchIngredients() async {
 }
 
 Future<Ingredient> createIngredient(Ingredient ingredient) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.post(
-      Uri.parse('http://$ipAddress/ingredients'),
+      Uri.parse('$uriPrefix/ingredients'),
       headers: {
         HttpHeaders
             .authorizationHeader: token,
@@ -133,11 +133,11 @@ Future<Ingredient> createIngredient(Ingredient ingredient) async {
 
 
 Future<Ingredient> updateIngredient(Ingredient ingredient) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.put(
-      Uri.parse('http://$ipAddress/ingredients/${ingredient.id}'),
+      Uri.parse('$uriPrefix/ingredients/${ingredient.id}'),
       headers: {
         HttpHeaders
             .authorizationHeader: token,
@@ -166,11 +166,11 @@ Future<Ingredient> updateIngredient(Ingredient ingredient) async {
 }
 
 Future<void> deleteIngredient(int id) async {
-  final token = await SecureStorageManager.read('KEY_TOKEN');
+  final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
     final response = await http.delete(
-      Uri.parse('http://$ipAddress/ingredients/$id'),
+      Uri.parse('$uriPrefix/ingredients/$id'),
       headers: {
         HttpHeaders
             .authorizationHeader: token,

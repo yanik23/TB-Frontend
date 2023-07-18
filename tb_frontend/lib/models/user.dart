@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 
-import 'package:tb_frontend/utils/Constants.dart';
+import 'package:tb_frontend/utils/constants.dart';
 
 class User {
   final String name;
@@ -28,10 +28,10 @@ class User {
 }
 
 
-Future<String> login(String name, String password) async {
+Future<(String, String)> login(String name, String password) async {
   try {
     final response = await http.post(
-      Uri.parse('http://$ipAddress/login'),
+      Uri.parse('$uriPrefix/login'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -43,7 +43,7 @@ Future<String> login(String name, String password) async {
 
     if (response.statusCode == 200) {
       log("============================> GOT 200!");
-      return response.headers['authorization']!;
+      return (response.headers['authorization']!, response.headers['refresh']!);
     } else {
       log("==============================> ${response.statusCode}");
       throw Exception(response.body);

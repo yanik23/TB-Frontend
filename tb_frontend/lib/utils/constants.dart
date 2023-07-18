@@ -1,8 +1,6 @@
 
-
-
 const String ipAddress = '192.168.1.3:8080';
-
+const String uriPrefix = 'http://$ipAddress';
 
 
 const numberRegexPattern = r'^[0-9]{0,10}$';

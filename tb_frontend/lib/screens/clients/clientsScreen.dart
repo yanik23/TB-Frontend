@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/models/client.dart';
@@ -16,7 +17,6 @@ class ClientsScreen extends StatefulWidget {
 }
 
 class _ClientsScreenState extends State<ClientsScreen> {
-
   late Future<List<Client>> clients;
   List<Client> localClients = [];
   List<Client> searchedClients = [];
@@ -27,23 +27,48 @@ class _ClientsScreenState extends State<ClientsScreen> {
   void initState() {
     super.initState();
     clients = fetchClients();
-    clients.then((value) => {
+    clients.then((value) {
+      setState(() {
+        localClients.addAll(value);
+        searchedClients.addAll(value);
+      });
+
+      if (value.isEmpty) {
+        fetchClientsLocally().then((value) => {
+          setState(() {
+            localClients.addAll(value);
+            searchedClients.addAll(value);
+          })
+        });
+      }
+      //localClients.addAll(value);
+      //searchedClients.addAll(value);
+    }).catchError((error) {
+      //log("=================================ERROgxdR=======================");
+      //log(error.toString());
+      fetchClientsLocally().then((value) => {
+            setState(() {
+              localClients.addAll(value);
+              searchedClients.addAll(value);
+            })
+          });
+      /*clients.then((value) => {
       localClients.addAll(value),
-      searchedClients.addAll(value)
-      /*localClients.forEach((element) {
-        element.status = "ok";
-        element.remoteId = 23;
-        insertClient(element);
-      })*/
+      searchedClients.addAll(value),
+        log(localClients.toString()),
+        log(searchedClients.toString())
+      })
+      });*/
     });
   }
+
   void _selectClient(BuildContext context, Client client) async {
     final updatedClient = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => ClientDetailsScreen(client),
       ),
     );
-    if(updatedClient != null) {
+    if (updatedClient != null) {
       setState(() {
         localClients.remove(client);
         localClients.add(updatedClient);
@@ -53,19 +78,19 @@ class _ClientsScreenState extends State<ClientsScreen> {
     }
   }
 
-  void _createClient() async{
+  void _createClient() async {
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => const CreateClientScreen('Create Client'),
       ),
     );
-    if(newClient != null) {
+    if (newClient != null) {
       setState(() {
         //clients = fetchClients();
+        newClient.status = "new";
+        createClientLocally(newClient);
         localClients.add(newClient);
         searchedClients.add(newClient);
-        newClient.status = "new";
-        insertClient(newClient);
       });
     }
   }
@@ -75,26 +100,58 @@ class _ClientsScreenState extends State<ClientsScreen> {
     setState(() {
       clients = fetchClients();
       clients.then((value) => {
-        localClients.clear(),
-        localClients.addAll(value),
-        searchedClients.clear(),
-        searchedClients.addAll(value)
-      });
+            localClients.clear(),
+            localClients.addAll(value),
+            searchedClients.clear(),
+            searchedClients.addAll(value)
+          });
     });
   }
 
   void _deleteClient(Client client) async {
-    deleteClient(client.id);
-    setState(() {
-      clients = fetchClients();
+    final response = await deleteClient(client.id).catchError((onError) {
+      log("=================================ERROR DELETING CLIENT=================================");
+      log(onError.toString());
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "You don't have permission to delete this resource.",
+              textAlign: TextAlign.center,
+            ),
+            showCloseIcon: true,
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      // TODO: workaround for now, need to fix.
+      setState(() {});
     });
+    if (response.statusCode == HttpStatus.noContent) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Deleted client successfully.",
+              textAlign: TextAlign.center,
+            ),
+            showCloseIcon: true,
+            //backgroundColor: Colors.green,
+          ),
+        );
+      }
+      setState(() {
+        localClients.remove(client);
+        searchedClients.remove(client);
+      });
+    }
   }
-
 
   void _filterSearchResults(String query) {
     setState(() {
       searchedClients = localClients
-          .where((item) => item.name.toLowerCase().contains(query.toLowerCase()))
+          .where(
+              (item) => item.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -119,17 +176,15 @@ class _ClientsScreenState extends State<ClientsScreen> {
       ),
     );
 
-
     Widget content = FutureBuilder<List<Client>>(
       future: clients,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return RefreshIndicator(
-            onRefresh: _refreshClients,//_refreshClients,
+            onRefresh: _refreshClients, //_refreshClients,
             child: Column(
               children: [
-                if(_showSearchBar) searchBar,
-
+                if (_showSearchBar) searchBar,
                 Expanded(
                   child: ListView.builder(
                     itemCount: searchedClients.length,
@@ -148,7 +203,8 @@ class _ClientsScreenState extends State<ClientsScreen> {
                                 child: const Text("No"),
                                 onPressed: () {
                                   setState(() {
-                                    ClientItem(searchedClients[index], _selectClient);
+                                    ClientItem(
+                                        searchedClients[index], _selectClient);
                                     Navigator.of(ctx).pop();
                                   });
                                 },
@@ -156,7 +212,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                               TextButton(
                                 child: const Text("Yes"),
                                 onPressed: () {
-                                  deleteClient(searchedClients[index].id);
+                                  _deleteClient(searchedClients[index]);
                                   Navigator.of(ctx).pop();
                                 },
                               ),

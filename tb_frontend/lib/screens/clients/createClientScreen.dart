@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import '../../models/client.dart';
-import '../../utils/Constants.dart';
+import '../../utils/constants.dart';
 
 class CreateClientScreen extends StatefulWidget {
   final Client? client;
@@ -169,8 +169,6 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                     }
                     resultClient
                         .whenComplete(() => Navigator.of(context).pop(resultClient));
-
-                    //Navigator.of(context).pop(client);
 
                     // Go back to the previous screen
                   }
