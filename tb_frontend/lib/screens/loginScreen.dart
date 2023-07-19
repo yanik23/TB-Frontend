@@ -19,8 +19,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final emailRegex = RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  /*final emailRegex = RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");*/
 
   //final _secureStorage = const FlutterSecureStorage();
 
@@ -124,8 +124,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     _formKey.currentState!.save();
 
                     const snackBar = SnackBar(
-                      content: Text('trying to login...'),
-                      duration: Duration(seconds: 4),
+                      content: Text('trying to login...', textAlign: TextAlign.center),
+                      showCloseIcon: true,
+                      closeIconColor: Colors.white,
+                      //duration: Duration(seconds: 4),
                       /*action: SnackBarAction(
                         label: 'UNDO',
                         onPressed: () {
@@ -134,12 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),*/
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                    try {
                       final Future<(String, String)> futureTokens = login(
                           _usernameController.text, _passwordController.text);
 
-                      if (futureTokens != null) {
+                      //if (futureTokens != null) {
                         futureTokens.then((token) {
                           log('bla===== $futureTokens');
                           SecureStorageManager.write(
@@ -154,17 +154,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           _menuScreen(_usernameController.text.toString());
                         }).catchError((e) {
                           final snackBar = SnackBar(
-                            content: Text(e.message.toString()),
+                            content: Text(e.message.toString(), textAlign: TextAlign.center),
+                            backgroundColor: Colors.red,
+                            showCloseIcon: true,
+                            closeIconColor: Colors.white,
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           log(e.toString());
-                          const snackBar3 = SnackBar(
+                          /*const snackBar3 = SnackBar(
                             content: Text('failed to login'),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar3);
-                          log(e.toString());
+                          log(e.toString());*/
 
-                          const snackBar2 = SnackBar(
+                          /*const snackBar2 = SnackBar(
                             content: Text('login in with local data...'),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar2);
@@ -185,26 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   .showSnackBar(snackBar3);
                               log(e.toString());
                             }
-                          });
+                          });*/
                         });
-                      } else {
-                        log('Token is null');
-                      }
-                    } catch (e) {
-
-                    }
-                    /*FutureBuilder<String>(
-                    future: _futureToken,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(snapshot.data!);
-                      } else if (snapshot.hasError) {
-                        return Text('${snapshot.error}');
-                      }
-
-                      return const CircularProgressIndicator();
-                    },
-                  );*/
                   }
                 },
                 child: const Text('Sign In'),

@@ -127,8 +127,7 @@ Future<List<Client>> _fetchClientsWithToken(String accessToken) async {
       HttpHeaders.authorizationHeader: token,
     });
     if (response.statusCode == 200) {
-      final List<dynamic> responseData =
-          jsonDecode(utf8.decode(response.bodyBytes));
+      final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
       return responseData.map((json) => Client.fromJson(json)).toList();
     } else {
       throw Exception('A) Failed to load clients');
@@ -152,6 +151,8 @@ Future<Client> createClient(Client client) async {
     );
     if (response.statusCode == 201) {
       return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    } else if (response.statusCode == HttpStatus.forbidden) {
+      throw Exception('You don\'t have the permission to create a client');
     } else if (response.statusCode == 401) {
       final token = await fetchNewToken();
       SecureStorageManager.write('ACCESS_TOKEN', token);
@@ -165,11 +166,11 @@ Future<Client> createClient(Client client) async {
       );
       if (response.statusCode == 201) {
         return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      } else if (response.statusCode == HttpStatus.forbidden){
+        throw Exception('You don\'t have the permission to create a client');
       } else {
-        throw Exception('You are not authorized to create a client');
+        throw Exception('Failed to create client');
       }
-
-      //throw Exception('You are not authorized to create a client');
     } else {
       throw Exception('Failed to create client');
     }

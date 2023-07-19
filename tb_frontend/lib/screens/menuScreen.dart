@@ -24,7 +24,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   initState() {
     super.initState();
-    Future<List<Client>> clients = fetchClients();
+    /*Future<List<Client>> clients = fetchClients();
     clients.then((value) => {
 
       for(int i = 0; i < value.length; i++){
@@ -38,7 +38,7 @@ class _MenuScreenState extends State<MenuScreen> {
         insertClientLocally(element);
       })*/
       //value.map((e) => e.status = "ok")
-    });
+    });*/
 
     //createClientsLocally(clients);
   }

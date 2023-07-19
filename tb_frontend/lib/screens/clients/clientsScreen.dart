@@ -87,8 +87,8 @@ class _ClientsScreenState extends State<ClientsScreen> {
     if (newClient != null) {
       setState(() {
         //clients = fetchClients();
-        newClient.status = "new";
-        createClientLocally(newClient);
+        /*newClient.status = "new";
+        createClientLocally(newClient);*/
         localClients.add(newClient);
         searchedClients.add(newClient);
       });
@@ -119,8 +119,9 @@ class _ClientsScreenState extends State<ClientsScreen> {
               "You don't have permission to delete this resource.",
               textAlign: TextAlign.center,
             ),
-            showCloseIcon: true,
             backgroundColor: Colors.red,
+            showCloseIcon: true,
+            closeIconColor: Colors.white,
           ),
         );
       }
@@ -132,11 +133,12 @@ class _ClientsScreenState extends State<ClientsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              "Deleted client successfully.",
+              "Client deleted successfully.",
               textAlign: TextAlign.center,
             ),
+            backgroundColor: Colors.green,
             showCloseIcon: true,
-            //backgroundColor: Colors.green,
+            closeIconColor: Colors.white,
           ),
         );
       }

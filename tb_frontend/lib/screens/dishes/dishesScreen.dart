@@ -36,10 +36,10 @@ class _DishesScreenState extends State<DishesScreen> {
       localDishes.addAll(value),
       searchedDishes.addAll(value),
 
-      if(value.isEmpty) {
+      /*if(value.isEmpty) {
         localDishes.addAll(dummyDishes),
         searchedDishes.addAll(dummyDishes)
-      }
+      }*/
     });
   }
 

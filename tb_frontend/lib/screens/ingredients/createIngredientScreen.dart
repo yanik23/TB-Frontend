@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/ingredient.dart';
-
-
-
-
+import '../../utils/constants.dart';
 
 class CreateIngredientScreen extends StatefulWidget {
   final Ingredient? ingredient;
@@ -23,6 +20,9 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
   String? _description;
   String? _supplier = '';
 
+  final RegExp _nameRegExp = RegExp(nameRegexPattern);
+  final RegExp _descriptionRegExp = RegExp(descriptionRegexPattern);
+
   @override
   void initState() {
     if (widget.ingredient != null) {
@@ -37,6 +37,49 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
     }
   }
 
+  void _createOrUpdateIngredient() {
+    Ingredient newIngredient = Ingredient(
+      _id,
+      _name,
+      _currentType,
+      description: _description,
+      supplier: _supplier,
+    );
+
+    Future<Ingredient> resultIngredient;
+    String snackBarMessage = '';
+    if (widget.ingredient == null) {
+      resultIngredient = createIngredient(newIngredient);
+      snackBarMessage = 'Ingredient created successfully';
+    } else {
+      resultIngredient = updateIngredient(newIngredient);
+      snackBarMessage = 'Ingredient updated successfully';
+    }
+    resultIngredient.then((ingredient) {
+
+     ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(snackBarMessage),
+          backgroundColor: Colors.green,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+      Navigator.of(context).pop(ingredient);
+
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Colors.red,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+    });
+    //if no error then show snackbar with success message
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +90,6 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          //autovalidateMode: AutovalidateMode.onUserInteraction,
           child: ListView(
             children: [
               TextFormField(
@@ -56,8 +98,12 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                   hintText: 'Enter the ingredient name',
                 ),
                 initialValue: _name,
+                maxLength: 50,
                 validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.trim().isEmpty ||
+                      !_nameRegExp.hasMatch(value)) {
                     return 'Please enter a valid name';
                   }
                   return null;
@@ -66,14 +112,11 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                   _name = value!;
                 },
               ),
-
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
                     labelText: 'Type',
                     hintText: 'Select the type of ingredient'),
-                value: _currentType == ''
-                    ? null
-                    : _currentType,
+                value: _currentType == '' ? null : _currentType,
                 onChanged: (value) {
                   setState(() {
                     _currentType = value.toString().toUpperCase();
@@ -82,12 +125,13 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                 items: IngredientType.values
                     .map(
                       (type) => DropdownMenuItem(
-                    value: type.toString() == _currentType
-                        ? _currentType
-                        : type.name.toString().toUpperCase(),
-                    child: Text(type.name.toString().toUpperCase()),
-                  ),
-                ).toList(),
+                        value: type.toString() == _currentType
+                            ? _currentType
+                            : type.name.toString().toUpperCase(),
+                        child: Text(type.name.toString().toUpperCase()),
+                      ),
+                    )
+                    .toList(),
                 validator: (value) {
                   if (value == null) {
                     return 'Please select a valid Type';
@@ -101,6 +145,13 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                   hintText: 'Enter the description',
                 ),
                 initialValue: _description,
+                maxLength: 255,
+                validator: (value) {
+                  if (!_descriptionRegExp.hasMatch(value!)) {
+                    return 'Please enter a valid description';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _description = value!;
                 },
@@ -111,6 +162,13 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                   hintText: 'Enter the supplier',
                 ),
                 initialValue: _supplier,
+                maxLength: 50,
+                validator: (value) {
+                  if (!_nameRegExp.hasMatch(value!)) {
+                    return 'Please enter a valid supplier';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _supplier = value!;
                 },
@@ -119,24 +177,7 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-
-
-                    Ingredient newIngredient = Ingredient(
-                      _id,
-                      _name,
-                      _currentType,
-                      description: _description,
-                      supplier: _supplier,
-                    );
-
-                    Future<Ingredient> resultIngredient;
-                    if (widget.ingredient == null) {
-                      resultIngredient = createIngredient(newIngredient);
-                    } else {
-                      resultIngredient = updateIngredient(newIngredient);
-                    }
-                    resultIngredient.whenComplete(() =>
-                        Navigator.of(context).pop(resultIngredient));
+                    _createOrUpdateIngredient();
                   }
                 },
                 child: const Text('Submit'),

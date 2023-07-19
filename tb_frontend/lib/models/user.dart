@@ -29,7 +29,7 @@ class User {
 
 
 Future<(String, String)> login(String name, String password) async {
-  try {
+  //try {
     final response = await http.post(
       Uri.parse('$uriPrefix/login'),
       headers: <String, String>{
@@ -42,21 +42,9 @@ Future<(String, String)> login(String name, String password) async {
     ).timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
-      log("============================> GOT 200!");
       return (response.headers['authorization']!, response.headers['refresh']!);
     } else {
-      log("==============================> ${response.statusCode}");
       throw Exception(response.body);
     }
-  } on TimeoutException catch (e) {
-    log("==============================> $e");
-    throw Exception('Failed to login, timeout');
-  } on SocketException catch (e) {
-    log("==============================> $e");
-    throw Exception('Failed to login');
-  } catch (e) {
 
-    log("==============================> $e");
-    throw Exception(e);
-  }
 }

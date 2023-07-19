@@ -25,8 +25,8 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
   String _city = '';
 
 
-
-  final RegExp _strRegExp = RegExp(nameRegexPattern);
+  final RegExp _nameRegExp = RegExp(nameRegexPattern);
+  final RegExp _streetAndCityRegExp = RegExp(streetAndCityRegexPattern);
   final RegExp _numberRegExp = RegExp(numberRegexPattern);
 
   @override
@@ -64,7 +64,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 initialValue: _name,
                 maxLength: 50,
                 validator: (value) {
-                  if (value == null || value.isEmpty || !_strRegExp.hasMatch(value)) {
+                  if (value == null || value.isEmpty || !_nameRegExp.hasMatch(value)) {
                     return 'Please enter a valid name';
                   }
                   return null;
@@ -79,8 +79,8 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 initialValue: _addressName,
                 maxLength: 50,
                 validator: (value) {
-                  if (value == null || value.isEmpty || !_strRegExp.hasMatch(value)) {
-                    return 'Please enter an address name';
+                  if (value == null || value.isEmpty || !_streetAndCityRegExp.hasMatch(value)) {
+                    return 'Please enter a valid address name';
                   }
                   return null;
                 },
@@ -96,7 +96,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 maxLength: 10,
                 validator: (value) {
                   if (value == null || value.isEmpty || !_numberRegExp.hasMatch(value)) {
-                    return 'Please enter an address number';
+                    return 'Please enter a valid address number';
                   }
                   return null;
                 },
@@ -112,7 +112,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 maxLength: 10,
                 validator: (value) {
                   if (value == null || value.isEmpty || !_numberRegExp.hasMatch(value)) {
-                    return 'Please enter a ZIP code';
+                    return 'Please enter a valid ZIP code';
                   }
                   return null;
                 },
@@ -126,7 +126,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 initialValue: _city,
                 maxLength: 50,
                 validator: (value) {
-                  if (value == null || value.isEmpty || !_strRegExp.hasMatch(value)) {
+                  if (value == null || value.isEmpty || !_streetAndCityRegExp.hasMatch(value)) {
                     return 'Please enter a valid city';
                   }
                   return null;

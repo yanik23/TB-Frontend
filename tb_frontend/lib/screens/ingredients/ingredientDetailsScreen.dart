@@ -10,7 +10,7 @@ class IngredientDetailsScreen extends StatefulWidget {
 
   final Ingredient tempIngredient;
 
-  IngredientDetailsScreen(this.tempIngredient, {super.key});
+  const IngredientDetailsScreen(this.tempIngredient, {super.key});
 
   @override
   State<IngredientDetailsScreen> createState() => _IngredientDetailsScreenState();
@@ -47,13 +47,6 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
           IconButton(
             icon: const Icon(Icons.qr_code),
             onPressed: () {
-              /*Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) {
-                    return GenerateQRCodeScreen(dish);
-                  },
-                ),
-              );*/
             },
           ),
         ],
@@ -72,15 +65,6 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  /*TextFormField(
-                    initialValue: snapshot.data!.name,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    readOnly: _isEditable,
-                  ),*/
                   Text(
                     snapshot.data!.name,
                     style: TextStyle(
