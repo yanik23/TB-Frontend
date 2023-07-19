@@ -66,11 +66,8 @@ Future<Ingredient> fetchIngredient(int id) async {
       HttpHeaders.authorizationHeader: token,
     });
     if (response.statusCode == HttpStatus.ok) {
-      // If the server did return a 200 OK response, then parse the JSON.
       return Ingredient.fullFromJson(jsonDecode(response.body));
     } else if (response.statusCode == HttpStatus.unauthorized) {
-      // If the server did not return a 200 OK response, then throw an exception.
-      //throw Exception('Failed to load ingredient');
       final newToken = await fetchNewToken();
       SecureStorageManager.write('ACCESS_TOKEN', newToken);
       final response =
@@ -78,18 +75,14 @@ Future<Ingredient> fetchIngredient(int id) async {
         HttpHeaders.authorizationHeader: newToken,
       });
       if (response.statusCode == HttpStatus.ok) {
-        // If the server did return a 200 OK response, then parse the JSON.
         return Ingredient.fullFromJson(jsonDecode(response.body));
       } else {
-        // If the server did not return a 200 OK response, then throw an exception.
         throw Exception('Failed to load ingredient');
       }
     } else {
-      // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to load ingredient');
     }
   } else {
-    // If the server did not return a 200 OK response, then throw an exception.
     throw Exception('Failed to load ingredient');
   }
 }
@@ -118,11 +111,9 @@ Future<List<Ingredient>> fetchIngredients() async {
             .map((json) => Ingredient.fullFromJson(json))
             .toList();
       } else {
-        // If the server did not return a 200 OK response, throw an exception.
         throw Exception('Failed to load ingredients');
       }
     } else {
-      // If the server did not return a 200 OK response, throw an exception.
       throw Exception('Failed to load ingredients');
     }
   } else {

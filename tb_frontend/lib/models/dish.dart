@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:tb_frontend/data/dummyDishes.dart';
-import 'package:tb_frontend/dto/ingredientForDishDTO.dart';
 import 'package:tb_frontend/dto/ingredientLessDTO.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:tb_frontend/utils/secureStorageManager.dart';
 import '../utils/constants.dart';
+import '../utils/refreshToken.dart';
 
 enum DishType {
   meat,
@@ -134,17 +134,34 @@ Future<Dish> fetchDish(int id) async {
               HttpHeaders
                   .authorizationHeader: token,
             }).timeout(const Duration(seconds: 3));
-        if (response.statusCode == 200) {
-          // If the server returned a 200 OK response, parse the JSON.
-          final responseData = jsonDecode(response.body);
+        if (response.statusCode == HttpStatus.ok) {
+          final responseData = jsonDecode(utf8.decode(response.bodyBytes));
           return Dish.fromServerJson(responseData);
+        } else if (response.statusCode == HttpStatus.unauthorized) {
+          final newToken = await fetchNewToken();
+          SecureStorageManager.write('ACCESS_TOKEN', newToken);
+          final response = await http.get(
+              Uri.parse('$uriPrefix/dishes/$id'),
+              headers: {
+                HttpHeaders
+                    .authorizationHeader: newToken,
+              }).timeout(const Duration(seconds: 3));
+          if (response.statusCode == HttpStatus.ok) {
+            final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+            return Dish.fromServerJson(responseData);
+          } else if (response.statusCode == HttpStatus.forbidden) {
+            throw Exception('You are not allowed to access this resource');
+          } else {
+            throw Exception('Failed to load dish');
+          }
+        } else if (response.statusCode == HttpStatus.forbidden) {
+          throw Exception('You are not allowed to access this resource');
         } else {
           // If the server did not return a 200 OK response, throw an exception.
           throw Exception('Failed to load dish');
         }
       } catch (e) {
         return dummyDishes.firstWhere((dish) => dish.id == id);
-        throw Exception('Failed to load dish');
       }
     } else {
       throw Exception('Failed to load token');
@@ -162,30 +179,35 @@ Future<List<Dish>> fetchDishes() async {
             HttpHeaders
                 .authorizationHeader: token,
           }).timeout(const Duration(seconds: 5));
-      if (response.statusCode == 200) {
-        // If the server returned a 200 OK response, parse the JSON.
-        final List<dynamic> responseData = jsonDecode(response.body);
+      if (response.statusCode == HttpStatus.ok) {
+        final List<dynamic> responseData = jsonDecode(
+            utf8.decode(response.bodyBytes));
         return responseData.map((json) => Dish.fromJson(json)).toList();
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You are not allowed to access this resource');
+      } else if (response.statusCode == HttpStatus.unauthorized) {
+        final newToken = await fetchNewToken();
+        SecureStorageManager.write('ACCESS_TOKEN', newToken);
+        final response = await http.get(Uri.parse('$uriPrefix/dishes'),
+            headers: {
+              HttpHeaders
+                  .authorizationHeader: newToken,
+            });
+        if (response.statusCode == HttpStatus.ok) {
+          final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
+          return responseData.map((json) => Dish.fromJson(json)).toList();
+        } else if (response.statusCode == HttpStatus.forbidden) {
+          throw Exception('You are not allowed to access this resource');
+        } else {
+          // If the server did not return a 200 OK response, throw an exception.
+          throw Exception('Failed to load dishes');
+        }
       } else {
         // If the server did not return a 200 OK response, throw an exception.
         throw Exception('Failed to load dishes');
       }
     } catch (e) {
       return List<Dish>.empty();
-      throw Exception('Failed to load dishes');
-    }
-    final response = await http.get(Uri.parse('$uriPrefix/dishes'),
-        headers: {
-          HttpHeaders
-              .authorizationHeader: token,
-        }).timeout(const Duration(seconds: 5));
-    if (response.statusCode == 200) {
-      // If the server returned a 200 OK response, parse the JSON.
-      final List<dynamic> responseData = jsonDecode(response.body);
-      return responseData.map((json) => Dish.fromJson(json)).toList();
-    } else {
-      // If the server did not return a 200 OK response, throw an exception.
-      throw Exception('Failed to load dishes');
     }
   } else {
     throw Exception('Failed to load token');
@@ -194,9 +216,7 @@ Future<List<Dish>> fetchDishes() async {
 
 Future<Dish> createDish(Dish dish) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
-
   if(token != null) {
-    try {
       final response = await http.post(Uri.parse('$uriPrefix/dishes'),
           headers: {
             HttpHeaders
@@ -204,15 +224,32 @@ Future<Dish> createDish(Dish dish) async {
             HttpHeaders.contentTypeHeader: 'application/json'
           },
           body: jsonEncode(dish.toJson()));
-      if (response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
+      if (response.statusCode == HttpStatus.created) {
+        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
         return Dish.fromServerJson(responseData);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to create this dish');
+      } else if (response.statusCode == HttpStatus.unauthorized) {
+        final newToken = await fetchNewToken();
+        SecureStorageManager.write('ACCESS_TOKEN', newToken);
+        final response = await http.post(Uri.parse('$uriPrefix/dishes'),
+            headers: {
+              HttpHeaders
+                  .authorizationHeader: newToken,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: jsonEncode(dish.toJson()));
+        if (response.statusCode == HttpStatus.created) {
+          final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+          return Dish.fromServerJson(responseData);
+        } else if (response.statusCode == HttpStatus.forbidden) {
+          throw Exception('You don\'t have permission to create this dish');
+        } else {
+          throw Exception('Failed to create dish');
+        }
       } else {
         throw Exception('Failed to create dish');
       }
-    } catch (e) {
-      throw Exception('Failed to create dish');
-    }
   } else {
     throw Exception('Failed to load token');
   }
@@ -230,9 +267,29 @@ Future<Dish> updateDish(Dish dish) async {
             HttpHeaders.contentTypeHeader: 'application/json'
           },
           body: jsonEncode(dish.toJson()));
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
+      if (response.statusCode == HttpStatus.ok) {
+        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
         return Dish.fromServerJson(responseData);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to update this dish');
+      } else if (response.statusCode == HttpStatus.unauthorized) {
+        final newToken = await fetchNewToken();
+        SecureStorageManager.write('ACCESS_TOKEN', newToken);
+        final response = await http.put(Uri.parse('$uriPrefix/dishes/${dish.id}'),
+            headers: {
+              HttpHeaders
+                  .authorizationHeader: newToken,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: jsonEncode(dish.toJson()));
+        if (response.statusCode == HttpStatus.ok) {
+          final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+          return Dish.fromServerJson(responseData);
+        } else if (response.statusCode == HttpStatus.forbidden) {
+          throw Exception('You don\'t have permission to update this dish');
+        } else {
+          throw Exception('Failed to update dish');
+        }
       } else {
         throw Exception('Failed to update dish');
       }
@@ -248,20 +305,37 @@ Future<void> deleteDish(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
-    try {
+    //try {
       final response = await http.delete(Uri.parse('$uriPrefix/dishes/$id'),
           headers: {
             HttpHeaders
                 .authorizationHeader: token,
           });
-      if (response.statusCode == 204) {
+      if (response.statusCode == HttpStatus.noContent) {
         return;
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to delete this dish');
+      } else if (response.statusCode == HttpStatus.unauthorized) {
+        final newToken = await fetchNewToken();
+        SecureStorageManager.write('ACCESS_TOKEN', newToken);
+        final response = await http.delete(Uri.parse('$uriPrefix/dishes/$id'),
+            headers: {
+              HttpHeaders
+                  .authorizationHeader: newToken,
+            });
+        if (response.statusCode == HttpStatus.noContent) {
+          return;
+        } else if (response.statusCode == HttpStatus.forbidden) {
+          throw Exception('You don\'t have permission to delete this dish');
+        } else {
+          throw Exception('Failed to delete dish');
+        }
       } else {
         throw Exception('Failed to delete dish');
       }
-    } catch (e) {
+    /*} catch (e) {
       throw Exception('Failed to delete dish');
-    }
+    }*/
   } else {
     throw Exception('Failed to load token');
   }

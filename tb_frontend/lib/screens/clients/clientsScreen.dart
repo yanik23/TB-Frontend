@@ -145,6 +145,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
   }
 
   Future _refreshClients() async {
+    log("=================================REFRESHING CLIENTS=================================");
     setState(() {
       clients = fetchClients();
       clients.then((value) => {

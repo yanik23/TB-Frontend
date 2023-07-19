@@ -246,12 +246,12 @@ Future<http.Response> deleteClient(int id) async {
       if (response.statusCode == HttpStatus.noContent) {
         return response;
       } else if (response.statusCode == HttpStatus.forbidden) {
-        throw Exception('A) You are not authorized to delete this client');
+        throw Exception('You don\'t have the permission to delete this client');
       } else {
         throw Exception('Failed to delete client');
       }
     } else if (response.statusCode == HttpStatus.forbidden) {
-      throw Exception('B) You are not authorized to delete this client');
+      throw Exception('You are not authorized to delete this client');
     } else {
       throw Exception('Failed to delete client');
     }

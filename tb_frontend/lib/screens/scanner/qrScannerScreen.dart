@@ -9,11 +9,11 @@ class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
 
   @override
-  _QrScannerScreenState createState() => _QrScannerScreenState();
+  State<QrScannerScreen> createState() => _QrScannerScreenState();
 }
 
-class _QrScannerScreenState extends State<QrScannerScreen> {
-  late MobileScannerController controller = MobileScannerController();
+class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProviderStateMixin {
+  //late MobileScannerController controller = MobileScannerController();
   Barcode? barcode;
   BarcodeCapture? capture;
 
@@ -21,9 +21,13 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     capture = barcode;
     setState(() => this.barcode = barcode.barcodes.first);
   }
-
   MobileScannerArguments? arguments;
-  MobileScannerController cameraController = MobileScannerController();
+
+  final MobileScannerController controller = MobileScannerController(
+    //detectionSpeed: DetectionSpeed.normal,
+    //facing: CameraFacing.back,
+    torchEnabled: true,
+  );
 
   @override
   void initState() {
@@ -45,9 +49,9 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
           IconButton(
             color: Colors.white,
             icon: ValueListenableBuilder(
-              valueListenable: cameraController.torchState,
+              valueListenable: controller.torchState,
               builder: (context, state, child) {
-                switch (state as TorchState) {
+                switch (state) {
                   case TorchState.off:
                     return const Icon(Icons.flash_off, color: Colors.grey);
                   case TorchState.on:
@@ -56,7 +60,8 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               },
             ),
             //iconSize: 32.0,
-            onPressed: () => cameraController.toggleTorch(),
+            onPressed: () => controller.toggleTorch(),
+              //cameraController.toggleTorch();
           ),
           /*IconButton(
             color: Colors.white,
@@ -94,7 +99,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
           //cameraController.start();
           if (barcode?.rawValue != null) {
             log("===================stoppping camera");
-            cameraController.stop();
+            controller.stop();
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -108,7 +113,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                       Navigator.of(context).pop();
                       setState(() {
                         log('============================================== starting camera');
-                        cameraController.start();
+                        controller.start();
                         barcodes.clear();
                         barcode = null;
                       });
@@ -129,7 +134,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                     onPressed: () {
                       Navigator.of(context).pop();
                       setState(() {
-                        cameraController.start();
+                        controller.start();
                         barcodes.clear();
                       });
 

@@ -4,13 +4,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/dto/dishForDeliveryDTO.dart';
 import 'package:tb_frontend/models/dish.dart';
-import 'package:tb_frontend/models/ingredient.dart';
 import 'package:tb_frontend/screens/deliveries/addClientToDeliveryScreen.dart';
-
 import '../../models/client.dart';
 import '../../models/delivery.dart';
-import 'package:intl/intl.dart';
-
+import '../../utils/constants.dart';
 import '../../utils/secureStorageManager.dart';
 import 'addDishesToDeliveryScreen.dart';
 
@@ -26,8 +23,6 @@ class DishCheck {
 
   DishCheck(this.id, this.name, this.isChecked, this.quantityRemained, this.quantityDelivered);
 }
-//final formatter = DateFormat.yMd();
-//final formatter = DateFormat('dd/MM/yyyy');
 
 class CreateDeliveryScreen extends StatefulWidget {
   final Delivery? delivery;
@@ -47,14 +42,11 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   late DateTime _date = DateTime.now();
   String? _deliveryDetails = '';
 
-  List<Client> _clients = [];
-  //Client? selectedClient;
-  //String selectedClient = '';
-
-
-  List<DishCheck> _dishes = [];
+  final List<Client> _clients = [];
+  final List<DishCheck> _dishes = [];
   List<DishCheck> selectedDishes = [];
 
+  final RegExp _descriptionRegExp = RegExp(descriptionRegexPattern);
 
   @override
   void initState() {
@@ -146,6 +138,47 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
   }
 
+  void _createOrUpdateDelivery() {
+    // Create a new delivery object with the input data
+    Delivery newDelivery = Delivery(
+      _id,
+      _username,
+      _clientName,
+      _date,
+      _deliveryDetails,
+      selectedDishes.map((e) => DishForDeliveryDTO(e.id, e.name, 0, e.quantityRemained ,e.quantityDelivered)).toList(),
+    );
+
+    //Future<Delivery> resultDelivery = createDelivery(newDelivery);
+    Future<Delivery> resultDelivery;
+    String snackBarMessage = '';
+    if(widget.delivery == null) {
+      resultDelivery = createDelivery(newDelivery);
+      snackBarMessage = 'Delivery created succesfully';
+    } else {
+      resultDelivery = updateDelivery(newDelivery);
+      snackBarMessage = 'Delivery updated succesfully';
+    }
+    resultDelivery.then((delivery) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(snackBarMessage, textAlign: TextAlign.center),
+          backgroundColor: Colors.green,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+      Navigator.of(context).pop(delivery);
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message, textAlign: TextAlign.center),
+          backgroundColor: Colors.red,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,12 +198,13 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   hintText: 'Enter some delivery details',
                 ),
                 initialValue: _deliveryDetails,
-                /*validator: (value) {
-                  if (value == null || value.isEmpty) {
+                maxLength: 255,
+                validator: (value) {
+                  if (!_descriptionRegExp.hasMatch(value!)) {
                     return 'Please enter a valid delivery details';
                   }
                   return null;
-                },*/
+                },
                 onSaved: (value) {
                   _deliveryDetails = value!;
                 },
@@ -181,9 +215,9 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   const Text('Delivery date : '),
                   const Spacer(),
                   Text(
-                    _date == null
-                        ? 'No date selected'
-                        : formatter.format(_date!),
+                    formatter.format(_date),
+                       /* ? 'No date selected'
+                        : formatter.format(_date!),*/
                   ),
                   IconButton(
                     onPressed: _showDatePicker,
@@ -195,7 +229,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
               Row(
                 children: [
                   Text(
-                    _clientName == null
+                    _clientName.isEmpty
                         ? 'No client selected'
                         : 'Delivery to : $_clientName',
                   ),
@@ -223,38 +257,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-
-                    // Create a new delivery object with the input data
-                    Delivery newDelivery = Delivery(
-                      _id,
-                      _username,
-                      _clientName,
-                      _date,
-                      _deliveryDetails,
-                      selectedDishes.map((e) => DishForDeliveryDTO(e.id, e.name, 0, e.quantityRemained ,e.quantityDelivered)).toList(),
-                    );
-                    // Do something with the new delivery object (e.g., save to database)
-                    try {} catch (e) {
-                      log('Delivery not created');
-                    }
-                    try {} catch (e) {
-                      log('=======================Delivery not created=======================');
-                    }
-
-                    //Future<Delivery> resultDelivery = createDelivery(newDelivery);
-                    Future<Delivery> resultDelivery;
-
-                    if(widget.delivery != null) {
-                      resultDelivery = updateDelivery(newDelivery);
-                    } else {
-                      resultDelivery = createDelivery(newDelivery);
-                    }
-                    resultDelivery
-                        .whenComplete(() => Navigator.of(context).pop(resultDelivery));
-
-                    //Navigator.of(context).pop(delivery);
-
-                    // Go back to the previous screen
+                    _createOrUpdateDelivery();
                   }
                 },
               ),

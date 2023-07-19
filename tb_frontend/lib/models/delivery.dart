@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../dto/dishForDeliveryDTO.dart';
+import '../utils/refreshToken.dart';
 import '../utils/secureStorageManager.dart';
 import 'dish.dart';
 import 'dart:async';
@@ -34,7 +35,6 @@ class Delivery {
       json['id'],
       json['userName'],
       json['clientName'],
-      //DateTime.parse((json['deliveryDate'].toString().replaceAll('/', '-'))),
       DateTime.parse(json['deliveryDate']),
       json['details'],
       json['dishes'] != null ? (json['dishes'] as List).map((i) => DishForDeliveryDTO.fromJson(i)).toList() : null,
@@ -56,33 +56,36 @@ Future<List<Delivery>> fetchDeliveries() async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
-    try {
       final response = await http
           .get(Uri.parse('$uriPrefix/deliveries'),
           headers: {
             HttpHeaders.authorizationHeader: token,
-          });
-
-      if (response.statusCode == 200) {
-        // If the server returned a 200 OK response, parse the JSON.
-        final List<dynamic> responseData = jsonDecode(response.body);
+          }
+      );
+      if (response.statusCode == HttpStatus.ok) {
+        final List<dynamic> responseData = jsonDecode(
+            utf8.decode(response.bodyBytes));
         return responseData.map((json) => Delivery.fromJson(json)).toList();
+      } else if (response.statusCode == HttpStatus.unauthorized) {
+        final newToken = await fetchNewToken();
+        SecureStorageManager.write('ACCESS_TOKEN', newToken);
+        final response = await http
+            .get(Uri.parse('$uriPrefix/deliveries'),
+            headers: {
+              HttpHeaders.authorizationHeader: newToken,
+            }
+        );
+        if (response.statusCode == HttpStatus.ok) {
+          final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
+          return responseData.map((json) => Delivery.fromJson(json)).toList();
+        } else {
+          // If the server did not return a 200 OK response, throw an exception.
+          throw Exception('Failed to load deliveries');
+        }
       } else {
         // If the server did not return a 200 OK response, throw an exception.
         throw Exception('Failed to load deliveries');
-        return [];
       }
-    } on SocketException {
-      log('=================================> ERROR: No connection');
-      throw Exception('Failed to load deliveries cause no connection');
-    } on TimeoutException {
-      log('=================================> ERROR: Timeout');
-      throw Exception('Failed to load deliveries cause timeout');
-    } catch (e) {
-      //quand le token n'est plus valide on arrive dans cette erreur.
-      log('=================================> ERROR: $e');
-      throw Exception('Failed to load deliveries cause unknown error');
-    }
   } else {
     throw Exception('Failed to load JWT');
   }
@@ -98,9 +101,9 @@ Future<Delivery> fetchDelivery(int id) async {
           HttpHeaders
               .authorizationHeader: token,
         });
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok) {
       // If the server did return a 200 OK response, then parse the JSON.
-      return Delivery.fromJson(jsonDecode(response.body));
+      return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
       // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to load delivery');
@@ -123,9 +126,31 @@ Future<Delivery> createDelivery(Delivery delivery) async {
       body: jsonEncode(delivery.toJson()),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == HttpStatus.created) {
       // If the server did return a 201 CREATED response, then parse the JSON.
-      return Delivery.fromJson(jsonDecode(response.body));
+      return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    } else if (response.statusCode == HttpStatus.forbidden) {
+      throw Exception('You don\'t have permission to create this delivery');
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      final newToken = await fetchNewToken();
+      SecureStorageManager.write('ACCESS_TOKEN', newToken);
+      final response = await http.post(
+        Uri.parse('$uriPrefix/deliveries'),
+        headers: {
+          HttpHeaders.authorizationHeader: newToken,
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        body: jsonEncode(delivery.toJson()),
+      );
+      if (response.statusCode == HttpStatus.created) {
+        // If the server did return a 201 CREATED response, then parse the JSON.
+        return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to create this delivery');
+      } else {
+        // If the server did not return a 201 CREATED response, then throw an exception.
+        throw Exception('Failed to create delivery');
+      }
     } else {
       // If the server did not return a 201 CREATED response, then throw an exception.
       throw Exception('Failed to create delivery');
@@ -148,9 +173,31 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
       body: jsonEncode(delivery.toJson()),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok) {
       // If the server did return a 200 OK response, then parse the JSON.
-      return Delivery.fromJson(jsonDecode(response.body));
+      return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    } else if (response.statusCode == HttpStatus.forbidden) {
+      throw Exception('You don\'t have permission to update this delivery');
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      final newToken = await fetchNewToken();
+      SecureStorageManager.write('ACCESS_TOKEN', newToken);
+      final response = await http.put(
+        Uri.parse('$uriPrefix/deliveries/${delivery.id}'),
+        headers: {
+          HttpHeaders.authorizationHeader: newToken,
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        body: jsonEncode(delivery.toJson()),
+      );
+      if (response.statusCode == HttpStatus.ok) {
+        // If the server did return a 200 OK response, then parse the JSON.
+        return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to update this delivery');
+      } else {
+        // If the server did not return a 200 OK response, then throw an exception.
+        throw Exception('Failed to update delivery');
+      }
     } else {
       // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to update delivery');
@@ -160,7 +207,7 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
   }
 }
 
-Future<void> deleteDelivery(int id) async {
+Future<int> deleteDelivery(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
@@ -171,9 +218,29 @@ Future<void> deleteDelivery(int id) async {
       },
     );
 
-    if (response.statusCode == 204) {
+    if (response.statusCode == HttpStatus.noContent) {
       // If the server did return a 204 NO CONTENT response, then parse the JSON.
-      return;
+      return response.statusCode;
+    } else if (response.statusCode == HttpStatus.forbidden) {
+      throw Exception('You don\'t have permission to delete this delivery');
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      final newToken = await fetchNewToken();
+      SecureStorageManager.write('ACCESS_TOKEN', newToken);
+      final response = await http.delete(
+        Uri.parse('$uriPrefix/deliveries/$id'),
+        headers: {
+          HttpHeaders.authorizationHeader: newToken,
+        },
+      );
+      if (response.statusCode == HttpStatus.noContent) {
+        // If the server did return a 204 NO CONTENT response, then parse the JSON.
+        return response.statusCode;
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to delete this delivery');
+      } else {
+        // If the server did not return a 204 NO CONTENT response, then throw an exception.
+        throw Exception('Failed to delete delivery');
+      }
     } else {
       // If the server did not return a 204 NO CONTENT response, then throw an exception.
       throw Exception('Failed to delete delivery');

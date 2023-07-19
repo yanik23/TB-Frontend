@@ -153,6 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ScaffoldMessenger.of(context).removeCurrentSnackBar();
                           _menuScreen(_usernameController.text.toString());
                         }).catchError((e) {
+                          ScaffoldMessenger.of(context).removeCurrentSnackBar();
                           final snackBar = SnackBar(
                             content: Text(e.message.toString(), textAlign: TextAlign.center),
                             backgroundColor: Colors.red,

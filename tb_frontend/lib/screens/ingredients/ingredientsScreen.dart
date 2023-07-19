@@ -29,9 +29,14 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
     super.initState();
     ingredients = fetchIngredients();
     ingredients.then((value) => {
-            localIngredients.addAll(value),
+      setState(() {
+        localIngredients.addAll(value);
+        searchedIngredients.addAll(value);
+      })
+      });
+            /*localIngredients.addAll(value),
             searchedIngredients.addAll(value),
-        });
+        });*/
   }
 
   void _selectIngredient(BuildContext context, Ingredient dish) async {
@@ -77,10 +82,10 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
             closeIconColor: Colors.white,
           ),
         );
+        setState(() {});
         return HttpStatus.forbidden;
       }
       // TODO : workaround for now, need to fix.
-      setState(() {});
     });
     if (statusCode == HttpStatus.noContent) {
       if (context.mounted) {
@@ -103,7 +108,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
     }
   }
 
-  void filterSearchResults(String query) {
+  void _filterSearchResults(String query) {
     setState(() {
       searchedIngredients = localIngredients
           .where(
@@ -130,7 +135,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         onChanged: (value) {
-          filterSearchResults(value);
+          _filterSearchResults(value);
         },
         controller: editingController,
         decoration: const InputDecoration(

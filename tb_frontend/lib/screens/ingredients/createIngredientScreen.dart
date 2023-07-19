@@ -177,7 +177,7 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
                     _createOrUpdateIngredient();
                   }
                 },
-                child: const Text('Submit'),
+                child: const Text('Save'),
               ),
             ],
           ),
