@@ -44,6 +44,49 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
     }
   }
 
+
+  void _createOrUpdateClient() {
+    // Create a new client object with the input data
+    Client newClient = Client(
+      _id,
+      _name,
+      _addressName,
+      _addressNumber,
+      _zipCode,
+      _city,
+    );
+    Future<Client> resultClient;
+    String snackBarMessage = '';
+    if(widget.client == null) {
+      resultClient = createClient(newClient);
+      snackBarMessage = 'Client created successfully';
+    } else {
+      resultClient = updateClient(newClient);
+      snackBarMessage = 'Client updated successfully';
+    }
+    resultClient.then((client) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(snackBarMessage, textAlign: TextAlign.center),
+          backgroundColor: Colors.green,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+      Navigator.of(context).pop(client);
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message, textAlign: TextAlign.center),
+          backgroundColor: Colors.red,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+    });
+
+    // Go back to the previous screen
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,36 +184,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-
-                    // Create a new client object with the input data
-                    Client newClient = Client(
-                      _id,
-                      _name,
-                      _addressName,
-                      _addressNumber,
-                      _zipCode,
-                      _city,
-                    );
-                    // Do something with the new client object (e.g., save to database)
-                    try {} catch (e) {
-                      log('Client not created');
-                    }
-                    try {} catch (e) {
-                      log('=======================Client not created=======================');
-                    }
-
-                    //Future<Client> resultClient = createClient(newClient);
-                    Future<Client> resultClient;
-
-                    if(widget.client != null) {
-                      resultClient = updateClient(newClient);
-                    } else {
-                      resultClient = createClient(newClient);
-                    }
-                    resultClient
-                        .whenComplete(() => Navigator.of(context).pop(resultClient));
-
-                    // Go back to the previous screen
+                    _createOrUpdateClient();
                   }
                 },
               ),

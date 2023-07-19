@@ -79,6 +79,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
         );
         return HttpStatus.forbidden;
       }
+      // TODO : workaround for now, need to fix.
       setState(() {});
     });
     if (statusCode == HttpStatus.noContent) {

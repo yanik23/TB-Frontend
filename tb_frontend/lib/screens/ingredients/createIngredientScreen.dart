@@ -56,17 +56,14 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
       snackBarMessage = 'Ingredient updated successfully';
     }
     resultIngredient.then((ingredient) {
-
      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(snackBarMessage),
+        SnackBar(content: Text(snackBarMessage),
           backgroundColor: Colors.green,
           showCloseIcon: true,
           closeIconColor: Colors.white,
         ),
       );
       Navigator.of(context).pop(ingredient);
-
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -95,28 +95,14 @@ class _ClientsScreenState extends State<ClientsScreen> {
     }
   }
 
-  Future _refreshClients() async {
-    log("=================================REFRESHING CLIENTS=================================");
-    setState(() {
-      clients = fetchClients();
-      clients.then((value) => {
-            localClients.clear(),
-            localClients.addAll(value),
-            searchedClients.clear(),
-            searchedClients.addAll(value)
-          });
-    });
-  }
-
   void _deleteClient(Client client) async {
-    final response = await deleteClient(client.id).catchError((onError) {
+    final response = await deleteClient(client.id).catchError((error) {
       log("=================================ERROR DELETING CLIENT=================================");
-      log(onError.toString());
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              "You don't have permission to delete this resource.",
+              'You don\'t have permission to delete this client',
               textAlign: TextAlign.center,
             ),
             backgroundColor: Colors.red,
@@ -133,7 +119,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              "Client deleted successfully.",
+              "Client deleted successfully",
               textAlign: TextAlign.center,
             ),
             backgroundColor: Colors.green,
@@ -155,6 +141,18 @@ class _ClientsScreenState extends State<ClientsScreen> {
           .where(
               (item) => item.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
+    });
+  }
+
+  Future _refreshClients() async {
+    setState(() {
+      clients = fetchClients();
+      clients.then((value) => {
+        localClients.clear(),
+        localClients.addAll(value),
+        searchedClients.clear(),
+        searchedClients.addAll(value)
+      });
     });
   }
 

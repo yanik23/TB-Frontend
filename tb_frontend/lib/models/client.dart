@@ -115,18 +115,18 @@ Future<List<Client>> _fetchClientsWithToken(String accessToken) async {
       HttpHeaders.authorizationHeader: accessToken,
     },
   ).timeout(const Duration(seconds: 5));
-  if (response.statusCode == 200) {
+  if (response.statusCode == HttpStatus.ok) {
     final List<dynamic> responseData =
         jsonDecode(utf8.decode(response.bodyBytes));
     return responseData.map((json) => Client.fromJson(json)).toList();
-  } else if (response.statusCode == 401) {
+  } else if (response.statusCode == HttpStatus.unauthorized) {
     final token = await fetchNewToken();
     SecureStorageManager.write('ACCESS_TOKEN', token);
     final response =
         await http.get(Uri.parse('$uriPrefix/clients'), headers: {
       HttpHeaders.authorizationHeader: token,
     });
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok) {
       final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
       return responseData.map((json) => Client.fromJson(json)).toList();
     } else {
@@ -149,11 +149,11 @@ Future<Client> createClient(Client client) async {
       },
       body: jsonEncode(client.toJson()),
     );
-    if (response.statusCode == 201) {
+    if (response.statusCode == HttpStatus.created) {
       return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == HttpStatus.forbidden) {
       throw Exception('You don\'t have the permission to create a client');
-    } else if (response.statusCode == 401) {
+    } else if (response.statusCode == HttpStatus.unauthorized) {
       final token = await fetchNewToken();
       SecureStorageManager.write('ACCESS_TOKEN', token);
       final response = await http.post(
@@ -164,7 +164,7 @@ Future<Client> createClient(Client client) async {
         },
         body: jsonEncode(client.toJson()),
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == HttpStatus.created) {
         return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
       } else if (response.statusCode == HttpStatus.forbidden){
         throw Exception('You don\'t have the permission to create a client');
@@ -194,6 +194,8 @@ Future<Client> updateClient(Client client) async {
     );
     if (response.statusCode == HttpStatus.ok) {
       return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    } else if (response.statusCode == HttpStatus.forbidden) {
+      throw Exception('You don\'t have permission to update this client');
     } else if (response.statusCode == HttpStatus.unauthorized) {
       final token = await fetchNewToken();
       SecureStorageManager.write('ACCESS_TOKEN', token);
@@ -207,6 +209,8 @@ Future<Client> updateClient(Client client) async {
       );
       if (response.statusCode == HttpStatus.ok) {
         return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to update this client');
       } else {
         throw Exception('Failed to update client');
       }
