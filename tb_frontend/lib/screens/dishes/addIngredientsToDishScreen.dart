@@ -19,12 +19,19 @@ class AddIngredientsToDishScreen extends StatefulWidget {
 
 class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen> {
   List<IngredientCheck> selectedIngredients = [];
+  List<IngredientCheck> searchedIngredients = [];
   bool _showSearchBar = false;
+  TextEditingController editingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     if (widget.selectedIngredients.isNotEmpty) {
+      log("==contains ===========================");
+      for(var el in widget.selectedIngredients){
+        log("==contains so setting true for ${el.name}");
+      }
+
       //selectedIngredients = List.from(widget.selectedIngredients);
       selectedIngredients = List.from(widget.ingredients);
       for (var element in selectedIngredients) {
@@ -49,24 +56,54 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
       selectedIngredients = List.from(widget.ingredients);
     }
     //selectedIngredients = List.from(widget.ingredients);
+    searchedIngredients.clear();
+    searchedIngredients.addAll(selectedIngredients);
   }
 
   void _toggleIngredient(int index, bool value) {
     setState(() {
-      selectedIngredients[index].isChecked = value;
+      searchedIngredients[index].isChecked = value;
     });
   }
 
   void _onAddPressed() {
-    List<IngredientCheck> si = selectedIngredients
+    List<IngredientCheck> si = searchedIngredients
         .where((ingredient) => ingredient.isChecked)
         .toList();
 
     Navigator.pop(context, si);
   }
 
+  void _filterSearchResults(String query) {
+    setState(() {
+      searchedIngredients = widget.ingredients
+          .where((ingredient) =>
+              ingredient.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget searchBar = Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        onChanged: (value) {
+          _filterSearchResults(value);
+        },
+        controller: editingController,
+        decoration: const InputDecoration(
+          labelText: 'Search',
+          hintText: 'Search',
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
+        ),
+      ),
+    );
+
+
     return Scaffold(
       appBar: AppBar(title: const Text('Select Ingredients'), actions: [
         IconButton(
@@ -80,18 +117,19 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
       ]),
       body: Column(
         children: <Widget>[
+          if (_showSearchBar) searchBar,
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: selectedIngredients.length,
+              itemCount: searchedIngredients.length,
               itemBuilder: (BuildContext context, int index) {
                 return Row(
                   children: [
                     Expanded(
                       child: CheckboxListTile(
                         activeColor: kColorScheme.primary,
-                        title: Text(selectedIngredients[index].name),
-                        value: selectedIngredients[index].isChecked,
+                        title: Text(searchedIngredients[index].name),
+                        value: searchedIngredients[index].isChecked,
                         onChanged: (value) {
                           _toggleIngredient(index, value!);
                         },
@@ -106,13 +144,13 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
                             hintText: 'Enter quantity',
                           ),
                           initialValue:
-                              selectedIngredients[index].weight != null
-                                  ? selectedIngredients[index].weight.toString()
+                              searchedIngredients[index].weight != null
+                                  ? searchedIngredients[index].weight.toString()
                                   : '',
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
                             setState(() {
-                              selectedIngredients[index].weight =
+                              searchedIngredients[index].weight =
                                   double.parse(value);
                             });
                           },

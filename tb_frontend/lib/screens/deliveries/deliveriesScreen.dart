@@ -51,6 +51,8 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
       setState(() {
         localDeliveries.remove(delivery);
         localDeliveries.add(updatedDelivery);
+        searchedDeliveries.remove(delivery);
+        searchedDeliveries.add(updatedDelivery);
       });
     }
   }
@@ -58,13 +60,14 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
   void _createDelivery() async{
     final newDelivery = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => const CreateDeliveryScreen(),
+        builder: (ctx) => const CreateDeliveryScreen('Create Delivery'),
       ),
     );
     if(newDelivery != null) {
       setState(() {
         //deliveries = fetchDeliveries();
         localDeliveries.add(newDelivery);
+        searchedDeliveries.add(newDelivery);
         /*newDelivery.status = "new";
         insertDelivery(newDelivery);*/
       });

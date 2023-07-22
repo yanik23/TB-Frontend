@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/dto/dishForDeliveryDTO.dart';
 import 'package:tb_frontend/models/dish.dart';
@@ -9,10 +8,8 @@ import '../../models/client.dart';
 import '../../models/delivery.dart';
 import '../../utils/constants.dart';
 import '../../utils/secureStorageManager.dart';
+import '../welcomeScreen.dart';
 import 'addDishesToDeliveryScreen.dart';
-
-
-
 
 class DishCheck {
   int id;
@@ -21,13 +18,15 @@ class DishCheck {
   int quantityRemained;
   int quantityDelivered;
 
-  DishCheck(this.id, this.name, this.isChecked, this.quantityRemained, this.quantityDelivered);
+  DishCheck(this.id, this.name, this.isChecked, this.quantityRemained,
+      this.quantityDelivered);
 }
 
 class CreateDeliveryScreen extends StatefulWidget {
   final Delivery? delivery;
+  final title;
 
-  const CreateDeliveryScreen({this.delivery, super.key});
+  const CreateDeliveryScreen(this.title, {this.delivery, super.key});
 
   @override
   State<CreateDeliveryScreen> createState() => _CreateDeliveryScreenState();
@@ -63,15 +62,17 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
         // TODO check date
         _date = widget.delivery!.deliveryDate;
         //selectedClient= widget.delivery!.clientName;
-        selectedDishes = widget.delivery!.dishes!.map((e) => DishCheck(e.id, e.name, true, e.quantityRemained, e.quantityDelivered)).toList();
-
+        selectedDishes = widget.delivery!.dishes!
+            .map((e) => DishCheck(
+                e.id, e.name, true, e.quantityRemained, e.quantityDelivered))
+            .toList();
       });
     }
   }
 
   void _loadUser() async {
     final username = await SecureStorageManager.read('KEY_USERNAME');
-    if(username != null) {
+    if (username != null) {
       setState(() {
         _username = username;
       });
@@ -89,7 +90,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   void _loadDishes() async {
     fetchDishes().then((value) {
       setState(() {
-        for(var dish in value) {
+        for (var dish in value) {
           _dishes.add(DishCheck(dish.id, dish.name, false, 0, 0));
         }
       });
@@ -103,7 +104,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
       firstDate: DateTime(2021),
       lastDate: DateTime.now(),
     ).then((value) {
-      if(value != null) {
+      if (value != null) {
         setState(() {
           _date = value;
         });
@@ -111,12 +112,11 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     });
   }
 
-
   void _addClientToDelivery() async {
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddClientToDeliveryScreen(_clients, _clientName)
-      ),
+          builder: (context) =>
+              AddClientToDeliveryScreen(_clients, _clientName)),
     );
     if (newClient != null) {
       setState(() {
@@ -128,7 +128,8 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   void _addDishesToDelivery() async {
     final newDishes = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddDishesToDeliveryScreen(_dishes, selectedDishes),
+        builder: (context) =>
+            AddDishesToDeliveryScreen(_dishes, selectedDishes),
       ),
     );
     if (newDishes != null) {
@@ -146,13 +147,16 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
       _clientName,
       _date,
       _deliveryDetails,
-      selectedDishes.map((e) => DishForDeliveryDTO(e.id, e.name, 0, e.quantityRemained ,e.quantityDelivered)).toList(),
+      selectedDishes
+          .map((e) => DishForDeliveryDTO(
+              e.id, e.name, 0, e.quantityRemained, e.quantityDelivered))
+          .toList(),
     );
 
     //Future<Delivery> resultDelivery = createDelivery(newDelivery);
     Future<Delivery> resultDelivery;
     String snackBarMessage = '';
-    if(widget.delivery == null) {
+    if (widget.delivery == null) {
       resultDelivery = createDelivery(newDelivery);
       snackBarMessage = 'Delivery created succesfully';
     } else {
@@ -161,7 +165,8 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
     resultDelivery.then((delivery) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(snackBarMessage, textAlign: TextAlign.center),
+        SnackBar(
+          content: Text(snackBarMessage, textAlign: TextAlign.center),
           backgroundColor: Colors.green,
           showCloseIcon: true,
           closeIconColor: Colors.white,
@@ -184,7 +189,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Delivery Input'),
+        title: Text(widget.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -212,11 +217,17 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
               const SizedBox(height: 16.0),
               Row(
                 children: [
-                  const Text('Delivery date : '),
+                  Text('Delivery date : ', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16.0,
+                      color: kColorScheme.primary
+                  ),
+                  ),
                   const Spacer(),
                   Text(
                     formatter.format(_date),
-                       /* ? 'No date selected'
+                    /* ? 'No date selected'
                         : formatter.format(_date!),*/
                   ),
                   IconButton(
@@ -226,30 +237,52 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                 ],
               ),
               const SizedBox(height: 16.0),
+              //Row(
+              // children: [
+
+
               Row(
+                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    _clientName.isEmpty
-                        ? 'No client selected'
-                        : 'Delivery to : $_clientName',
+                    'Delivered to : ',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 16.0,
+                        color: kColorScheme.primary),
                   ),
                   const Spacer(),
-                  ElevatedButton(onPressed: () {
-                    _addClientToDelivery();
-                  }, child: const Text('Add Client')),
+                  ElevatedButton(
+                      onPressed: () {
+                        _addClientToDelivery();
+                      },
+                      child: const Text('Add Client')),
                 ],
               ),
+              Text(
+                _clientName.isEmpty ? 'No client selected' : _clientName,
+              ),
+              //],
+              //),
               const SizedBox(height: 16.0),
               Row(
                 children: [
-                  const Text('List of dishes :'),
+                  Text('List of dishes :', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16.0,
+                      color: kColorScheme.primary
+                  ),
+                  ),
                   const Spacer(),
-                  ElevatedButton(onPressed: () {
-                    _addDishesToDelivery();
-                  }, child: const Text('Add Dishes')),
+                  ElevatedButton(
+                      onPressed: () {
+                        _addDishesToDelivery();
+                      },
+                      child: const Text('Add Dishes')),
                 ],
               ),
-
 
               const SizedBox(height: 16.0),
               ElevatedButton(

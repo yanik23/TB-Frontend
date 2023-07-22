@@ -29,7 +29,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
   void _editDelivery(Delivery c) async {
     final newDelivery = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => CreateDeliveryScreen(delivery: c),
+        builder: (ctx) => CreateDeliveryScreen('Edit Delivery', delivery: c),
       ),
     );
     if (newDelivery != null) {

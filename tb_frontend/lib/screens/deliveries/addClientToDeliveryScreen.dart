@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../models/client.dart';
 import '../../models/dish.dart';
 import '../welcomeScreen.dart';
+import '../../utils/widgets/searchBar.dart' as sb;
 
 
 /*class DishCheck {
@@ -23,18 +24,36 @@ class AddClientToDeliveryScreen extends StatefulWidget {
 
   @override
   State<AddClientToDeliveryScreen> createState() => _AddClientToDeliveryScreenState();
+
 }
 
 
 class _AddClientToDeliveryScreenState extends State<AddClientToDeliveryScreen> {
-
+  List<Client> searchedClients = [];
   //Dish dish = Dish();
   bool _showSearchBar = false;
+  TextEditingController editingController = TextEditingController();
 
+
+  @override
+  void initState() {
+    super.initState();
+    searchedClients = widget.clients;
+  }
 
   void _onAddPressed() {
     Navigator.of(context).pop(widget.selectedClient);
   }
+
+  void _filterSearchResults(String query) {
+    setState(() {
+      searchedClients = widget.clients
+          .where((client) =>
+          client.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,26 +72,27 @@ class _AddClientToDeliveryScreenState extends State<AddClientToDeliveryScreen> {
       ),
       body: Column(
           children: [
+            if (_showSearchBar) sb.SearchBar(editingController, _filterSearchResults),
             Expanded(
               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: widget.clients.length,
+                itemCount: searchedClients.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Row(
                     children: [
                       Expanded(
                         child: RadioListTile(
-                          value: widget.clients[index].name,
+                          value: searchedClients[index].name,
                           groupValue: widget.selectedClient,
                           activeColor: kColorScheme.primary,
-                          title: Text(widget.clients[index].name, style: TextStyle(
+                          title: Text(searchedClients[index].name, style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontStyle: FontStyle.italic,
                             fontSize: 18.0,
                             color: kColorScheme.primary,
                           ),
                           ),
-                          subtitle: Text("${widget.clients[index].addressName} ${widget.clients[index].addressNumber}, ${widget.clients[index].zipCode} ${widget.clients[index].city}"),
+                          subtitle: Text("${searchedClients[index].addressName} ${searchedClients[index].addressNumber}, ${searchedClients[index].zipCode} ${searchedClients[index].city}"),
                           onChanged: (value) {
                             setState(() {
                               widget.selectedClient = value;

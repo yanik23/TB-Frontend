@@ -46,33 +46,36 @@ class DeliveryItem extends StatelessWidget {
                 padding:
                 const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Column(children: [
-                  Text(
-                    'delivery id : ${delivery.id}',
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    softWrap: true, //so the text is wrapped well if needed
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    Text(
+                      'Delivery id : ${delivery.id}11.111.111.222',
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      softWrap: true, //so the text is wrapped well if needed
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
+
                   const SizedBox(height: 8),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.person, color: Colors.white,),
-                        Text(
-                          delivery.username,
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          softWrap: true, //so the text is wrapped well if needed
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        Container(
+                          child: Text(
+                            delivery.username,
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            softWrap: true, //so the text is wrapped well if needed
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         const Spacer(),
@@ -91,39 +94,36 @@ class DeliveryItem extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
-
-
-                        /*DishItemTrait(Icons.monetization_on, '${dish.price} CHF'),
-                        const Spacer(),
-                        DishItemTrait(Icons.local_fire_department, '${dish.calories}'),
-                        const Spacer(),
-                        DishItemTrait(Icons.format_size, dish.currentSize),
-                        const Spacer(),
-                        DishItemTrait(Icons.category, dish.currentType)*/
                       ]
                   ),
                   const SizedBox(height: 8),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.delivery_dining, color: Colors.white,),
-                      Text(
-                        delivery.clientName,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        softWrap: true, //so the text is wrapped well if needed
-                        overflow: TextOverflow.fade,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                  //Wrap(
+                   // children: [
+                      Row(
+                        //alignment: WrapAlignment.center,
+                        children: [
+                          const Icon(Icons.delivery_dining, color: Colors.white,),
+                          Expanded(
+                            child: Text(
+                              delivery.clientName,
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              softWrap: true, //so the text is wrapped well if needed
+                              overflow: TextOverflow.fade,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                   //const Spacer(),
-                ]),
+                //]),
 
               ),
             )

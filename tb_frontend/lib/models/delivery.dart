@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,7 +12,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:tb_frontend/utils/constants.dart';
 
-
 final formatter = DateFormat('dd/MM/yyyy');
 
 class Delivery {
@@ -24,7 +22,8 @@ class Delivery {
   String? details;
   List<DishForDeliveryDTO>? dishes;
 
-  Delivery(this.id, this.username, this.clientName, this.deliveryDate, this.details, this.dishes);
+  Delivery(this.id, this.username, this.clientName, this.deliveryDate,
+      this.details, this.dishes);
 
   get formattedDate {
     return '${deliveryDate.day}/${deliveryDate.month}/${deliveryDate.year}';
@@ -37,55 +36,57 @@ class Delivery {
       json['clientName'],
       DateTime.parse(json['deliveryDate']),
       json['details'],
-      json['dishes'] != null ? (json['dishes'] as List).map((i) => DishForDeliveryDTO.fromJson(i)).toList() : null,
+      json['dishes'] != null
+          ? (json['dishes'] as List)
+              .map((i) => DishForDeliveryDTO.fromJson(i))
+              .toList()
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'userName': username,
-    'clientName': clientName,
-    'deliveryDate': deliveryDate.toIso8601String(),
-    'details': details ?? '',
-    'dishes': dishes != null ? dishes!.map((e) => e.toJson()).toList() : null, //will add ingredients of dishes too.
-  };
-
+        'id': id,
+        'userName': username,
+        'clientName': clientName,
+        'deliveryDate': deliveryDate.toIso8601String(),
+        'details': details ?? '',
+        'dishes': dishes != null
+            ? dishes!.map((e) => e.toJson()).toList()
+            : null, //will add ingredients of dishes too.
+      };
 }
 
 Future<List<Delivery>> fetchDeliveries() async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
-  if(token != null) {
-      final response = await http
-          .get(Uri.parse('$uriPrefix/deliveries'),
-          headers: {
-            HttpHeaders.authorizationHeader: token,
-          }
-      );
+  if (token != null) {
+    final response =
+        await http.get(Uri.parse('$uriPrefix/deliveries'), headers: {
+      HttpHeaders.authorizationHeader: token,
+    });
+    if (response.statusCode == HttpStatus.ok) {
+      final List<dynamic> responseData =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      return responseData.map((json) => Delivery.fromJson(json)).toList();
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      final newToken = await fetchNewToken();
+      SecureStorageManager.write('ACCESS_TOKEN', newToken);
+      final response =
+          await http.get(Uri.parse('$uriPrefix/deliveries'), headers: {
+        HttpHeaders.authorizationHeader: newToken,
+      });
       if (response.statusCode == HttpStatus.ok) {
-        final List<dynamic> responseData = jsonDecode(
-            utf8.decode(response.bodyBytes));
+        final List<dynamic> responseData =
+            jsonDecode(utf8.decode(response.bodyBytes));
         return responseData.map((json) => Delivery.fromJson(json)).toList();
-      } else if (response.statusCode == HttpStatus.unauthorized) {
-        final newToken = await fetchNewToken();
-        SecureStorageManager.write('ACCESS_TOKEN', newToken);
-        final response = await http
-            .get(Uri.parse('$uriPrefix/deliveries'),
-            headers: {
-              HttpHeaders.authorizationHeader: newToken,
-            }
-        );
-        if (response.statusCode == HttpStatus.ok) {
-          final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
-          return responseData.map((json) => Delivery.fromJson(json)).toList();
-        } else {
-          // If the server did not return a 200 OK response, throw an exception.
-          throw Exception('Failed to load deliveries');
-        }
       } else {
         // If the server did not return a 200 OK response, throw an exception.
         throw Exception('Failed to load deliveries');
       }
+    } else {
+      // If the server did not return a 200 OK response, throw an exception.
+      throw Exception('Failed to load deliveries');
+    }
   } else {
     throw Exception('Failed to load JWT');
   }
@@ -94,16 +95,32 @@ Future<List<Delivery>> fetchDeliveries() async {
 Future<Delivery> fetchDelivery(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
-  if(token != null) {
-    final response = await http.get(
-        Uri.parse('$uriPrefix/deliveries/$id'),
-        headers: {
-          HttpHeaders
-              .authorizationHeader: token,
-        });
+  if (token != null) {
+    final response =
+        await http.get(Uri.parse('$uriPrefix/deliveries/$id'), headers: {
+      HttpHeaders.authorizationHeader: token,
+    });
     if (response.statusCode == HttpStatus.ok) {
       // If the server did return a 200 OK response, then parse the JSON.
       return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    } else if (response.statusCode == HttpStatus.unauthorized) {
+      final newToken = await fetchNewToken();
+      SecureStorageManager.write('ACCESS_TOKEN', newToken);
+      final response =
+          await http.get(Uri.parse('$uriPrefix/deliveries/$id'), headers: {
+        HttpHeaders.authorizationHeader: newToken,
+      });
+      if (response.statusCode == HttpStatus.ok) {
+        // If the server did return a 200 OK response, then parse the JSON.
+        return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw Exception('You don\'t have permission to view this delivery');
+      } else {
+        // If the server did not return a 200 OK response, then throw an exception.
+        throw Exception('Failed to load delivery');
+      }
+    } else if (response.statusCode == HttpStatus.forbidden) {
+      throw Exception('You don\'t have permission to view this delivery');
     } else {
       // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to load delivery');
@@ -116,7 +133,7 @@ Future<Delivery> fetchDelivery(int id) async {
 Future<Delivery> createDelivery(Delivery delivery) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
-  if(token != null) {
+  if (token != null) {
     final response = await http.post(
       Uri.parse('$uriPrefix/deliveries'),
       headers: {
@@ -163,7 +180,7 @@ Future<Delivery> createDelivery(Delivery delivery) async {
 Future<Delivery> updateDelivery(Delivery delivery) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
-  if(token != null) {
+  if (token != null) {
     final response = await http.put(
       Uri.parse('$uriPrefix/deliveries/${delivery.id}'),
       headers: {
@@ -210,7 +227,7 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
 Future<int> deleteDelivery(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
-  if(token != null) {
+  if (token != null) {
     final response = await http.delete(
       Uri.parse('$uriPrefix/deliveries/$id'),
       headers: {

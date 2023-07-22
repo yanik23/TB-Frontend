@@ -23,7 +23,7 @@ class CreateDishScreen extends StatefulWidget {
   const CreateDishScreen({this.dish, super.key});
 
   @override
-  _CreateDishScreenState createState() => _CreateDishScreenState();
+  State<CreateDishScreen> createState() => _CreateDishScreenState();
 }
 
 class _CreateDishScreenState extends State<CreateDishScreen> {
