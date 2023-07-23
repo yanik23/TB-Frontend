@@ -97,12 +97,11 @@ class _ClientsScreenState extends State<ClientsScreen> {
 
   void _deleteClient(Client client) async {
     final response = await deleteClient(client.id).catchError((error) {
-      log("=================================ERROR DELETING CLIENT=================================");
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'You don\'t have permission to delete this client',
+              'You don\'t have the permission to delete this client',
               textAlign: TextAlign.center,
             ),
             backgroundColor: Colors.red,
@@ -145,7 +144,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
   }
 
   Future _refreshClients() async {
-    log("=================================REFRESHING CLIENTS=================================");
     setState(() {
       clients = fetchClients();
       clients.then((value) => {
@@ -192,7 +190,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
                     itemBuilder: (context, index) => Dismissible(
                       key: UniqueKey(),
                       onDismissed: (direction) {
-                        // onRemoveExpense(expenses[index]);
                         showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(

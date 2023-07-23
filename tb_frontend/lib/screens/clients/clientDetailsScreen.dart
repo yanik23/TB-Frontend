@@ -99,7 +99,7 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
                         onPressed: () {
                           _editClient(localClient);
                         },
-                        child: Text('Edit')),
+                        child: const Text('Edit Client')),
                   ],
                 );
               } else if (snapshot.hasError) {

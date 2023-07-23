@@ -1,11 +1,6 @@
 
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
-
 import '../../models/client.dart';
 
 class ClientItem extends StatelessWidget {
@@ -89,15 +84,6 @@ class ClientItem extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
-
-
-                        /*DishItemTrait(Icons.monetization_on, '${dish.price} CHF'),
-                        const Spacer(),
-                        DishItemTrait(Icons.local_fire_department, '${dish.calories}'),
-                        const Spacer(),
-                        DishItemTrait(Icons.format_size, dish.currentSize),
-                        const Spacer(),
-                        DishItemTrait(Icons.category, dish.currentType)*/
                       ]
                   )
                 ]),

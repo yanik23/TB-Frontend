@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tb_frontend/data/dummyDishes.dart';
-import 'package:tb_frontend/models/client.dart';
 import 'package:tb_frontend/screens/deliveries/deliveriesScreen.dart';
 import 'package:tb_frontend/screens/ingredients/ingredientsScreen.dart';
 import 'package:tb_frontend/screens/scanner/qrScannerScreen.dart';
 import 'package:tb_frontend/screens/statistics/statisticMenuScreen.dart';
-import 'package:tb_frontend/screens/statistics/statisticsScreen.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
@@ -24,23 +21,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   initState() {
     super.initState();
-    /*Future<List<Client>> clients = fetchClients();
-    clients.then((value) => {
 
-      for(int i = 0; i < value.length; i++){
-        value[i].status = "ok",
-        value[i].remoteId = value[i].id,
-        createClientLocally(value[i])
-      }
-      /*value.forEach((element) {
-        element.status = "ok";
-        element.remoteId = 23;
-        insertClientLocally(element);
-      })*/
-      //value.map((e) => e.status = "ok")
-    });*/
-
-    //createClientsLocally(clients);
   }
 
   @override
@@ -115,7 +96,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (ctx) {
-                      return DishesScreen('Dishes');
+                      return const DishesScreen('Dishes');
                     },
                   ),
                 );

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
-
 import '../../utils/constants.dart';
 import 'createDishScreen.dart';
 

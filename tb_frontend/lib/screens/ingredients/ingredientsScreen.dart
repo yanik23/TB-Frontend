@@ -1,8 +1,6 @@
-import 'dart:developer';
+
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import '../../models/ingredient.dart';
 import 'createIngredientScreen.dart';
 import 'ingredientDetailsScreen.dart';
