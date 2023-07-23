@@ -58,7 +58,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
   void _createIngredient() async {
     final newIngredient = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => const CreateIngredientScreen(),
+        builder: (ctx) => const CreateIngredientScreen('Create Ingredient'),
       ),
     );
     if (newIngredient != null) {

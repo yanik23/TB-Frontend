@@ -29,7 +29,7 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
   void _editIngredient(Ingredient i) async {
     final updatedIngredient = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => CreateIngredientScreen(ingredient: i),
+        builder: (ctx) => CreateIngredientScreen('Edit Ingredient', ingredient: i),
       ),
     );
     if(updatedIngredient != null) {
@@ -47,6 +47,27 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
           IconButton(
             icon: const Icon(Icons.qr_code),
             onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) =>
+              AlertDialog(
+                title: Text("QR Code"),
+                content: Text("QR code not implemented yet"),
+                actions: [
+                  TextButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+              );
+              /*ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('QR code not implemented yet'),
+                ),
+              );*/
             },
           ),
         ],
@@ -109,9 +130,11 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
                   Text(snapshot.data!.supplier ?? 'N/A'),
                   const SizedBox(height: 32.0),
 
-                  ElevatedButton(onPressed: () {
-                    _editIngredient(snapshot.data!);
-                  }, child: Text('Edit')),
+                  Center(
+                    child: ElevatedButton(onPressed: () {
+                      _editIngredient(snapshot.data!);
+                    }, child: const Text('Edit')),
+                  ),
 
                 ],
               );
@@ -120,7 +143,7 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
             }
 
             // By default, show a loading spinner.
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           },
         )
       ),

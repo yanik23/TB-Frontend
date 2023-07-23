@@ -66,7 +66,7 @@ Future<Ingredient> fetchIngredient(int id) async {
       HttpHeaders.authorizationHeader: token,
     });
     if (response.statusCode == HttpStatus.ok) {
-      return Ingredient.fullFromJson(jsonDecode(response.body));
+      return Ingredient.fullFromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == HttpStatus.unauthorized) {
       final newToken = await fetchNewToken();
       SecureStorageManager.write('ACCESS_TOKEN', newToken);
@@ -75,7 +75,7 @@ Future<Ingredient> fetchIngredient(int id) async {
         HttpHeaders.authorizationHeader: newToken,
       });
       if (response.statusCode == HttpStatus.ok) {
-        return Ingredient.fullFromJson(jsonDecode(response.body));
+        return Ingredient.fullFromJson(jsonDecode(utf8.decode(response.bodyBytes)));
       } else {
         throw Exception('Failed to load ingredient');
       }
@@ -96,7 +96,7 @@ Future<List<Ingredient>> fetchIngredients() async {
       HttpHeaders.authorizationHeader: token,
     });
     if (response.statusCode == HttpStatus.ok) {
-      final List<dynamic> responseData = jsonDecode(response.body);
+      final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
       return responseData.map((json) => Ingredient.fullFromJson(json)).toList();
     } else if (response.statusCode == HttpStatus.unauthorized) {
       final newToken = await fetchNewToken();
@@ -106,7 +106,7 @@ Future<List<Ingredient>> fetchIngredients() async {
         HttpHeaders.authorizationHeader: newToken,
       });
       if (response.statusCode == HttpStatus.ok) {
-        final List<dynamic> responseData = jsonDecode(response.body);
+        final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
         return responseData
             .map((json) => Ingredient.fullFromJson(json))
             .toList();
@@ -136,7 +136,7 @@ Future<Ingredient> createIngredient(Ingredient ingredient) async {
 
     if (response.statusCode == HttpStatus.created) {
       // If the server did return a 201 CREATED response, then parse the JSON.
-      return Ingredient.fullFromJson(jsonDecode(response.body));
+      return Ingredient.fullFromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == HttpStatus.forbidden) {
       // If the server did not return a 201 CREATED response, then throw an exception.
       throw Exception('You don\'t have permission to create this ingredient');
@@ -153,7 +153,7 @@ Future<Ingredient> createIngredient(Ingredient ingredient) async {
       );
       if (response.statusCode == HttpStatus.created) {
         // If the server did return a 201 CREATED response, then parse the JSON.
-        return Ingredient.fullFromJson(jsonDecode(response.body));
+        return Ingredient.fullFromJson(jsonDecode(utf8.decode(response.bodyBytes)));
       } else if (response.statusCode == HttpStatus.forbidden) {
         // If the server did not return a 201 CREATED response, then throw an exception.
         throw Exception('You don\'t have permission to create this ingredient');

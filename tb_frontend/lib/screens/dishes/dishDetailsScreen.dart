@@ -33,7 +33,7 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
   void _editDish(Dish d) async {
     final updatedDish = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => CreateDishScreen(dish: d),
+        builder: (ctx) => CreateDishScreen('Edit Dish',dish: d),
       ),
     );
     if(updatedDish != null) {
@@ -79,7 +79,7 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      localDish.name ?? 'N/A',
+                      localDish.name,
                       style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -175,6 +175,14 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
+
+                    if(localDish.ingredients?.isEmpty ?? true)
+                      const Text('N/A', /*style: TextStyle(
+                        fontSize: 18.0,
+                        //fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),*/),
                     Container(
                       width: double.infinity,
                       constraints: const BoxConstraints(maxHeight: 300.0),
@@ -202,12 +210,7 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                                         const Icon(Icons.balance, color: Colors.orangeAccent),
                                         const SizedBox(width: 8.0),
                                         Text(localDish.ingredients?[index].weight != null ? '${localDish.ingredients?[index].weight}g' : 'N/A'),
-                                        const Spacer(),
-                                        /*const Text("Remained: "),
-                                        Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),
-                                        const Spacer(),
-                                        const Text("Delivered: "),
-                                        Text(localDelivery.dishes?[index].quantityDelivered.toString() ?? 'N/A'),*/
+                                        //const Spacer(),
                                       ],
                                     ),
                                   ),
@@ -218,18 +221,14 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                         ),
                       ),
                     ),
-                    ElevatedButton(
-                        onPressed: () {
-                          // _isEditable = !_isEditable;
-                          /*Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) =>
-                                  CreateClientScreen(client: snapshot.data),
-                            ),
-                          );*/
-                          _editDish(localDish);
-                        },
-                        child: const Text('Edit')),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _editDish(localDish);
+                          },
+                          child: const Text('Edit Dish')),
+                    ),
                   ],
                 );
               } else if (snapshot.hasError) {

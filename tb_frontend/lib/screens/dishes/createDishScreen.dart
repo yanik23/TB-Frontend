@@ -1,13 +1,12 @@
-import 'dart:developer';
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/addIngredientsToDishScreen.dart';
-//import 'package:tb_frontend/models/ingredient.dart';
-//import 'package:tb_frontend/screens/dishes/dishIngredientsSelectionScreen.dart';
-
 import '../../dto/ingredientLessDTO.dart';
 import '../../models/dish.dart';
 import '../../models/ingredient.dart';
+import '../../utils/constants.dart';
+import '../welcomeScreen.dart';
 
 class IngredientCheck {
   int id;
@@ -20,7 +19,8 @@ class IngredientCheck {
 
 class CreateDishScreen extends StatefulWidget {
   final Dish? dish;
-  const CreateDishScreen({this.dish, super.key});
+  final String title;
+  const CreateDishScreen(this.title, {this.dish, super.key});
 
   @override
   State<CreateDishScreen> createState() => _CreateDishScreenState();
@@ -50,12 +50,20 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
   //TextEditingController nameController = TextEditingController();
 
-  final DishType _selectedDishType = DishType.meat;
-  final DishSize _selectedDishSize = DishSize.fit;
+  /*final DishType _selectedDishType = DishType.meat;
+  final DishSize _selectedDishSize = DishSize.fit;*/
 
   List<IngredientCheck> ingredients = [];
   List<IngredientCheck> selectedIngredients = [];
   List<IngredientLessDTO> ingredientsLessDTO = [];
+
+  final RegExp _nameRegExp = RegExp(nameRegexPattern);
+  final RegExp _descriptionRegExp = RegExp(descriptionRegexPattern);
+  final RegExp _intRegExp = RegExp(intRegexPattern);
+  final RegExp _doubleRegExp = RegExp(doubleRegexPattern);
+
+  late bool _nutritionInfo;
+  late Icon icon;
 
   @override
   void initState() {
@@ -90,6 +98,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
               ))
           .toList();
     }
+    _nutritionInfo = false;
+    icon = Icon(Icons.arrow_right, color: kColorScheme.primary,);
   }
 
   void _toggleIngredient(int index, bool value) {
@@ -103,7 +113,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
         ingredients.where((ingredient) => ingredient.isChecked).toList();
 
     // Do something with the selectedIngredients
-    print(selectedIngredients);
+
 
     // Close the bottom sheet
     Navigator.pop(context);
@@ -124,6 +134,9 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
   void _addIngredientsToDish() async {
     log("========================================== _addIngredientsToDish");
+    for(var el in selectedIngredients) {
+      log("=============selected=========================== ${el.name}");
+    }
     final newIngredients = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
@@ -137,11 +150,12 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Dish'),
+        title: Text(widget.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -160,8 +174,9 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
-                        value.trim().isEmpty) {
-                      return 'Please enter a name';
+                        value.trim().isEmpty
+                        || !_nameRegExp.hasMatch(value)) {
+                      return 'Please enter a valid name';
                     }
                     return null;
                   },
@@ -177,15 +192,16 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish price',
                   ),
                   keyboardType: TextInputType.number,
+                  initialValue: _price == 0 ? '' : _price.toString(),
+                  maxLength: 6,
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
-                        value.trim().isEmpty) {
+                        value.trim().isEmpty || !_doubleRegExp.hasMatch(value)) {
                       return 'Please enter a valid price';
                     }
                     return null;
                   },
-                  initialValue: _price == 0 ? '' : _price.toString(),
                   onChanged: (value) {
                     setState(() {
                       _price = double.parse(value);
@@ -199,11 +215,12 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   ),
                   keyboardType: TextInputType.number,
                   initialValue: _calories == 0 ? '' : _calories.toString(),
+                  maxLength: 6,
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
-                        value.trim().isEmpty) {
-                      return 'Please enter a valid number of calories';
+                        value.trim().isEmpty || !_intRegExp.hasMatch(value)) {
+                      return 'Please enter a valid integer number of calories';
                     }
                     return null;
                   },
@@ -220,9 +237,16 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     hintText: 'Enter the dish description',
                   ),
                   initialValue: _description,
+                  maxLength: 255,
+                  validator: (value) {
+                    if (!_descriptionRegExp.hasMatch(value!)) {
+                      return 'Please enter a valid description';
+                    }
+                    return null;
+                  },
                   onChanged: (value) {
                     setState(() {
-                      _description = value;
+                       value.isEmpty? _description = null: _description = value;
                     });
                   },
                 ),
@@ -290,148 +314,256 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   },
                 ),
                 const SizedBox(height: 16.0),
-                const Text('Nutritional Informations (Optional)'),
-
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fats',
-                    hintText: 'Enter the dish fats',
-                  ),
-                  keyboardType: TextInputType.number,
-                  initialValue: _fats == null ? '' : _fats.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _fats = double.parse(value);
-                    });
-                  },
+                /*Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Nutritional Information (Optional)', style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: kColorScheme.primary
+                    ),
+                    ),
+                    IconButton(onPressed: () {
+                      setState(() {
+                        _nutritionInfo = !_nutritionInfo;
+                      });
+                      //icon = Icons.arrow_left
+                    },
+                        icon: Icon(Icons.arrow_drop_down, color: kColorScheme.primary,)),
+                  ],
+                ),*/
+                TextButton.icon(onPressed: () {
+                  setState(() {
+                    _nutritionInfo = !_nutritionInfo;
+                    _nutritionInfo ? icon = Icon(Icons.arrow_drop_down, color: kColorScheme.primary,) : icon = Icon(Icons.arrow_right, color: kColorScheme.primary,);
+                  });
+                  //icon = Icons.arrow_left
+                }, icon: icon, label: Text('Nutritional Information (Optional)', style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    color: kColorScheme.primary
                 ),
-
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Saturated Fats',
-                    hintText: 'Enter the dish saturated fats',
-                  ),
-                  keyboardType: TextInputType.number,
-                  initialValue:
-                      _saturatedFats == null ? '' : _saturatedFats.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _saturatedFats = double.parse(value);
-                    });
-                  },
                 ),
-
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Sodium',
-                    hintText: 'Enter the dish sodium',
-                  ),
-                  keyboardType: TextInputType.number,
-                  initialValue: _sodium == null ? '' : _sodium.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _sodium = double.parse(value);
-                    });
-                  },
                 ),
-
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Carbohydrates',
-                    hintText: 'Enter the dish carbohydrates',
+                if (_nutritionInfo)
+                   Column(
+                     children: [
+                       TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Fats',
+                          hintText: 'Enter the dish fats',
+                        ),
+                        keyboardType: TextInputType.number,
+                        initialValue: _fats == null ? '' : _fats.toString(),
+                        maxLength: 10,
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid fats value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            value.isEmpty ? _fats = null : _fats = double.parse(value);
+                          });
+                        },
                   ),
-                  keyboardType: TextInputType.number,
-                  initialValue:
-                      _carbohydrates == null ? '' : _carbohydrates.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _carbohydrates = double.parse(value);
-                    });
-                  },
-                ),
 
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fibers',
-                    hintText: 'Enter the dish fibers',
-                  ),
-                  keyboardType: TextInputType.number,
-                  initialValue: _fibers == null ? '' : _fibers.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _fibers = double.parse(value);
-                    });
-                  },
-                ),
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Saturated Fats',
+                          hintText: 'Enter the dish saturated fats',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
 
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Sugars',
-                    hintText: 'Enter the dish sugars',
+                        initialValue:
+                            _saturatedFats == null ? '' : _saturatedFats.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid saturated fats value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            value.isEmpty ? _saturatedFats = null : _saturatedFats = double.parse(value);
+                          });
+                        },
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    setState(() {
-                      _sugars = double.parse(value);
-                    });
-                  },
-                ),
 
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Proteins',
-                    hintText: 'Enter the dish proteins',
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Sodium',
+                          hintText: 'Enter the dish sodium',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue: _sodium == null ? '' : _sodium.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid sodium value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                           value.isEmpty? _sodium = null : _sodium = double.parse(value);
+                          });
+                        },
                   ),
-                  keyboardType: TextInputType.number,
-                  initialValue: _proteins == null ? '' : _proteins.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _proteins = double.parse(value);
-                    });
-                  },
-                ),
 
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Calcium',
-                    hintText: 'Enter the dish calcium',
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Carbohydrates',
+                          hintText: 'Enter the dish carbohydrates',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue:
+                            _carbohydrates == null ? '' : _carbohydrates.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid carbohydrates value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            value.isEmpty ? _carbohydrates = null : _carbohydrates = double.parse(value);
+                          });
+                        },
                   ),
-                  keyboardType: TextInputType.number,
-                  initialValue: _calcium == null ? '' : _calcium.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _calcium = double.parse(value);
-                    });
-                  },
-                ),
 
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Iron',
-                    hintText: 'Enter the dish iron',
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Fibers',
+                          hintText: 'Enter the dish fibers',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue: _fibers == null ? '' : _fibers.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid fibers value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                           value.isEmpty ? _fibers = null : _fibers = double.parse(value);
+                          });
+                        },
                   ),
-                  keyboardType: TextInputType.number,
-                  initialValue: _iron == null ? '' : _iron.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _iron = double.parse(value);
-                    });
-                  },
-                ),
 
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Potassium',
-                    hintText: 'Enter the dish potassium',
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Sugars',
+                          hintText: 'Enter the dish sugars',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue: _sugars == null ? '' : _sugars.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid sugars value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            value.isEmpty ? _sugars = null : _sugars = double.parse(value);
+                          });
+                        },
                   ),
-                  keyboardType: TextInputType.number,
-                  initialValue: _potassium == null ? '' : _potassium.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _potassium = double.parse(value);
-                    });
-                  },
-                ),
+
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Proteins',
+                          hintText: 'Enter the dish proteins',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue: _proteins == null ? '' : _proteins.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid proteins value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            value.isEmpty ? _proteins = null : _proteins = double.parse(value);
+                          });
+                        },
+                  ),
+
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Calcium',
+                          hintText: 'Enter the dish calcium',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue: _calcium == null ? '' : _calcium.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid calcium value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            value.isEmpty ? _calcium = null : _calcium = double.parse(value);
+                          });
+                        },
+                  ),
+
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Iron',
+                          hintText: 'Enter the dish iron',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue: _iron == null ? '' : _iron.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid iron value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                           value.isEmpty ? _iron = null : _iron = double.parse(value);
+                          });
+                        },
+                  ),
+
+                  TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Potassium',
+                          hintText: 'Enter the dish potassium',
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        initialValue: _potassium == null ? '' : _potassium.toString(),
+                        validator: (value) {
+                          if (!_doubleRegExp.hasMatch(value!)) {
+                            return 'Please enter a valid potassium value';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            value.isEmpty ? _potassium = null : _potassium = double.parse(value);
+                          });
+                        },
+                  ),
+                     ],
+                   ),
 
                 // Add more text fields for other properties here
                 const SizedBox(height: 16.0),
@@ -449,7 +581,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 ]),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
-                    child: const Text('Create Dish'),
+                    child: const Text('Save Dish'),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();

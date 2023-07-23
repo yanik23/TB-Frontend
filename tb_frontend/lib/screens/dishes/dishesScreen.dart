@@ -62,7 +62,7 @@ class _DishesScreenState extends State<DishesScreen> {
   void _createDish() async{
     final newDish = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => const CreateDishScreen(),
+        builder: (ctx) => const CreateDishScreen('Create Dish'),
       ),
     );
     if(newDish != null) {

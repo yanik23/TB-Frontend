@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../welcomeScreen.dart';
 import 'createDeliveryScreen.dart';
+import '../../utils/widgets/searchBar.dart' as sb;
 
 
 class AddDishesToDeliveryScreen extends StatefulWidget {
@@ -19,11 +20,16 @@ class AddDishesToDeliveryScreen extends StatefulWidget {
 
 class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
   List<DishCheck> selectedDishes = [];
+  List<DishCheck> searchedDishes = [];
   bool _showSearchBar = false;
+  TextEditingController editingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+
+
     if (widget.selectedDishes.isNotEmpty) {
       selectedDishes = List.from(widget.dishes);
       for (var element in selectedDishes) {
@@ -46,6 +52,8 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
     } else {
       selectedDishes = List.from(widget.dishes);
     }
+    //searchedDishes = List.from(selectedDishes);
+    });
     //selectedIngredients = List.from(widget.ingredients);
   }
 
@@ -58,6 +66,16 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
   void _onAddPressed() {
     List<DishCheck> sd = selectedDishes.where((element) => element.isChecked).toList();
     Navigator.of(context).pop(sd);
+  }
+
+
+  void _filterSearchResults(String query) {
+    setState(() {
+      searchedDishes = selectedDishes
+          .where(
+              (item) => item.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
 
 
@@ -77,10 +95,11 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
       ]),
       body: Column(
         children: <Widget>[
+          if (_showSearchBar) sb.SearchBar(editingController, _filterSearchResults),
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: selectedDishes.length,
+              itemCount: searchedDishes.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   padding: const EdgeInsets.all(8.0),
@@ -89,14 +108,14 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
                     children: [
                         CheckboxListTile(
                           activeColor: kColorScheme.primary,
-                          title: Text(selectedDishes[index].name, style: TextStyle(
+                          title: Text(searchedDishes[index].name, style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.italic,
                               color: kColorScheme.primary
                           ),
                           ),
-                          value: selectedDishes[index].isChecked,
+                          value: searchedDishes[index].isChecked,
                           onChanged: (value) {
                             _toggleDish(index, value!);
                           },
@@ -113,13 +132,13 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
                                   hintText: 'Enter quantity Remained',
                                 ),
                                 initialValue:
-                                selectedDishes[index].quantityRemained != null
-                                    ? selectedDishes[index].quantityRemained.toString()
+                                searchedDishes[index].quantityRemained != null
+                                    ? searchedDishes[index].quantityRemained.toString()
                                     : '',
                                 keyboardType: TextInputType.number,
                                 onChanged: (value) {
                                   setState(() {
-                                    selectedDishes[index].quantityRemained = int.parse(value);
+                                    searchedDishes[index].quantityRemained = int.parse(value);
                                   });
                                 },
                               ),
@@ -134,13 +153,13 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
                                   hintText: 'Enter quantity to Deliver',
                                 ),
                                 initialValue:
-                                selectedDishes[index].quantityDelivered != null
-                                    ? selectedDishes[index].quantityDelivered.toString()
+                                searchedDishes[index].quantityDelivered != null
+                                    ? searchedDishes[index].quantityDelivered.toString()
                                     : '',
                                 keyboardType: TextInputType.number,
                                 onChanged: (value) {
                                   setState(() {
-                                    selectedDishes[index].quantityDelivered = int.parse(value);
+                                    searchedDishes[index].quantityDelivered = int.parse(value);
                                   });
                                 },
                               ),

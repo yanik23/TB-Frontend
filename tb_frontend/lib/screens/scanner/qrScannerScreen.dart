@@ -126,7 +126,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                     onPressed: () {
                       //Navigator.of(context).pop();
                       log('============================================new dish');
-                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CreateDishScreen()));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const CreateDishScreen('Edit dish')));
                     },
                     child: const Text('Edit dish'),
                   ),

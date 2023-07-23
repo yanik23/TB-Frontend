@@ -158,10 +158,10 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     String snackBarMessage = '';
     if (widget.delivery == null) {
       resultDelivery = createDelivery(newDelivery);
-      snackBarMessage = 'Delivery created succesfully';
+      snackBarMessage = 'Delivery created successfully';
     } else {
       resultDelivery = updateDelivery(newDelivery);
-      snackBarMessage = 'Delivery updated succesfully';
+      snackBarMessage = 'Delivery updated successfully';
     }
     resultDelivery.then((delivery) {
       ScaffoldMessenger.of(context).showSnackBar(

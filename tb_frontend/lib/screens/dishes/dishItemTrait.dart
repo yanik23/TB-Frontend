@@ -8,11 +8,15 @@ class DishItemTrait extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Wrap(
       children: [
         Icon(icon, size: 17, color: Colors.white),
-        const SizedBox(width: 8),
-        Text(label, style: const TextStyle(color: Colors.white)),
+        //const SizedBox(width: 8),
+        Text(label,
+            maxLines: 1,
+            softWrap: true,
+            overflow: TextOverflow.fade,
+            style: const TextStyle(color: Colors.white)),
       ],
     );
   }

@@ -42,7 +42,7 @@ class DishItem extends StatelessWidget {
               child: Container(
                 color: Colors.black54,
                 padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: Column(children: [
                   Text(
                     dish.name,
@@ -58,7 +58,8 @@ class DishItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      //alignment: WrapAlignment.center,
+                      //spacing: 8,
                       children: [
                         DishItemTrait(Icons.monetization_on, '${dish.price} CHF'),
                         const Spacer(),

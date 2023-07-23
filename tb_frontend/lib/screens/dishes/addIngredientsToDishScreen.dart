@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
 
+import '../../utils/constants.dart';
 import 'createDishScreen.dart';
 
 class AddIngredientsToDishScreen extends StatefulWidget {
@@ -22,28 +23,22 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
   List<IngredientCheck> searchedIngredients = [];
   bool _showSearchBar = false;
   TextEditingController editingController = TextEditingController();
+  Map<int, TextEditingController> textEditingControllerMap = {};
+
+  final RegExp _doubleRegExp = RegExp(doubleRegexPattern);
 
   @override
   void initState() {
     super.initState();
-    if (widget.selectedIngredients.isNotEmpty) {
-      log("==contains ===========================");
-      for(var el in widget.selectedIngredients){
-        log("==contains so setting true for ${el.name}");
-      }
 
-      //selectedIngredients = List.from(widget.selectedIngredients);
-      selectedIngredients = List.from(widget.ingredients);
+    selectedIngredients = List.from(widget.ingredients);
+    if (widget.selectedIngredients.isNotEmpty) {
       for (var element in selectedIngredients) {
-        /*if(widget.selectedIngredients.contains(element)){
-          log("==contains so setting true for ${element.name}");
-          element.isChecked = true;
-        }*/
         element.isChecked = widget.selectedIngredients
             .where((el) => element.id == el.id)
             .isNotEmpty;
-        //element.weight = widget.selectedIngredients.where((el) => element.id == el.id).f;
-        if (widget.selectedIngredients.where((el) => element.id == el.id)
+        if (widget.selectedIngredients
+            .where((el) => element.id == el.id)
             .isNotEmpty) {
           element.weight = widget.selectedIngredients
               .where((el) => element.id == el.id)
@@ -51,23 +46,26 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
               .weight;
         }
       }
-    } else {
-      log("==not contains ===========================");
-      selectedIngredients = List.from(widget.ingredients);
     }
-    //selectedIngredients = List.from(widget.ingredients);
-    searchedIngredients.clear();
-    searchedIngredients.addAll(selectedIngredients);
+  }
+
+  @override
+  void dispose() {
+    for (final controller in textEditingControllerMap.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   void _toggleIngredient(int index, bool value) {
     setState(() {
-      searchedIngredients[index].isChecked = value;
+      selectedIngredients[index].isChecked = value;
+      //widget.ingredients[index].isChecked = value;
     });
   }
 
   void _onAddPressed() {
-    List<IngredientCheck> si = searchedIngredients
+    List<IngredientCheck> si = selectedIngredients
         .where((ingredient) => ingredient.isChecked)
         .toList();
 
@@ -76,10 +74,18 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
 
   void _filterSearchResults(String query) {
     setState(() {
-      searchedIngredients = widget.ingredients
+      selectedIngredients = widget.ingredients
           .where((ingredient) =>
               ingredient.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
+
+      for (var element in searchedIngredients) {
+        /*element.weight = widget.ingredients
+            .where((el) => element.id == el.id)
+            .first
+            .weight;*/
+        log("==setting weight for ${element.name} to ${element.weight}");
+      }
     });
   }
 
@@ -103,7 +109,6 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
       ),
     );
 
-
     return Scaffold(
       appBar: AppBar(title: const Text('Select Ingredients'), actions: [
         IconButton(
@@ -111,6 +116,10 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
           onPressed: () {
             setState(() {
               _showSearchBar = !_showSearchBar;
+              if (!_showSearchBar) {
+                // Reset the search results when closing the search bar
+                searchedIngredients = List.from(widget.ingredients);
+              }
             });
           },
         ),
@@ -121,15 +130,15 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: searchedIngredients.length,
+              itemCount: selectedIngredients.length,
               itemBuilder: (BuildContext context, int index) {
                 return Row(
                   children: [
                     Expanded(
                       child: CheckboxListTile(
                         activeColor: kColorScheme.primary,
-                        title: Text(searchedIngredients[index].name),
-                        value: searchedIngredients[index].isChecked,
+                        title: Text(selectedIngredients[index].name),
+                        value: selectedIngredients[index].isChecked,
                         onChanged: (value) {
                           _toggleIngredient(index, value!);
                         },
@@ -139,19 +148,27 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: TextFormField(
+                          //controller: textEditingController,
                           decoration: const InputDecoration(
                             labelText: 'Quantity (g)',
                             hintText: 'Enter quantity',
                           ),
-                          initialValue:
-                              searchedIngredients[index].weight != null
-                                  ? searchedIngredients[index].weight.toString()
-                                  : '',
                           keyboardType: TextInputType.number,
+                          maxLength: 10,
+                          initialValue:
+                              selectedIngredients[index].weight != null
+                                  ? selectedIngredients[index].weight.toString()
+                                  : '',
+                          validator: (value) {
+                            if (!_doubleRegExp.hasMatch(value!)) {
+                              return 'Please enter a valid quantity';
+                            }
+                            return null;
+                          },
                           onChanged: (value) {
                             setState(() {
-                              searchedIngredients[index].weight =
-                                  double.parse(value);
+                              selectedIngredients[index].weight =
+                                  double.tryParse(value);
                             });
                           },
                         ),

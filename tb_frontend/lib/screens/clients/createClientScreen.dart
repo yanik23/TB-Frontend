@@ -27,7 +27,8 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
 
   final RegExp _nameRegExp = RegExp(nameRegexPattern);
   final RegExp _streetAndCityRegExp = RegExp(streetAndCityRegexPattern);
-  final RegExp _numberRegExp = RegExp(numberRegexPattern);
+  final RegExp _intRegExp = RegExp(intRegexPattern);
+  final RegExp _doubleRegExp = RegExp(doubleRegexPattern);
 
   @override
   void initState() {
@@ -138,7 +139,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 keyboardType: TextInputType.number,
                 maxLength: 10,
                 validator: (value) {
-                  if (value == null || value.isEmpty || !_numberRegExp.hasMatch(value)) {
+                  if (value == null || value.isEmpty || !_intRegExp.hasMatch(value)) {
                     return 'Please enter a valid address number';
                   }
                   return null;
@@ -154,7 +155,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
                 initialValue: _zipCode == 0 ? '' : _zipCode.toString(),
                 maxLength: 10,
                 validator: (value) {
-                  if (value == null || value.isEmpty || !_numberRegExp.hasMatch(value)) {
+                  if (value == null || value.isEmpty || !_intRegExp.hasMatch(value)) {
                     return 'Please enter a valid ZIP code';
                   }
                   return null;

@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Username',
                   hintText: 'Enter your username',
-                  icon: Icon(Icons.email),
+                  icon: Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null ||
@@ -141,7 +141,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       //if (futureTokens != null) {
                         futureTokens.then((token) {
-                          log('bla===== $futureTokens');
                           SecureStorageManager.write(
                               "KEY_USERNAME", _usernameController.text);
                           SecureStorageManager.write(

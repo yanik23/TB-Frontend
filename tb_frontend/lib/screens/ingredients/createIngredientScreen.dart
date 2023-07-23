@@ -5,7 +5,8 @@ import '../../utils/constants.dart';
 
 class CreateIngredientScreen extends StatefulWidget {
   final Ingredient? ingredient;
-  const CreateIngredientScreen({this.ingredient, super.key});
+  final String title;
+  const CreateIngredientScreen(this.title, {this.ingredient, super.key});
 
   @override
   State<CreateIngredientScreen> createState() => _CreateIngredientScreenState();
@@ -81,7 +82,7 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Ingredient'),
+        title: Text(widget.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
