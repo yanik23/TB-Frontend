@@ -51,11 +51,11 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
                 context: context,
                 builder: (BuildContext context) =>
               AlertDialog(
-                title: Text("QR Code"),
-                content: Text("QR code not implemented yet"),
+                title: const Text("QR Code"),
+                content: const Text("QR code not implemented yet"),
                 actions: [
                   TextButton(
-                    child: Text("OK"),
+                    child: const Text("OK"),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },

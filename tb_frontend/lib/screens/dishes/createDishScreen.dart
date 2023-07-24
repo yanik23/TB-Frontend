@@ -47,10 +47,6 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
   double? _iron;
   double? _potassium;
 
-  //TextEditingController nameController = TextEditingController();
-
-  /*final DishType _selectedDishType = DishType.meat;
-  final DishSize _selectedDishSize = DishSize.fit;*/
 
   List<IngredientCheck> ingredients = [];
   List<IngredientCheck> selectedIngredients = [];
@@ -104,21 +100,6 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     );
   }
 
-  void _toggleIngredient(int index, bool value) {
-    setState(() {
-      ingredients[index].isChecked = value;
-    });
-  }
-
-  void _onAddPressed() {
-    selectedIngredients =
-        ingredients.where((ingredient) => ingredient.isChecked).toList();
-
-    // Do something with the selectedIngredients
-
-    // Close the bottom sheet
-    Navigator.pop(context);
-  }
 
   void _loadIngredients() async {
     fetchIngredients().then((value) {
@@ -147,6 +128,45 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
         selectedIngredients = newIngredients;
       });
     }
+  }
+
+  void _createOrUpdateDish() {
+    ingredientsLessDTO = selectedIngredients
+        .map((e) =>
+        IngredientLessDTO(e.id, e.name, e.weight))
+        .toList();
+    // Create an instance of the Dish class using the collected inputs
+    Dish newDish = Dish(
+      id: _id,
+      name: _name,
+      description: _description,
+      currentType: _currentType,
+      currentSize: _currentSize,
+      price: _price,
+      isAvailable: _isAvailable,
+      calories: _calories,
+      fats: _fats,
+      saturatedFats: _saturatedFats,
+      sodium: _sodium,
+      carbohydrates: _carbohydrates,
+      fibers: _fibers,
+      sugars: _sugars,
+      proteins: _proteins,
+      calcium: _calcium,
+      iron: _iron,
+      potassium: _potassium,
+      ingredients: ingredientsLessDTO,
+    );
+
+    Future<Dish> resultDish;
+
+    if (widget.dish != null) {
+      resultDish = updateDish(newDish);
+    } else {
+      resultDish = createDish(newDish);
+    }
+    resultDish.whenComplete(
+            () => Navigator.of(context).pop(resultDish));
   }
 
   @override
@@ -641,42 +661,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
 
-                        ingredientsLessDTO = selectedIngredients
-                            .map((e) =>
-                                IngredientLessDTO(e.id, e.name, e.weight))
-                            .toList();
-                        // Create an instance of the Dish class using the collected inputs
-                        Dish newDish = Dish(
-                          id: _id,
-                          name: _name,
-                          description: _description,
-                          currentType: _currentType,
-                          currentSize: _currentSize,
-                          price: _price,
-                          isAvailable: _isAvailable,
-                          calories: _calories,
-                          fats: _fats,
-                          saturatedFats: _saturatedFats,
-                          sodium: _sodium,
-                          carbohydrates: _carbohydrates,
-                          fibers: _fibers,
-                          sugars: _sugars,
-                          proteins: _proteins,
-                          calcium: _calcium,
-                          iron: _iron,
-                          potassium: _potassium,
-                          ingredients: ingredientsLessDTO,
-                        );
-
-                        Future<Dish> resultDish;
-
-                        if (widget.dish != null) {
-                          resultDish = updateDish(newDish);
-                        } else {
-                          resultDish = createDish(newDish);
-                        }
-                        resultDish.whenComplete(
-                            () => Navigator.of(context).pop(resultDish));
+                        _createOrUpdateDish();
                       }
                     }),
               ],

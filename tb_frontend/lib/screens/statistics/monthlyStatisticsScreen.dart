@@ -4,7 +4,7 @@ import 'package:tb_frontend/screens/welcomeScreen.dart';
 
 class LineTitles {
   static getTitleData() =>
-      FlTitlesData(
+      const FlTitlesData(
           show: true,
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
@@ -75,14 +75,14 @@ class _MonthlyStatisticsScreenState extends State<MonthlyStatisticsScreen> {
           gridData: FlGridData(
             show: true,
             getDrawingHorizontalLine: (value) {
-              return FlLine(
+              return const FlLine(
                 color: Colors.grey,
                 strokeWidth: 1,
               );
             },
             drawVerticalLine: true,
             getDrawingVerticalLine: (value) {
-              return FlLine(
+              return const FlLine(
                 color: Colors.grey,
                 strokeWidth: 1,
               );
@@ -122,13 +122,13 @@ class _MonthlyStatisticsScreenState extends State<MonthlyStatisticsScreen> {
               ),
               dotData: const FlDotData(show: true),
               spots: [
-                FlSpot(0, 3),
-                FlSpot(2.6, 2),
-                FlSpot(4.9, 5),
-                FlSpot(6.8, 3.1),
-                FlSpot(8, 4),
-                FlSpot(9.5, 3),
-                FlSpot(11, 4),
+                const FlSpot(0, 3),
+                const FlSpot(2.6, 2),
+                const FlSpot(4.9, 5),
+                const FlSpot(6.8, 3.1),
+                const FlSpot(8, 4),
+                const FlSpot(9.5, 3),
+                const FlSpot(11, 4),
               ],
             ),
           ],

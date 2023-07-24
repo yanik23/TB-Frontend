@@ -75,7 +75,6 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
         ),
       );
     });
-    //if no error then show snackbar with success message
   }
 
   @override
