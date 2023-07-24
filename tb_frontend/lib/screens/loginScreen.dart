@@ -1,5 +1,5 @@
 
-import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 32),
               TextFormField(
                 controller: _usernameController,
-                maxLength: 50,
+                maxLength: 20,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   labelText: 'Username',
@@ -132,8 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SecureStorageManager.write(
                               "KEY_PASSWORD", _passwordController.text);
                           SecureStorageManager.write("ACCESS_TOKEN", token.$1);
-                          SecureStorageManager.write(
-                              "REFRESH_TOKEN", token.$2);
+                          SecureStorageManager.write("REFRESH_TOKEN", token.$2);
 
                           ScaffoldMessenger.of(context).removeCurrentSnackBar();
                           _menuScreen(_usernameController.text.toString());
@@ -146,35 +145,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             closeIconColor: Colors.white,
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          //log(e.toString());
-                          /*const snackBar3 = SnackBar(
-                            content: Text('failed to login'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar3);
-                          log(e.toString());*/
-
-                          /*const snackBar2 = SnackBar(
-                            content: Text('login in with local data...'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar2);
-                          log(e.toString());
-
-                          _localLogin(_usernameController.text,
-                                  _passwordController.text)
-                              .then((value) {
-                            if (value) {
-                              ScaffoldMessenger.of(context)
-                                  .removeCurrentSnackBar();
-                              _menuScreen(_usernameController.text.toString());
-                            } else {
-                              const snackBar3 = SnackBar(
-                                content: Text('failed to login'),
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar3);
-                              log(e.toString());
-                            }
-                          });*/
                         });
                   }
                 },

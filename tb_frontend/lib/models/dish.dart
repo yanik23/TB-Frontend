@@ -260,7 +260,7 @@ Future<Dish> updateDish(Dish dish) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
-    try {
+    //try {
       final response = await http.put(Uri.parse('$uriPrefix/dishes/${dish.id}'),
           headers: {
             HttpHeaders
@@ -294,9 +294,9 @@ Future<Dish> updateDish(Dish dish) async {
       } else {
         throw Exception('Failed to update dish');
       }
-    } catch (e) {
+    /*} catch (e) {
       throw Exception('Failed to update dish');
-    }
+    }*/
   } else {
     throw Exception('Failed to load token');
   }

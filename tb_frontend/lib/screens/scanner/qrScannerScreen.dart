@@ -27,7 +27,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
   MobileScannerArguments? arguments;
 
   final MobileScannerController controller = MobileScannerController(
-    torchEnabled: true,
+    //torchEnabled: true,
     // formats: [BarcodeFormat.qrCode]
     // facing: CameraFacing.front,
     // detectionSpeed: DetectionSpeed.normal
@@ -157,17 +157,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                     },
                     child: const Text('Dish Details'),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      setState(() {
-                        controller.start();
-                        //barcodes.clear();
-                      });
 
-                    },
-                    child: const Text('Add to new Delivery'),
-                  ),
                 ],
               ),
             );

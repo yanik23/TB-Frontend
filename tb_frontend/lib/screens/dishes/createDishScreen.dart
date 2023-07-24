@@ -159,14 +159,33 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     );
 
     Future<Dish> resultDish;
-
+    String snackBarMessage = '';
     if (widget.dish != null) {
       resultDish = updateDish(newDish);
+      snackBarMessage = 'Dish updated successfully';
     } else {
       resultDish = createDish(newDish);
+      snackBarMessage = 'Dish created successfully';
     }
-    resultDish.whenComplete(
-            () => Navigator.of(context).pop(resultDish));
+    resultDish.then((dish) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(snackBarMessage),
+          backgroundColor: Colors.green,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+      Navigator.of(context).pop(dish);
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Colors.red,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+    });
   }
 
   @override

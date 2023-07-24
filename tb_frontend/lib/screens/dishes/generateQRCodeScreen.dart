@@ -26,7 +26,6 @@ class GenerateQRCodeScreen extends StatelessWidget {
   }
 
   String get qrCodeData {
-    //return '{"dishId": ${dish.id}, "dishName": "${dish.name}", "dishPrice": ${dish.price}}';
     return '{"id": ${dish.id}, "name": "${dish.name}", "price": ${dish.price}, "calories": ${dish.calories}, "currentType": "${dish.currentType}", "currentSize": "${dish.currentSize}", "available": ${dish.isAvailable}}';
   }
 

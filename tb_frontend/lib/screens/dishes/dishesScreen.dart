@@ -82,7 +82,7 @@ class _DishesScreenState extends State<DishesScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'You don\'t have the permission to delete this client',
+              'You don\'t have the permission to delete this dish',
               textAlign: TextAlign.center,
             ),
             backgroundColor: Colors.red,
@@ -102,7 +102,7 @@ class _DishesScreenState extends State<DishesScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              "Client deleted successfully",
+              "Dish deleted successfully",
               textAlign: TextAlign.center,
             ),
             backgroundColor: Colors.green,
