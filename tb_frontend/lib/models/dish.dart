@@ -207,7 +207,8 @@ Future<List<Dish>> fetchDishes() async {
         throw Exception('Failed to load dishes');
       }
     } catch (e) {
-      return List<Dish>.empty();
+      throw Exception('Failed to load dishes cause no co');
+      //return List<Dish>.empty();
     }
   } else {
     throw Exception('Failed to load token');
@@ -301,7 +302,7 @@ Future<Dish> updateDish(Dish dish) async {
   }
 }
 
-Future<void> deleteDish(int id) async {
+Future<http.Response> deleteDish(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
   if(token != null) {
@@ -312,9 +313,9 @@ Future<void> deleteDish(int id) async {
                 .authorizationHeader: token,
           });
       if (response.statusCode == HttpStatus.noContent) {
-        return;
+        return response;
       } else if (response.statusCode == HttpStatus.forbidden) {
-        throw Exception('You don\'t have permission to delete this dish');
+        throw Exception('You don\'t have the permission to delete this dish');
       } else if (response.statusCode == HttpStatus.unauthorized) {
         final newToken = await fetchNewToken();
         SecureStorageManager.write('ACCESS_TOKEN', newToken);
@@ -324,18 +325,15 @@ Future<void> deleteDish(int id) async {
                   .authorizationHeader: newToken,
             });
         if (response.statusCode == HttpStatus.noContent) {
-          return;
+          return response;
         } else if (response.statusCode == HttpStatus.forbidden) {
-          throw Exception('You don\'t have permission to delete this dish');
+          throw Exception('You don\'t have the permission to delete this dish');
         } else {
           throw Exception('Failed to delete dish');
         }
       } else {
         throw Exception('Failed to delete dish');
       }
-    /*} catch (e) {
-      throw Exception('Failed to delete dish');
-    }*/
   } else {
     throw Exception('Failed to load token');
   }

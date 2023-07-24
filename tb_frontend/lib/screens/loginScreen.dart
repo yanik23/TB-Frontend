@@ -1,14 +1,11 @@
-import 'dart:developer';
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/welcomeScreen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../utils/secureStorageManager.dart';
-
 import '../models/user.dart';
 import 'menuScreen.dart';
-
-import 'package:dargon2_flutter/dargon2_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,10 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  /*final emailRegex = RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");*/
 
-  //final _secureStorage = const FlutterSecureStorage();
 
   late String token;
 
@@ -59,9 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         key: _formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 48),
-          /*alignment: Alignment.center,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,*/
+
           child: Column(
             children: [
               const SizedBox(height: 32),
@@ -86,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 validator: (value) {
                   if (value == null ||
-                      value.isEmpty /*|| !emailRegex.hasMatch(value)*/) {
+                      value.isEmpty) {
                     return 'Please enter a valid username';
                   }
                   return null;
@@ -127,13 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       content: Text('trying to login...', textAlign: TextAlign.center),
                       showCloseIcon: true,
                       closeIconColor: Colors.white,
-                      //duration: Duration(seconds: 4),
-                      /*action: SnackBarAction(
-                        label: 'UNDO',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ),*/
+
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       final Future<(String, String)> futureTokens = login(
@@ -160,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             closeIconColor: Colors.white,
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          log(e.toString());
+                          //log(e.toString());
                           /*const snackBar3 = SnackBar(
                             content: Text('failed to login'),
                           );

@@ -23,9 +23,9 @@ class Delivery {
   Delivery(this.id, this.username, this.clientName, this.deliveryDate,
       this.details, this.dishes);
 
-  get formattedDate {
+  /*get formattedDate {
     return '${deliveryDate.day}/${deliveryDate.month}/${deliveryDate.year}';
-  }
+  }*/
 
   factory Delivery.fromJson(Map<String, dynamic> json) {
     return Delivery(
@@ -50,7 +50,7 @@ class Delivery {
         'details': details ?? '',
         'dishes': dishes != null
             ? dishes!.map((e) => e.toJson()).toList()
-            : null, //will add ingredients of dishes too.
+            : null,
       };
 }
 
@@ -192,7 +192,7 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
       // If the server did return a 200 OK response, then parse the JSON.
       return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == HttpStatus.forbidden) {
-      throw Exception('You don\'t have permission to update this delivery');
+      throw Exception('You don\'t have the permission to update this delivery');
     } else if (response.statusCode == HttpStatus.unauthorized) {
       final newToken = await fetchNewToken();
       SecureStorageManager.write('ACCESS_TOKEN', newToken);
@@ -205,16 +205,13 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
         body: jsonEncode(delivery.toJson()),
       );
       if (response.statusCode == HttpStatus.ok) {
-        // If the server did return a 200 OK response, then parse the JSON.
         return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw Exception('You don\'t have permission to update this delivery');
       } else {
-        // If the server did not return a 200 OK response, then throw an exception.
         throw Exception('Failed to update delivery');
       }
     } else {
-      // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to update delivery');
     }
   } else {
@@ -248,16 +245,13 @@ Future<int> deleteDelivery(int id) async {
         },
       );
       if (response.statusCode == HttpStatus.noContent) {
-        // If the server did return a 204 NO CONTENT response, then parse the JSON.
         return response.statusCode;
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw Exception('You don\'t have permission to delete this delivery');
       } else {
-        // If the server did not return a 204 NO CONTENT response, then throw an exception.
         throw Exception('Failed to delete delivery');
       }
     } else {
-      // If the server did not return a 204 NO CONTENT response, then throw an exception.
       throw Exception('Failed to delete delivery');
     }
   } else {

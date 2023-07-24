@@ -1,12 +1,9 @@
 
 import 'dart:async';
-import 'dart:async';
-
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/createDishScreen.dart';
 import 'package:tb_frontend/screens/dishes/dishDetailsScreen.dart';
-import '../../data/dummyDishes.dart';
 import '../../models/dish.dart';
 import 'dishItem.dart';
 
@@ -21,7 +18,6 @@ class DishesScreen extends StatefulWidget {
 }
 
 class _DishesScreenState extends State<DishesScreen> {
-  //final List<Dish> dishes = dummyDishes;
   late Future<List<Dish>> dishes;
   List<Dish> localDishes = [];
   List<Dish> searchedDishes = [];
@@ -35,11 +31,6 @@ class _DishesScreenState extends State<DishesScreen> {
     dishes.then((value) => {
       localDishes.addAll(value),
       searchedDishes.addAll(value),
-
-      /*if(value.isEmpty) {
-        localDishes.addAll(dummyDishes),
-        searchedDishes.addAll(dummyDishes)
-      }*/
     });
   }
 
@@ -86,11 +77,45 @@ class _DishesScreenState extends State<DishesScreen> {
   }
 
   void _deleteDish(Dish dish) async{
-    deleteDish(dish.id);
+    final response = await deleteDish(dish.id).catchError((error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'You don\'t have the permission to delete this client',
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Colors.red,
+            showCloseIcon: true,
+            closeIconColor: Colors.white,
+          ),
+        );
+      }
+      setState(() {});
+    });
     setState(() {
       localDishes.remove(dish);
       searchedDishes.remove(dish);
     });
+    if (response.statusCode == HttpStatus.noContent) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Client deleted successfully",
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Colors.green,
+            showCloseIcon: true,
+            closeIconColor: Colors.white,
+          ),
+        );
+      }
+      setState(() {
+        localDishes.remove(dish);
+        searchedDishes.remove(dish);
+      });
+    }
   }
 
   void _filterSearchResults(String query) {

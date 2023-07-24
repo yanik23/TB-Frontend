@@ -1,12 +1,10 @@
 
-
-
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 class ExceptionHandler {
-  static void handleFetchClientsError(error) {
+  static void handleError(error) {
     if (error is SocketException) {
       log('=================================> ERROR: No connection');
       throw Exception('Failed to load clients cause no connection');

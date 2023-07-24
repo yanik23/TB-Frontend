@@ -1,4 +1,5 @@
 
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/ingredient.dart';
@@ -19,18 +20,47 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
   List<Ingredient> searchedIngredients = [];
 
   bool _showSearchBar = false;
-
+  bool _showError = false;
   TextEditingController editingController = TextEditingController();
+
+  Widget _errorWidget(String message) {
+    return Center(
+      child: Text(
+        message,
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 20,
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    ingredients = fetchIngredients();
+    ingredients = fetchIngredients().catchError((error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message,
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Colors.red,
+            showCloseIcon: true,
+            closeIconColor: Colors.white,
+          ),
+        );
+        setState(() {
+          _showError = true;
+        });
+        return List<Ingredient>.empty();
+      }
+    });
     ingredients.then((value) => {
-      setState(() {
-        localIngredients.addAll(value);
-        searchedIngredients.addAll(value);
-      })
+      //setState(() {
+        localIngredients.addAll(value),
+        searchedIngredients.addAll(value),
+      //})
       });
             /*localIngredients.addAll(value),
             searchedIngredients.addAll(value),
@@ -117,7 +147,23 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
 
   Future _refreshIngredients() async {
     setState(() {
-      ingredients = fetchIngredients();
+      ingredients = fetchIngredients().catchError((error) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.message,
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Colors.red,
+              showCloseIcon: true,
+              closeIconColor: Colors.white,
+            ),
+          );
+          setState(() {
+            _showError = true;
+          });
+        }
+      });
       ingredients.then((value) => {
             localIngredients.clear(),
             localIngredients.addAll(value),
@@ -200,6 +246,7 @@ class _IngredientsScreenState extends State<IngredientsScreen> {
             ),
           );
         } else if (snapshot.hasError) {
+          log("===== snapshot error======");
           return Text("${snapshot.error}");
         }
         return const Center(child: CircularProgressIndicator());

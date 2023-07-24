@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/addIngredientsToDishScreen.dart';
@@ -99,7 +98,10 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
           .toList();
     }
     _nutritionInfo = false;
-    icon = Icon(Icons.arrow_right, color: kColorScheme.primary,);
+    icon = Icon(
+      Icons.arrow_right,
+      color: kColorScheme.primary,
+    );
   }
 
   void _toggleIngredient(int index, bool value) {
@@ -114,18 +116,15 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
     // Do something with the selectedIngredients
 
-
     // Close the bottom sheet
     Navigator.pop(context);
   }
 
   void _loadIngredients() async {
-    log("========================================== _loadIngredients");
     fetchIngredients().then((value) {
       ingredients.clear();
       setState(() {
         for (var element in value) {
-          log("========================================== ${element.name}");
           ingredients.add(IngredientCheck(element.id, element.name, false));
         }
       });
@@ -134,7 +133,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
 
   void _addIngredientsToDish() async {
     log("========================================== _addIngredientsToDish");
-    for(var el in selectedIngredients) {
+    for (var el in selectedIngredients) {
       log("=============selected=========================== ${el.name}");
     }
     final newIngredients = await Navigator.of(context).push(
@@ -149,7 +148,6 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -174,8 +172,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
-                        value.trim().isEmpty
-                        || !_nameRegExp.hasMatch(value)) {
+                        value.trim().isEmpty ||
+                        !_nameRegExp.hasMatch(value)) {
                       return 'Please enter a valid name';
                     }
                     return null;
@@ -197,7 +195,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
-                        value.trim().isEmpty || !_doubleRegExp.hasMatch(value)) {
+                        value.trim().isEmpty ||
+                        !_doubleRegExp.hasMatch(value)) {
                       return 'Please enter a valid price';
                     }
                     return null;
@@ -219,7 +218,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
-                        value.trim().isEmpty || !_intRegExp.hasMatch(value)) {
+                        value.trim().isEmpty ||
+                        !_intRegExp.hasMatch(value)) {
                       return 'Please enter a valid integer number of calories';
                     }
                     return null;
@@ -246,7 +246,9 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   },
                   onChanged: (value) {
                     setState(() {
-                       value.isEmpty? _description = null: _description = value;
+                      value.isEmpty
+                          ? _description = null
+                          : _description = value;
                     });
                   },
                 ),
@@ -254,9 +256,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
                       labelText: 'Type', hintText: 'Select the dish type'),
-                  value: _currentType == ''
-                      ? null
-                      : _currentType,
+                  value: _currentType == '' ? null : _currentType,
                   onChanged: (value) {
                     setState(() {
                       _currentType = value.toString().toUpperCase();
@@ -314,43 +314,37 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   },
                 ),
                 const SizedBox(height: 16.0),
-                /*Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Nutritional Information (Optional)', style: TextStyle(
+
+                TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _nutritionInfo = !_nutritionInfo;
+                      _nutritionInfo
+                          ? icon = Icon(
+                              Icons.arrow_drop_down,
+                              color: kColorScheme.primary,
+                            )
+                          : icon = Icon(
+                              Icons.arrow_right,
+                              color: kColorScheme.primary,
+                            );
+                    });
+                    //icon = Icons.arrow_left
+                  },
+                  icon: icon,
+                  label: Text(
+                    'Nutritional Information (Optional)',
+                    style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic,
-                        color: kColorScheme.primary
-                    ),
-                    ),
-                    IconButton(onPressed: () {
-                      setState(() {
-                        _nutritionInfo = !_nutritionInfo;
-                      });
-                      //icon = Icons.arrow_left
-                    },
-                        icon: Icon(Icons.arrow_drop_down, color: kColorScheme.primary,)),
-                  ],
-                ),*/
-                TextButton.icon(onPressed: () {
-                  setState(() {
-                    _nutritionInfo = !_nutritionInfo;
-                    _nutritionInfo ? icon = Icon(Icons.arrow_drop_down, color: kColorScheme.primary,) : icon = Icon(Icons.arrow_right, color: kColorScheme.primary,);
-                  });
-                  //icon = Icons.arrow_left
-                }, icon: icon, label: Text('Nutritional Information (Optional)', style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic,
-                    color: kColorScheme.primary
-                ),
-                ),
+                        color: kColorScheme.primary),
+                  ),
                 ),
                 if (_nutritionInfo)
-                   Column(
-                     children: [
-                       TextFormField(
+                  Column(
+                    children: [
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Fats',
                           hintText: 'Enter the dish fats',
@@ -366,21 +360,22 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            value.isEmpty ? _fats = null : _fats = double.parse(value);
+                            value.isEmpty
+                                ? _fats = null
+                                : _fats = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Saturated Fats',
                           hintText: 'Enter the dish saturated fats',
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 10,
-
-                        initialValue:
-                            _saturatedFats == null ? '' : _saturatedFats.toString(),
+                        initialValue: _saturatedFats == null
+                            ? ''
+                            : _saturatedFats.toString(),
                         validator: (value) {
                           if (!_doubleRegExp.hasMatch(value!)) {
                             return 'Please enter a valid saturated fats value';
@@ -389,12 +384,13 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            value.isEmpty ? _saturatedFats = null : _saturatedFats = double.parse(value);
+                            value.isEmpty
+                                ? _saturatedFats = null
+                                : _saturatedFats = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Sodium',
                           hintText: 'Enter the dish sodium',
@@ -410,20 +406,22 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                           value.isEmpty? _sodium = null : _sodium = double.parse(value);
+                            value.isEmpty
+                                ? _sodium = null
+                                : _sodium = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Carbohydrates',
                           hintText: 'Enter the dish carbohydrates',
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 10,
-                        initialValue:
-                            _carbohydrates == null ? '' : _carbohydrates.toString(),
+                        initialValue: _carbohydrates == null
+                            ? ''
+                            : _carbohydrates.toString(),
                         validator: (value) {
                           if (!_doubleRegExp.hasMatch(value!)) {
                             return 'Please enter a valid carbohydrates value';
@@ -432,12 +430,13 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            value.isEmpty ? _carbohydrates = null : _carbohydrates = double.parse(value);
+                            value.isEmpty
+                                ? _carbohydrates = null
+                                : _carbohydrates = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Fibers',
                           hintText: 'Enter the dish fibers',
@@ -453,12 +452,13 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                           value.isEmpty ? _fibers = null : _fibers = double.parse(value);
+                            value.isEmpty
+                                ? _fibers = null
+                                : _fibers = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Sugars',
                           hintText: 'Enter the dish sugars',
@@ -474,19 +474,21 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            value.isEmpty ? _sugars = null : _sugars = double.parse(value);
+                            value.isEmpty
+                                ? _sugars = null
+                                : _sugars = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Proteins',
                           hintText: 'Enter the dish proteins',
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 10,
-                        initialValue: _proteins == null ? '' : _proteins.toString(),
+                        initialValue:
+                            _proteins == null ? '' : _proteins.toString(),
                         validator: (value) {
                           if (!_doubleRegExp.hasMatch(value!)) {
                             return 'Please enter a valid proteins value';
@@ -495,19 +497,21 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            value.isEmpty ? _proteins = null : _proteins = double.parse(value);
+                            value.isEmpty
+                                ? _proteins = null
+                                : _proteins = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Calcium',
                           hintText: 'Enter the dish calcium',
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 10,
-                        initialValue: _calcium == null ? '' : _calcium.toString(),
+                        initialValue:
+                            _calcium == null ? '' : _calcium.toString(),
                         validator: (value) {
                           if (!_doubleRegExp.hasMatch(value!)) {
                             return 'Please enter a valid calcium value';
@@ -516,12 +520,13 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            value.isEmpty ? _calcium = null : _calcium = double.parse(value);
+                            value.isEmpty
+                                ? _calcium = null
+                                : _calcium = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Iron',
                           hintText: 'Enter the dish iron',
@@ -537,19 +542,21 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                           value.isEmpty ? _iron = null : _iron = double.parse(value);
+                            value.isEmpty
+                                ? _iron = null
+                                : _iron = double.parse(value);
                           });
                         },
-                  ),
-
-                  TextFormField(
+                      ),
+                      TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Potassium',
                           hintText: 'Enter the dish potassium',
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 10,
-                        initialValue: _potassium == null ? '' : _potassium.toString(),
+                        initialValue:
+                            _potassium == null ? '' : _potassium.toString(),
                         validator: (value) {
                           if (!_doubleRegExp.hasMatch(value!)) {
                             return 'Please enter a valid potassium value';
@@ -558,18 +565,26 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            value.isEmpty ? _potassium = null : _potassium = double.parse(value);
+                            value.isEmpty
+                                ? _potassium = null
+                                : _potassium = double.parse(value);
                           });
                         },
+                      ),
+                    ],
                   ),
-                     ],
-                   ),
 
                 // Add more text fields for other properties here
                 const SizedBox(height: 16.0),
 
                 Row(children: [
-                  const Text('List of ingredients (Optional) : '),
+                  Text('List of ingredients (Optional) : ', style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    color: kColorScheme.primary,
+                  ),
+                  ),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: () {
@@ -579,6 +594,46 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   ),
                   const SizedBox(height: 16.0),
                 ]),
+
+                if(selectedIngredients?.isEmpty ?? true)
+                  const Text('N/A'),
+                Container(
+                  width: double.infinity,
+                  constraints: const BoxConstraints(maxHeight: 300.0),
+                  child: Scrollbar(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: selectedIngredients?.length ?? 0,
+                      itemBuilder: (context, index) =>
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(selectedIngredients?[index].name ?? 'N/A', style: TextStyle(
+                                    fontSize: 18.0,
+                                    //fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),),
+                                ),
+                                const Spacer(),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.balance, color: Colors.orangeAccent),
+                                      const SizedBox(width: 8.0),
+                                      Text(selectedIngredients?[index].weight != null ? '${selectedIngredients?[index].weight}g' : 'N/A'),
+                                      //const Spacer(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                     child: const Text('Save Dish'),

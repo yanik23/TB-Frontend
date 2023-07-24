@@ -8,7 +8,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:tb_frontend/data/database.dart';
 import 'package:tb_frontend/utils/constants.dart';
 import 'package:tb_frontend/utils/exceptionHandler.dart';
-
 import '../utils/refreshToken.dart';
 import '../utils/secureStorageManager.dart';
 
@@ -67,7 +66,6 @@ Future<Client> fetchClient(int id) async {
       HttpHeaders.authorizationHeader: token,
     });
     if (response.statusCode == HttpStatus.ok) {
-      // If the server did return a 200 OK response, then parse the JSON.
       return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == HttpStatus.unauthorized) {
       final token = await fetchNewToken();
@@ -77,14 +75,11 @@ Future<Client> fetchClient(int id) async {
         HttpHeaders.authorizationHeader: token,
       });
       if (response.statusCode == HttpStatus.ok) {
-        // If the server did return a 200 OK response, then parse the JSON.
         return Client.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
       } else {
-        // If the server did not return a 200 OK response, then throw an exception.
         throw Exception('Failed to load client');
       }
     } else {
-      // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to load client');
     }
   } else {
@@ -98,7 +93,7 @@ Future<List<Client>> fetchClients() async {
     try {
       return await _fetchClientsWithToken(accessToken);
     } catch (exception) {
-      ExceptionHandler.handleFetchClientsError(exception);
+      ExceptionHandler.handleError(exception);
       return [];
     }
   } else {
@@ -128,10 +123,10 @@ Future<List<Client>> _fetchClientsWithToken(String accessToken) async {
       final List<dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
       return responseData.map((json) => Client.fromJson(json)).toList();
     } else {
-      throw Exception('A) Failed to load clients');
+      throw Exception('Failed to load clients');
     }
   } else {
-    throw Exception('B) Failed to load clients');
+    throw Exception('Failed to load clients');
   }
 }
 
@@ -260,7 +255,6 @@ Future<http.Response> deleteClient(int id) async {
 
 
 Future<List<Client>> fetchClientsLocally() async {
-  log('=================================> fetchClientsLocally');
   // Get a reference to the database.
   final Database db = await DBHelper.database;
 
@@ -281,6 +275,8 @@ Future<List<Client>> fetchClientsLocally() async {
     );
   });
 }
+
+
 
 Future<void> createClientLocally(Client client) async {
   // Get a reference to the database.

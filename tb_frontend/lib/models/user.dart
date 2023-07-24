@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -24,7 +26,6 @@ class User {
 
 
 Future<(String, String)> login(String name, String password) async {
-  //try {
     final response = await http.post(
       Uri.parse('$uriPrefix/login'),
       headers: <String, String>{
@@ -36,7 +37,7 @@ Future<(String, String)> login(String name, String password) async {
       }),
     ).timeout(const Duration(seconds: 5));
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok) {
       return (response.headers['authorization']!, response.headers['refresh']!);
     } else {
       throw Exception(response.body);
