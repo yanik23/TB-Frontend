@@ -19,8 +19,10 @@ class AddDishesToDeliveryScreen extends StatefulWidget {
 }
 
 class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
+  List<DishCheck> dishes = [];
   List<DishCheck> selectedDishes = [];
   List<DishCheck> searchedDishes = [];
+
   bool _showSearchBar = false;
   TextEditingController editingController = TextEditingController();
 
@@ -29,9 +31,8 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
     super.initState();
     setState(() {
 
-
+    selectedDishes = List.from(widget.dishes);
     if (widget.selectedDishes.isNotEmpty) {
-      selectedDishes = List.from(widget.dishes);
       for (var element in selectedDishes) {
         element.isChecked = widget.selectedDishes
             .where((el) => element.id == el.id)
@@ -49,22 +50,20 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
               .quantityDelivered;
         }
       }
-    } else {
-      selectedDishes = List.from(widget.dishes);
     }
-    //searchedDishes = List.from(selectedDishes);
+    searchedDishes = selectedDishes;
     });
-    //selectedIngredients = List.from(widget.ingredients);
   }
 
   void _toggleDish(int index, bool value) {
     setState(() {
       selectedDishes[index].isChecked = value;
+      searchedDishes[index].isChecked = value;
     });
   }
 
   void _onAddPressed() {
-    List<DishCheck> sd = selectedDishes.where((element) => element.isChecked).toList();
+    List<DishCheck> sd = searchedDishes.where((element) => element.isChecked).toList();
     Navigator.of(context).pop(sd);
   }
 

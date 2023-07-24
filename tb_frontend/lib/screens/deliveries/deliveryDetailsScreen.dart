@@ -132,64 +132,52 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                     ),
                     const SizedBox(height: 16.0),
 
-                    const SizedBox(height: 16.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: localDelivery.dishes?.length,
-                      itemBuilder: (context, index) =>
+                    Container(
+                      width: double.infinity,
+                      constraints: const BoxConstraints(maxHeight: 250.0),
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: localDelivery.dishes?.length,
+                          itemBuilder: (context, index) =>
 
-                            Column(
-                              children: [
-                                Text(localDelivery.dishes?[index].name ?? 'N/A', style: TextStyle(
-                                  fontSize: 18.0,
-                                  //fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),),
-                                Row(
+                                Column(
                                   children: [
-                                    const Icon(Icons.monetization_on, color: Colors.orangeAccent,),
-                                    Text(localDelivery.dishes?[index].price.toString() ?? 'N/A'),
-                                    const Spacer(),
-                                    const Text("Remained: "),
-                                    Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),
-                                    const Spacer(),
-                                    const Text("Delivered: "),
-                                    Text(localDelivery.dishes?[index].quantityDelivered.toString() ?? 'N/A'),
+                                    Text(localDelivery.dishes?[index].name ?? 'N/A', style: TextStyle(
+                                      fontSize: 18.0,
+                                      //fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),),
+                                    Container(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.monetization_on, color: Colors.orangeAccent),
+                                          Text(localDelivery.dishes?[index].price.toString() ?? 'N/A'),
+                                          const Spacer(),
+                                          const Text("Remained: "),
+                                          Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),
+                                          const Spacer(),
+                                          const Text("Delivered: "),
+                                          Text(localDelivery.dishes?[index].quantityDelivered.toString() ?? 'N/A'),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16.0),
                                   ],
                                 ),
-                                const SizedBox(height: 16.0),
-                              ],
-                            ),
-
-                            /*Text(localDelivery.dishes?[index].price.toString() ?? 'N/A'),
-                            Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),*/
-
+                        ),
+                      ),
                     ),
-                    /*ListView.builder(
-                      itemCount: localDelivery.dishes?.length,
-                      itemBuilder: (context, index) =>
-                        Row(
-                          children: [
-                            Text(localDelivery.dishes?[index].name ?? 'N/A'),
-                            Text(localDelivery.dishes?[index].quantityRemained.toString() ?? 'N/A'),
-                          ],),
-                    ),*/
-
-
                     const SizedBox(height: 32.0),
-                    ElevatedButton(
-                        onPressed: () {
-                          // _isEditable = !_isEditable;
-                          /*Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) =>
-                                  CreateDeliveryScreen(delivery: snapshot.data),
-                            ),
-                          );*/
-                          _editDelivery(localDelivery);
-                        },
-                        child: Text('Edit')),
+                    Center(
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _editDelivery(localDelivery);
+                          },
+                          child: const Text('Edit Delivery')),
+                    ),
                   ],
                 );
               } else if (snapshot.hasError) {

@@ -599,7 +599,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   const Text('N/A'),
                 Container(
                   width: double.infinity,
-                  constraints: const BoxConstraints(maxHeight: 300.0),
+                  constraints: const BoxConstraints(maxHeight: 250.0),
                   child: Scrollbar(
                     child: ListView.builder(
                       shrinkWrap: true,

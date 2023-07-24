@@ -193,108 +193,149 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Delivery details (Optional)',
-                  hintText: 'Enter some delivery details',
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Delivery details (Optional)',
+                    hintText: 'Enter some delivery details',
+                  ),
+                  initialValue: _deliveryDetails,
+                  maxLength: 255,
+                  validator: (value) {
+                    if (!_descriptionRegExp.hasMatch(value!)) {
+                      return 'Please enter a valid delivery details';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _deliveryDetails = value!;
+                  },
                 ),
-                initialValue: _deliveryDetails,
-                maxLength: 255,
-                validator: (value) {
-                  if (!_descriptionRegExp.hasMatch(value!)) {
-                    return 'Please enter a valid delivery details';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _deliveryDetails = value!;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Text('Delivery date : ', style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 16.0,
-                      color: kColorScheme.primary
-                  ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    formatter.format(_date),
-                    /* ? 'No date selected'
-                        : formatter.format(_date!),*/
-                  ),
-                  IconButton(
-                    onPressed: _showDatePicker,
-                    icon: const Icon(Icons.calendar_month),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              //Row(
-              // children: [
-
-
-              Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'Delivered to : ',
-                    style: TextStyle(
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Text('Delivery date : ', style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic,
                         fontSize: 16.0,
-                        color: kColorScheme.primary),
-                  ),
-                  const Spacer(),
-                  ElevatedButton(
-                      onPressed: () {
-                        _addClientToDelivery();
-                      },
-                      child: const Text('Add Client')),
-                ],
-              ),
-              Text(
-                _clientName.isEmpty ? 'No client selected' : _clientName,
-              ),
-              //],
-              //),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Text('List of dishes :', style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 16.0,
-                      color: kColorScheme.primary
-                  ),
-                  ),
-                  const Spacer(),
-                  ElevatedButton(
-                      onPressed: () {
-                        _addDishesToDelivery();
-                      },
-                      child: const Text('Add Dishes')),
-                ],
-              ),
+                        color: kColorScheme.primary
+                    ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      formatter.format(_date),
+                      /* ? 'No date selected'
+                          : formatter.format(_date!),*/
+                    ),
+                    IconButton(
+                      onPressed: _showDatePicker,
+                      icon: const Icon(Icons.calendar_month),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                //Row(
+                // children: [
 
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                child: const Text('Save'),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    _createOrUpdateDelivery();
-                  }
-                },
-              ),
-            ],
+
+                Row(
+                  //mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Delivered to : ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16.0,
+                          color: kColorScheme.primary),
+                    ),
+                    const Spacer(),
+                    ElevatedButton(
+                        onPressed: () {
+                          _addClientToDelivery();
+                        },
+                        child: const Text('Add Client')),
+                  ],
+                ),
+                Text(
+                  _clientName.isEmpty ? 'No client selected' : _clientName,
+                ),
+                //],
+                //),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Text('List of dishes :', style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 16.0,
+                        color: kColorScheme.primary
+                    ),
+                    ),
+                    const Spacer(),
+                    ElevatedButton(
+                        onPressed: () {
+                          _addDishesToDelivery();
+                        },
+                        child: const Text('Add Dishes')),
+                  ],
+                ),
+
+                const SizedBox(height: 16.0),
+                Container(
+                  width: double.infinity,
+                  constraints: const BoxConstraints(maxHeight: 250.0),
+                  child: Scrollbar(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: selectedDishes.length,
+                      itemBuilder: (context, index) =>
+                          Container(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Text(selectedDishes[index].name ?? 'N/A', style: TextStyle(
+                                  fontSize: 18.0,
+                                  //fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.recycling, color: Colors.orangeAccent),
+                                    const SizedBox(width: 8.0),
+                                    const Text("Remained: "),
+                                    Text(selectedDishes[index].quantityRemained.toString() ?? 'N/A'),
+                                    const Spacer(),
+                                    const Icon(Icons.delivery_dining, color: Colors.orangeAccent),
+                                    const SizedBox(width: 8.0),
+                                    const Text("Delivered: "),
+                                    Text(selectedDishes[index].quantityDelivered.toString() ?? 'N/A'),
+                                  ],
+                                ),
+                                const SizedBox(height: 16.0),
+                              ],
+                            ),
+                          ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      _createOrUpdateDelivery();
+                    }
+                  },
+                  child: const Text('Save Delivery'),
+                ),
+              ],
+            ),
           ),
         ),
         //],
