@@ -183,7 +183,7 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
+        /*bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
@@ -197,6 +197,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 icon: Icon(Icons.delivery_dining), label: 'Deliveries'),
             BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'QR'),
           ],
-        ));
+        ),*/
+    );
   }
 }

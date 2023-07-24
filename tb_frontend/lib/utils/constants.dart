@@ -1,7 +1,10 @@
 
 
 // Constants used throughout the app
-const String ipAddress = '192.168.1.3:8080';
+//const String ipAddress = '192.168.1.3:8080';
+const String ipAddress = '193.134.218.31:8080';
+//const String ipAddress = 'IICT-MV335-Boka-food.iict.ch';
+
 const String uriPrefix = 'http://$ipAddress';
 
 // Regex patterns used for INPUT VALIDATION

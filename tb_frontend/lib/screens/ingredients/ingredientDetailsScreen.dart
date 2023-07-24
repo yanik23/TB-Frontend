@@ -133,7 +133,7 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
                   Center(
                     child: ElevatedButton(onPressed: () {
                       _editIngredient(snapshot.data!);
-                    }, child: const Text('Edit')),
+                    }, child: const Text('Edit Ingredient')),
                   ),
 
                 ],

@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tb_frontend/screens/dishes/createDishScreen.dart';
+import 'package:tb_frontend/screens/dishes/dishDetailsScreen.dart';
+
+import '../../models/dish.dart';
 
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
@@ -14,33 +17,55 @@ class QrScannerScreen extends StatefulWidget {
 
 class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProviderStateMixin {
   //late MobileScannerController controller = MobileScannerController();
-  Barcode? barcode;
-  BarcodeCapture? capture;
+  //Barcode? barcode;
+  BarcodeCapture? barcode;
 
-  Future<void> onDetect(BarcodeCapture barcode) async {
+  /*Future<void> onDetect(BarcodeCapture barcode) async {
     capture = barcode;
     setState(() => this.barcode = barcode.barcodes.first);
-  }
+  }*/
   MobileScannerArguments? arguments;
 
   final MobileScannerController controller = MobileScannerController(
-    //detectionSpeed: DetectionSpeed.normal,
-    //facing: CameraFacing.back,
     torchEnabled: true,
+    // formats: [BarcodeFormat.qrCode]
+    // facing: CameraFacing.front,
+    // detectionSpeed: DetectionSpeed.normal
+    // detectionTimeoutMs: 1000,
+    // returnImage: false,
   );
 
-  @override
+  bool isStarted = true;
+
+  void _startOrStop() {
+    try {
+      if (isStarted) {
+        controller.stop();
+      } else {
+        controller.start();
+      }
+      setState(() {
+        isStarted = !isStarted;
+      });
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Something went wrong! $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /*@override
   void initState() {
     // TODO: implement initState
     //cameraController.stop();
     super.initState();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
-
-   /* cameraController.stop();
-    cameraController.start();*/
 
     return Scaffold(
       appBar: AppBar(
@@ -82,22 +107,22 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
         ],
       ),
       body: MobileScanner(
-        // fit: BoxFit.contain,
-        /*controller: MobileScannerController(
-          detectionSpeed: DetectionSpeed.normal,
-          //facing: CameraFacing.back,
-          torchEnabled: false,
-        ),*/
+        controller: controller,
+        errorBuilder: (context, error, child) {
+          return Center(
+            child: Text(
+              error.toString(),
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        },
+        fit: BoxFit.contain,
+        onDetect: (barcode) {
+          setState(() {
+            this.barcode = barcode;
+          });
 
-        onDetect: (capture) {
-          final List<Barcode> barcodes = capture.barcodes;
-          Barcode? barcode = barcodes.last;
-          final Uint8List? image = capture.image;
-          /*for (final barcode in barcodes) {
-            debugPrint('Barcode found! ${barcode.rawValue}');
-          }*/
-          //cameraController.start();
-          if (barcode?.rawValue != null) {
+          if (barcode != null) {
             log("===================stoppping camera");
             controller.stop();
             showDialog(
@@ -105,7 +130,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
               builder: (context) => AlertDialog(
                 title: const Text('Barcode found!'),
                 content:
-                    Text('Type: ${barcode?.type}\nData: ${barcode?.rawValue}'),
+                    Text('Type: ${barcode.barcodes.first.rawValue}'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -114,28 +139,30 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                       setState(() {
                         log('============================================== starting camera');
                         controller.start();
-                        barcodes.clear();
-                        barcode = null;
+                        /*barcodes.clear();
+                        barcode = null;*/
                       });
-
-
                     },
                     child: const Text('OK'),
                   ),
                   TextButton(
                     onPressed: () {
-                      //Navigator.of(context).pop();
-                      log('============================================new dish');
-                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const CreateDishScreen('Edit dish')));
+
+                        String? rawValue = barcode.barcodes.first.rawValue;
+                        if (rawValue != null) {
+                          Dish dish = Dish.fromJson(jsonDecode(rawValue));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => DishDetailsScreen(dish)));
+                        }
+                        //Dish dish = Dish.fromJson(jsonDecode(barcode.barcodes.first.rawValue));
                     },
-                    child: const Text('Edit dish'),
+                    child: const Text('Dish Details'),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                       setState(() {
                         controller.start();
-                        barcodes.clear();
+                        //barcodes.clear();
                       });
 
                     },
