@@ -23,9 +23,6 @@ class Delivery {
   Delivery(this.id, this.username, this.clientName, this.deliveryDate,
       this.details, this.dishes);
 
-  /*get formattedDate {
-    return '${deliveryDate.day}/${deliveryDate.month}/${deliveryDate.year}';
-  }*/
 
   factory Delivery.fromJson(Map<String, dynamic> json) {
     return Delivery(
@@ -78,11 +75,9 @@ Future<List<Delivery>> fetchDeliveries() async {
             jsonDecode(utf8.decode(response.bodyBytes));
         return responseData.map((json) => Delivery.fromJson(json)).toList();
       } else {
-        // If the server did not return a 200 OK response, throw an exception.
         throw Exception('Failed to load deliveries');
       }
     } else {
-      // If the server did not return a 200 OK response, throw an exception.
       throw Exception('Failed to load deliveries');
     }
   } else {
@@ -99,7 +94,6 @@ Future<Delivery> fetchDelivery(int id) async {
       HttpHeaders.authorizationHeader: token,
     });
     if (response.statusCode == HttpStatus.ok) {
-      // If the server did return a 200 OK response, then parse the JSON.
       return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == HttpStatus.unauthorized) {
       final newToken = await fetchNewToken();
@@ -109,18 +103,15 @@ Future<Delivery> fetchDelivery(int id) async {
         HttpHeaders.authorizationHeader: newToken,
       });
       if (response.statusCode == HttpStatus.ok) {
-        // If the server did return a 200 OK response, then parse the JSON.
         return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw Exception('You don\'t have permission to view this delivery');
       } else {
-        // If the server did not return a 200 OK response, then throw an exception.
         throw Exception('Failed to load delivery');
       }
     } else if (response.statusCode == HttpStatus.forbidden) {
       throw Exception('You don\'t have permission to view this delivery');
     } else {
-      // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to load delivery');
     }
   } else {
@@ -163,11 +154,9 @@ Future<Delivery> createDelivery(Delivery delivery) async {
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw Exception('You don\'t have permission to create this delivery');
       } else {
-        // If the server did not return a 201 CREATED response, then throw an exception.
         throw Exception('Failed to create delivery');
       }
     } else {
-      // If the server did not return a 201 CREATED response, then throw an exception.
       throw Exception('Failed to create delivery');
     }
   } else {
@@ -189,7 +178,6 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
     );
 
     if (response.statusCode == HttpStatus.ok) {
-      // If the server did return a 200 OK response, then parse the JSON.
       return Delivery.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else if (response.statusCode == HttpStatus.forbidden) {
       throw Exception('You don\'t have the permission to update this delivery');
@@ -231,7 +219,6 @@ Future<int> deleteDelivery(int id) async {
     );
 
     if (response.statusCode == HttpStatus.noContent) {
-      // If the server did return a 204 NO CONTENT response, then parse the JSON.
       return response.statusCode;
     } else if (response.statusCode == HttpStatus.forbidden) {
       throw Exception('You don\'t have permission to delete this delivery');

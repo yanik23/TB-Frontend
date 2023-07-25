@@ -1,8 +1,5 @@
 
 
-
-
-
 class IngredientLessDTO {
   int id;
   String name;

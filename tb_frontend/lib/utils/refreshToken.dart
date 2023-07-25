@@ -11,8 +11,10 @@ import 'constants.dart';
 /// It uses the refresh token stored in the secure storage to fetch a new access token.
 /// The access token is then stored in the secure storage.
 Future<String> fetchNewToken() async {
+  // Read the refresh token from the secure storage
   final refreshToken = await SecureStorageManager.read('REFRESH_TOKEN');
 
+  // If the refresh token is not null, fetch a new access token from the server
   if (refreshToken != null) {
     final response = await http
         .get(Uri.parse('$uriPrefix/users/refresh-token'), headers: {

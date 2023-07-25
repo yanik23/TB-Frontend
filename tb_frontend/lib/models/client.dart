@@ -91,7 +91,7 @@ Future<List<Client>> fetchClients() async {
   final accessToken = await SecureStorageManager.read('ACCESS_TOKEN');
   if (accessToken != null) {
     try {
-      return await _fetchClientsWithToken(accessToken);
+      return await fetchClientsWithToken(accessToken);
     } catch (exception) {
       ExceptionHandler.handleError(exception);
       return [];
@@ -101,7 +101,7 @@ Future<List<Client>> fetchClients() async {
   }
 }
 
-Future<List<Client>> _fetchClientsWithToken(String accessToken) async {
+Future<List<Client>> fetchClientsWithToken(String accessToken) async {
   final response = await http.get(
     Uri.parse('$uriPrefix/clients'),
     headers: {
