@@ -1,8 +1,8 @@
 
 
 // Constants used throughout the app
-const String ipAddress = '192.168.1.3:8080'; //local address
-//const String ipAddress = '193.134.218.31:8080'; //VM address
+//const String ipAddress = '192.168.1.3:8080'; //local address
+const String ipAddress = '193.134.218.31:8080'; //VM address
 
 
 const String uriPrefix = 'http://$ipAddress';
