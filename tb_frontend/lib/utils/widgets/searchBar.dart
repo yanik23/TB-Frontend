@@ -1,6 +1,13 @@
 
 import 'package:flutter/material.dart';
 
+/// This class is used to display a search bar.
+///
+/// It is used to filter entites based on the filter searchResult.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class SearchBar extends StatelessWidget {
   final TextEditingController editingController;
   final Function(String) filterSearchResults;

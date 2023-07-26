@@ -1,17 +1,27 @@
 
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
-
 import '../../models/dish.dart';
 import 'dishItemTrait.dart';
 
 
+/// This class is used to generate a dish item  widget of the application.
+///
+/// Inspired and adapted from : https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DishItem extends StatelessWidget {
+
+  // dish to display
   final Dish dish;
+
   final Function(BuildContext context, Dish dish) onSelect;
 
   const DishItem(this.dish, this.onSelect, {super.key});
 
+  /// This function is used to build the dish item.
   @override
   Widget build(BuildContext context) {
     return Card(

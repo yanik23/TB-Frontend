@@ -2,16 +2,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
-
 import '../../models/ingredient.dart';
 
 
+/// This class is used generate an ingredient item Widget.
+/// It is used in the ingredients screen.
+/// Inspired by: https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class IngredientItem extends StatelessWidget {
+
+  // ingredient to display
   final Ingredient ingredient;
   final Function(BuildContext context, Ingredient ingredient) onSelect;
 
   const IngredientItem(this.ingredient, this.onSelect, {super.key});
 
+  /// This function is used to build the ingredient item.
   @override
   Widget build(BuildContext context) {
     return Card(

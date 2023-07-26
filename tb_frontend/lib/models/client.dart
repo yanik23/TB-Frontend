@@ -11,6 +11,11 @@ import 'package:tb_frontend/utils/exceptionHandler.dart';
 import '../utils/refreshToken.dart';
 import '../utils/secureStorageManager.dart';
 
+/// This class represents a client model.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class Client {
   final int id;
   String? status;
@@ -25,6 +30,7 @@ class Client {
       this.city,
       {this.status, this.remoteId});
 
+  /// This method is used to create a client object from a JSON object.
   factory Client.fromJson(Map<String, dynamic> json) {
     return Client(
       json['id'],
@@ -36,6 +42,7 @@ class Client {
     );
   }
 
+  /// This method is used to create a JSON object from a client object.
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
@@ -45,6 +52,7 @@ class Client {
         'city': city,
       };
 
+  /// This method is used to create a map object from a client object. Used at the beginning for the local database.
   Map<String, dynamic> toMap() => {
         'id': id,
         'status': status,
@@ -57,6 +65,7 @@ class Client {
       };
 }
 
+/// This method is used to fetch a client from the backend.
 Future<Client> fetchClient(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -87,6 +96,7 @@ Future<Client> fetchClient(int id) async {
   }
 }
 
+/// This method is used to fetch all clients from the backend.
 Future<List<Client>> fetchClients() async {
   final accessToken = await SecureStorageManager.read('ACCESS_TOKEN');
   if (accessToken != null) {
@@ -101,6 +111,7 @@ Future<List<Client>> fetchClients() async {
   }
 }
 
+/// This method is used to fetch all clients from the backend with a given access token.
 Future<List<Client>> fetchClientsWithToken(String accessToken) async {
   final response = await http.get(
     Uri.parse('$uriPrefix/clients'),
@@ -130,6 +141,7 @@ Future<List<Client>> fetchClientsWithToken(String accessToken) async {
   }
 }
 
+/// This method is used to create a client on the backend.
 Future<Client> createClient(Client client) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 

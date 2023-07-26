@@ -5,6 +5,12 @@ import 'package:tb_frontend/screens/welcomeScreen.dart';
 import '../../utils/constants.dart';
 import 'createDishScreen.dart';
 
+
+/// This class is used to display the ingredients to be added for a dish.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class AddIngredientsToDishScreen extends StatefulWidget {
   final List<IngredientCheck> ingredients;
   final List<IngredientCheck> selectedIngredients;
@@ -17,15 +23,23 @@ class AddIngredientsToDishScreen extends StatefulWidget {
       _AddIngredientsToDishScreenState();
 }
 
+/// This class is used to manage the state of the ingredients to be added for a dish.
 class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen> {
-  List<IngredientCheck> selectedIngredients = [];
-  List<IngredientCheck> searchedIngredients = [];
-  bool _showSearchBar = false;
-  TextEditingController editingController = TextEditingController();
-  Map<int, TextEditingController> textEditingControllerMap = {};
 
+  // the list of ingredients selected by the user
+  List<IngredientCheck> selectedIngredients = [];
+  // the list of ingredients searched by the user
+  List<IngredientCheck> searchedIngredients = [];
+  // show search bar
+  bool _showSearchBar = false;
+  // editing controller for the search bar
+  TextEditingController editingController = TextEditingController();
+  //Map<int, TextEditingController> textEditingControllerMap = {};
+
+  // regex pattern for validation
   final RegExp _doubleRegExp = RegExp(doubleRegexPattern);
 
+  /// This function is used to initialize the state of the ingredients to be added for a dish.
   @override
   void initState() {
     super.initState();
@@ -48,14 +62,8 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
     }
   }
 
-  @override
-  void dispose() {
-    for (final controller in textEditingControllerMap.values) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
 
+  /// This function is used to toggle an ingredient.
   void _toggleIngredient(int index, bool value) {
     setState(() {
       selectedIngredients[index].isChecked = value;
@@ -63,6 +71,7 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
     });
   }
 
+  /// This function is used to add the selected ingredients to the dish.
   void _onAddPressed() {
     List<IngredientCheck> si = selectedIngredients
         .where((ingredient) => ingredient.isChecked)
@@ -71,23 +80,17 @@ class _AddIngredientsToDishScreenState extends State<AddIngredientsToDishScreen>
     Navigator.pop(context, si);
   }
 
+  /// This function is used to filter the search results.
   void _filterSearchResults(String query) {
     setState(() {
       selectedIngredients = widget.ingredients
           .where((ingredient) =>
               ingredient.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
-
-      for (var element in searchedIngredients) {
-        /*element.weight = widget.ingredients
-            .where((el) => element.id == el.id)
-            .first
-            .weight;*/
-        log("==setting weight for ${element.name} to ${element.weight}");
-      }
     });
   }
 
+  /// This function is used to build the screen.
   @override
   Widget build(BuildContext context) {
     Widget searchBar = Padding(

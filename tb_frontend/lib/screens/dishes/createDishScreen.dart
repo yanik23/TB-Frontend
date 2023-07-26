@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/addIngredientsToDishScreen.dart';
 import '../../dto/ingredientLessDTO.dart';
@@ -7,6 +6,12 @@ import '../../models/ingredient.dart';
 import '../../utils/constants.dart';
 import '../welcomeScreen.dart';
 
+/// This class is used to represent an ingredient with a checkbox.
+/// It is used to display the list of ingredients in the create dish screen.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class IngredientCheck {
   int id;
   String name;
@@ -16,6 +21,13 @@ class IngredientCheck {
   IngredientCheck(this.id, this.name, this.isChecked, {this.weight});
 }
 
+/// This class is used to display the create dish screen of the application.
+/// It is used to create or edit a dish.
+/// If the dish was created or edited successfully, the user is navigated back to the dishes screen.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class CreateDishScreen extends StatefulWidget {
   final Dish? dish;
   final String title;
@@ -25,9 +37,11 @@ class CreateDishScreen extends StatefulWidget {
   State<CreateDishScreen> createState() => _CreateDishScreenState();
 }
 
+/// This class is used to manage the state of the create dish screen.
 class _CreateDishScreenState extends State<CreateDishScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  // initial values of the dish
   int _id = 0;
   String _name = '';
   String? _description;
@@ -47,19 +61,28 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
   double? _iron;
   double? _potassium;
 
-
+  // list of ingredients check
   List<IngredientCheck> ingredients = [];
+  // list of selected ingredients check
   List<IngredientCheck> selectedIngredients = [];
+  // list of ingredients less dto
   List<IngredientLessDTO> ingredientsLessDTO = [];
 
+  // regex patterns for validation
   final RegExp _nameRegExp = RegExp(nameRegexPattern);
   final RegExp _descriptionRegExp = RegExp(descriptionRegexPattern);
   final RegExp _intRegExp = RegExp(intRegexPattern);
   final RegExp _doubleRegExp = RegExp(doubleRegexPattern);
 
+  // show nutrition info
   late bool _nutritionInfo;
+
+  // icon for nutrition info
   late Icon icon;
 
+  /// This function is used to initialize the state of the create dish screen.
+  /// if the dish is not null, it means we update the dish, the initial values are set to the values of the dish.
+  /// if the dish is null, the initial values are set to the default values.
   @override
   void initState() {
     super.initState();
@@ -100,7 +123,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     );
   }
 
-
+  /// This function is used to load the ingredients from the backend.
   void _loadIngredients() async {
     fetchIngredients().then((value) {
       ingredients.clear();
@@ -112,11 +135,10 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     });
   }
 
+  /// This function is used to add ingredients to the dish.
+  /// It navigates to the add ingredients to dish screen.
+  /// If the ingredients were added successfully, the selected ingredients list is updated.
   void _addIngredientsToDish() async {
-    log("========================================== _addIngredientsToDish");
-    for (var el in selectedIngredients) {
-      log("=============selected=========================== ${el.name}");
-    }
     final newIngredients = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
@@ -130,10 +152,11 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     }
   }
 
+  /// This function is used to create or update a dish.
+  /// If the dish was created or updated successfully, the user is navigated back to the dishes screen.
   void _createOrUpdateDish() {
     ingredientsLessDTO = selectedIngredients
-        .map((e) =>
-        IngredientLessDTO(e.id, e.name, e.weight))
+        .map((e) => IngredientLessDTO(e.id, e.name, e.weight))
         .toList();
     // Create an instance of the Dish class using the collected inputs
     Dish newDish = Dish(
@@ -159,6 +182,8 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     );
 
     Future<Dish> resultDish;
+
+    /// if the dish is not null, it means we update the dish, else we create a new dish.
     String snackBarMessage = '';
     if (widget.dish != null) {
       resultDish = updateDish(newDish);
@@ -167,9 +192,12 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
       resultDish = createDish(newDish);
       snackBarMessage = 'Dish created successfully';
     }
+
+    /// shows a snackbar with the result of the operation. if an error occurs, the error message is shown.
     resultDish.then((dish) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(snackBarMessage),
+        SnackBar(
+          content: Text(snackBarMessage),
           backgroundColor: Colors.green,
           showCloseIcon: true,
           closeIconColor: Colors.white,
@@ -188,6 +216,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
     });
   }
 
+  /// This function is used to build the create dish screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -617,12 +646,14 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                 const SizedBox(height: 16.0),
 
                 Row(children: [
-                  Text('List of ingredients (Optional) : ', style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic,
-                    color: kColorScheme.primary,
-                  ),
+                  Text(
+                    'List of ingredients (Optional) : ',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      color: kColorScheme.primary,
+                    ),
                   ),
                   const Spacer(),
                   ElevatedButton(
@@ -634,8 +665,7 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                   const SizedBox(height: 16.0),
                 ]),
 
-                if(selectedIngredients?.isEmpty ?? true)
-                  const Text('N/A'),
+                if (selectedIngredients?.isEmpty ?? true) const Text('N/A'),
                 Container(
                   width: double.infinity,
                   constraints: const BoxConstraints(maxHeight: 250.0),
@@ -643,33 +673,39 @@ class _CreateDishScreenState extends State<CreateDishScreen> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: selectedIngredients?.length ?? 0,
-                      itemBuilder: (context, index) =>
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 5.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(selectedIngredients?[index].name ?? 'N/A', style: TextStyle(
-                                    fontSize: 18.0,
-                                    //fontWeight: FontWeight.bold,
-                                    fontStyle: FontStyle.italic,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),),
+                      itemBuilder: (context, index) => Container(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                selectedIngredients?[index].name ?? 'N/A',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  //fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
-                                const Spacer(),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.balance, color: Colors.orangeAccent),
-                                      const SizedBox(width: 8.0),
-                                      Text(selectedIngredients?[index].weight != null ? '${selectedIngredients?[index].weight}g' : 'N/A'),
-                                      //const Spacer(),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                            const Spacer(),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.balance,
+                                      color: Colors.orangeAccent),
+                                  const SizedBox(width: 8.0),
+                                  Text(selectedIngredients?[index].weight !=
+                                          null
+                                      ? '${selectedIngredients?[index].weight}g'
+                                      : 'N/A'),
+                                  //const Spacer(),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),

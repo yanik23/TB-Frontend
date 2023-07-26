@@ -10,6 +10,10 @@ import 'constants.dart';
 ///
 /// It uses the refresh token stored in the secure storage to fetch a new access token.
 /// The access token is then stored in the secure storage.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 Future<String> fetchNewToken() async {
   // Read the refresh token from the secure storage
   final refreshToken = await SecureStorageManager.read('REFRESH_TOKEN');

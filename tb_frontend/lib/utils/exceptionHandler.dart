@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+/// This class is used to handle exceptions.
 class ExceptionHandler {
   static void handleError(error) {
     if (error is SocketException) {

@@ -43,7 +43,24 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code),
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) =>
+                    AlertDialog(
+                      title: const Text("QR Code"),
+                      content: const Text("QR code not implemented yet"),
+                      actions: [
+                        TextButton(
+                          child: const Text("OK"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    ),
+              );
+            },
           ),
         ],
       ),

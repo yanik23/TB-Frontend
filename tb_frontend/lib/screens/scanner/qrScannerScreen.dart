@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tb_frontend/screens/dishes/createDishScreen.dart';
 import 'package:tb_frontend/screens/dishes/dishDetailsScreen.dart';
-
 import '../../models/dish.dart';
 
+
+/// This class is used to display the qr scanner screen of the application.
+/// Inspired by: https://pub.dev/packages/mobile_scanner/example
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class QrScannerScreen extends StatefulWidget {
   const QrScannerScreen({super.key});
 
@@ -15,62 +21,24 @@ class QrScannerScreen extends StatefulWidget {
   State<QrScannerScreen> createState() => _QrScannerScreenState();
 }
 
+/// This class is used to manage the state of the qr scanner screen.
 class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProviderStateMixin {
-  //late MobileScannerController controller = MobileScannerController();
-  //Barcode? barcode;
   BarcodeCapture? barcode;
 
-  /*Future<void> onDetect(BarcodeCapture barcode) async {
-    capture = barcode;
-    setState(() => this.barcode = barcode.barcodes.first);
-  }*/
   MobileScannerArguments? arguments;
 
-  final MobileScannerController controller = MobileScannerController(
-    //torchEnabled: true,
-    // formats: [BarcodeFormat.qrCode]
-    // facing: CameraFacing.front,
-    // detectionSpeed: DetectionSpeed.normal
-    // detectionTimeoutMs: 1000,
-    // returnImage: false,
-  );
+  final MobileScannerController controller = MobileScannerController();
 
   bool isStarted = true;
 
-  void _startOrStop() {
-    try {
-      if (isStarted) {
-        controller.stop();
-      } else {
-        controller.start();
-      }
-      setState(() {
-        isStarted = !isStarted;
-      });
-    } on Exception catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Something went wrong! $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  /*@override
-  void initState() {
-    // TODO: implement initState
-    //cameraController.stop();
-    super.initState();
-  }*/
-
+  /// This function is used to initialize the state of the qr scanner screen.
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mobile Scanner'),
         actions: [
+          /// This button is used to toggle the torch of the qr scanner.
           IconButton(
             color: Colors.white,
             icon: ValueListenableBuilder(
@@ -84,26 +52,8 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                 }
               },
             ),
-            //iconSize: 32.0,
             onPressed: () => controller.toggleTorch(),
-              //cameraController.toggleTorch();
           ),
-          /*IconButton(
-            color: Colors.white,
-            icon: ValueListenableBuilder(
-              valueListenable: cameraController.cameraFacingState,
-              builder: (context, state, child) {
-                switch (state) {
-                  case CameraFacing.front:
-                    return const Icon(Icons.camera_front);
-                  case CameraFacing.back:
-                    return const Icon(Icons.camera_rear);
-                }
-              },
-            ),
-            iconSize: 32.0,
-            onPressed: () => cameraController.switchCamera(),
-          ),*/
         ],
       ),
       body: MobileScanner(
@@ -121,49 +71,39 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
           setState(() {
             this.barcode = barcode;
           });
-
+          /// This dialog is used to display the detected qr code.
           if (barcode != null) {
-            log("===================stoppping camera");
             controller.stop();
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text('Barcode found!'),
-                content:
-                    Text('Type: ${barcode.barcodes.first.rawValue}'),
+                content: Text('Type: ${barcode.barcodes.first.rawValue}'),
                 actions: [
                   TextButton(
                     onPressed: () {
-                      log('===========================================hkjhkjh=== starting camera');
                       Navigator.of(context).pop();
                       setState(() {
-                        log('============================================== starting camera');
                         controller.start();
-                        /*barcodes.clear();
-                        barcode = null;*/
                       });
                     },
                     child: const Text('OK'),
                   ),
+                  /// This button is used to navigate to the create dish screen with the details of the dish that was scanned.
                   TextButton(
                     onPressed: () {
-
-                        String? rawValue = barcode.barcodes.first.rawValue;
-                        if (rawValue != null) {
-                          Dish dish = Dish.fromJson(jsonDecode(rawValue));
-                          Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => DishDetailsScreen(dish)));
-                        }
-                        //Dish dish = Dish.fromJson(jsonDecode(barcode.barcodes.first.rawValue));
+                      String? rawValue = barcode.barcodes.first.rawValue;
+                      if (rawValue != null) {
+                        Dish dish = Dish.fromJson(jsonDecode(rawValue));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => DishDetailsScreen(dish)));
+                      }
                     },
                     child: const Text('Dish Details'),
                   ),
-
                 ],
               ),
             );
-            /*Future.delayed(const Duration(seconds: 5), () {
-              Navigator.pop(context);
-            });*/
           }
         },
       ),

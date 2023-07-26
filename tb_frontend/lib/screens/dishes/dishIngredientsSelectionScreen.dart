@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Ingredient {
+/*class Ingredient {
   String name;
   bool isChecked;
 
@@ -115,4 +115,4 @@ class _IngredientSelectionScreenState extends State<IngredientSelectionScreen> {
       ),
     );
   }
-}
+}*/

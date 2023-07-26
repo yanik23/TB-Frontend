@@ -8,7 +8,15 @@ import '../../models/dish.dart';
 import 'dishItem.dart';
 
 
+/// This class is used to display the dishes screen of the application.
+/// It is used to display all dishes.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DishesScreen extends StatefulWidget {
+
+  // title of the screen
   final String? title;
 
   const DishesScreen(this.title, {super.key});
@@ -18,12 +26,18 @@ class DishesScreen extends StatefulWidget {
 }
 
 class _DishesScreenState extends State<DishesScreen> {
+  // dishes fetched from the backend
   late Future<List<Dish>> dishes;
+  // local dishes list
   List<Dish> localDishes = [];
+  // searched dishes list
   List<Dish> searchedDishes = [];
+  // editing controller for the search bar
   TextEditingController editingController = TextEditingController();
+  // show search bar
   bool _showSearchBar = false;
 
+  /// This function is used to initialize the state of the dishes screen.
   @override
   void initState() {
     super.initState();
@@ -34,6 +48,9 @@ class _DishesScreenState extends State<DishesScreen> {
     });
   }
 
+  /// This function is used to select a dish.
+  /// It navigates to the dish details screen.
+  /// If the dish was edited, it updates the dishes screen.
   void _selectDish(BuildContext context, Dish dish) async{
     final upgradedDish = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -50,6 +67,9 @@ class _DishesScreenState extends State<DishesScreen> {
     }
   }
 
+  /// This function is used to create a dish.
+  /// It navigates to the create dish screen.
+  /// If the dish was created, it updates the dishes screen.
   void _createDish() async{
     final newDish = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -64,6 +84,7 @@ class _DishesScreenState extends State<DishesScreen> {
     }
   }
 
+  /// This function is used to refresh the dishes screen.
   Future _refreshDish() async {
     setState(() {
       dishes = fetchDishes();
@@ -76,6 +97,9 @@ class _DishesScreenState extends State<DishesScreen> {
     });
   }
 
+  /// This function is used to delete a dish.
+  /// If the dish was deleted successfully, it updates the dishes screen and shows a snackbar.
+  /// If an error occurs, it shows a snackbar.
   void _deleteDish(Dish dish) async{
     final response = await deleteDish(dish.id).catchError((error) {
       if (context.mounted) {
@@ -118,6 +142,7 @@ class _DishesScreenState extends State<DishesScreen> {
     }
   }
 
+  /// This function is used to filter the dishes list.
   void _filterSearchResults(String query) {
     setState(() {
       searchedDishes = localDishes
@@ -126,8 +151,10 @@ class _DishesScreenState extends State<DishesScreen> {
     });
   }
 
+  /// This function is used to build the dishes screen.
   @override
   Widget build(BuildContext context) {
+    /// This widget is used to display the search bar.
     Widget searchBar = Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
@@ -146,7 +173,7 @@ class _DishesScreenState extends State<DishesScreen> {
       ),
     );
 
-
+    /// This widget is used to display the dishes.
     Widget content = FutureBuilder<List<Dish>>(
       future: dishes,
       builder: (context, snapshot) {

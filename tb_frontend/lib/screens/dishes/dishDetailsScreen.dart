@@ -3,16 +3,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/generateQRCodeScreen.dart';
-
-
 import '../../models/dish.dart';
 import 'createDishScreen.dart';
 
+
+/// This class is used to display the dish details screen of the application.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DishDetailsScreen extends StatefulWidget {
-  //static const routeName = '/dish-details-screen';
 
+  // dish to display
   final Dish tempDish;
-
 
   const DishDetailsScreen(this.tempDish, {super.key});
 
@@ -20,16 +23,20 @@ class DishDetailsScreen extends StatefulWidget {
   State<DishDetailsScreen> createState() => _DishDetailsScreenState();
 }
 
+/// This class is used to manage the state of the dish details screen.
 class _DishDetailsScreenState extends State<DishDetailsScreen> {
+
+  // dish fetched from the backend
   late Future<Dish> dish;
 
-
+  /// This function is used to initialize the state of the dish details screen.
   @override
   void initState() {
     super.initState();
     dish = fetchDish(widget.tempDish.id);
   }
 
+  /// This function is used to edit a dish.
   void _editDish(Dish d) async {
     final updatedDish = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -43,12 +50,14 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
     }
   }
 
+  /// This function is used to build the dish details screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dish Details'),
         actions: [
+          /// This button is used to navigate to the generate QR code screen.
           IconButton(
             icon: const Icon(Icons.qr_code),
             onPressed: () {
@@ -237,14 +246,12 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
               return const CircularProgressIndicator();
             },
           ),
-
-
-
         ),
       ),
     );
   }
 
+  /// This function is used to build a nutrition row.
   Widget buildNutritionRow(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

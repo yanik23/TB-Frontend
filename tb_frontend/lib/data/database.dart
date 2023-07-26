@@ -2,6 +2,11 @@
 
 import 'package:sqflite/sqflite.dart';
 
+/// This class is used to manage the local database of the application.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DBHelper {
   static Database? _database;
   static const String databaseName = 'TB.db';

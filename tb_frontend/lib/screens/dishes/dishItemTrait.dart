@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+
+/// This class is used to display the ingredient details screen of the application.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DishItemTrait extends StatelessWidget {
   final IconData icon;
   final String label;

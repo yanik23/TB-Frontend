@@ -1,13 +1,17 @@
 
 
 import 'package:flutter/material.dart';
-
 import '../../models/ingredient.dart';
 import 'createIngredientScreen.dart';
 
+/// This class is used to display the ingredient details screen of the application.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class IngredientDetailsScreen extends StatefulWidget {
-  //static const routeName = '/dish-details-screen';
 
+  // ingredient to display
   final Ingredient tempIngredient;
 
   const IngredientDetailsScreen(this.tempIngredient, {super.key});
@@ -16,16 +20,21 @@ class IngredientDetailsScreen extends StatefulWidget {
   State<IngredientDetailsScreen> createState() => _IngredientDetailsScreenState();
 }
 
+/// This class is used to manage the state of the ingredient details screen.
 class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
   late Future<Ingredient> ingredient;
 
+  /// This function is used to initialize the state of the ingredient details screen.
+  /// It fetches the ingredient from the backend.
   @override
   void initState() {
     super.initState();
     ingredient = fetchIngredient(widget.tempIngredient.id);
   }
 
-  
+  /// This function is used to edit an ingredient.
+  /// It navigates to the create ingredient screen.
+  /// If the ingredient was edited, it updates the ingredient details screen.
   void _editIngredient(Ingredient i) async {
     final updatedIngredient = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -38,6 +47,8 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
       });
     }
   }
+
+  /// This function is used to build the ingredient details screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,15 +74,12 @@ class _IngredientDetailsScreenState extends State<IngredientDetailsScreen> {
                 ],
               ),
               );
-              /*ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('QR code not implemented yet'),
-                ),
-              );*/
             },
           ),
         ],
       ),
+
+      /// Used to update the ingredient list when the ingredient was edited.
       body: WillPopScope(
         onWillPop: () async {
           Navigator.of(context).pop(ingredient);

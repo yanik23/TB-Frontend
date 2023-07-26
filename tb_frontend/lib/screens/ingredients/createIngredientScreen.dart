@@ -3,27 +3,42 @@ import 'package:flutter/material.dart';
 import '../../models/ingredient.dart';
 import '../../utils/constants.dart';
 
+
+/// This class is used to display the ingredient details screen of the application.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class CreateIngredientScreen extends StatefulWidget {
+
+  // ingredient to display if it is an edit. else null for creating a new ingredient
   final Ingredient? ingredient;
+
+  // title of the screen
   final String title;
+
   const CreateIngredientScreen(this.title, {this.ingredient, super.key});
 
   @override
   State<CreateIngredientScreen> createState() => _CreateIngredientScreenState();
 }
 
+/// This class is used to manage the state of the ingredient details screen.
 class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  // initial values of the ingredient
   int _id = 0;
   String _name = '';
   String _currentType = '';
   String? _description;
   String? _supplier = '';
 
+  // regex patterns for validation
   final RegExp _nameRegExp = RegExp(nameRegexPattern);
   final RegExp _descriptionRegExp = RegExp(descriptionRegexPattern);
 
+  /// This function is used to initialize the state of the ingredient details screen.
   @override
   void initState() {
     if (widget.ingredient != null) {
@@ -38,6 +53,9 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
     }
   }
 
+  /// This function is used to create or update an ingredient.
+  /// If the ingredient was created or updated successfully, the user is navigated back to the ingredient detail screen.
+  /// If an error occurs, a snackbar is shown.
   void _createOrUpdateIngredient() {
     Ingredient newIngredient = Ingredient(
       _id,
@@ -77,6 +95,7 @@ class _CreateIngredientScreenState extends State<CreateIngredientScreen> {
     });
   }
 
+  /// This function is used to build the ingredient details screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

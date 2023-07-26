@@ -6,6 +6,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 ///
 /// The storage is used to store the JWT access and refresh token.
 /// It stores the username and password of the last user that logged in.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class SecureStorageManager {
 
   /// The storage object.

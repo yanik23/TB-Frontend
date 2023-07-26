@@ -46,7 +46,7 @@ class DeliveryItem extends StatelessWidget {
                 const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Column(children: [
                     Text(
-                      'Delivery id : ${delivery.id}11.111.111.222',
+                      'Delivery id : ${delivery.id}',
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       softWrap: true, //so the text is wrapped well if needed

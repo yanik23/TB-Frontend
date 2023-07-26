@@ -7,8 +7,11 @@ import 'package:tb_frontend/screens/welcomeScreen.dart';
 import 'clients/clientsScreen.dart';
 import 'dishes/dishesScreen.dart';
 
+
+/// This class is used to display the menu screen of the application.
 class MenuScreen extends StatefulWidget {
 
+  /// The username of the logged in user used to display a welcome message.
   final String username;
   const MenuScreen(this.username, {super.key});
 
@@ -16,14 +19,20 @@ class MenuScreen extends StatefulWidget {
   State<MenuScreen> createState() => _MenuScreenState();
 }
 
+/// This class is used to manage the state of the menu screen.
 class _MenuScreenState extends State<MenuScreen> {
 
+  /// This function is used to initialize the state of the menu screen.
   @override
   initState() {
     super.initState();
 
   }
 
+  /// This function is used to build the menu screen.
+  /// On the menu screen the user can navigate to the different screens of the application.
+  /// The menu screen also contains a drawer that can be opened by swiping from the left side of the screen.
+  /// The drawer contains a logout button that navigates the user back to the welcome screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,21 +192,7 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
           ],
         ),
-        /*bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.stacked_bar_chart), label: 'Stats'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.local_dining_sharp), label: 'Dishes'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Clients'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.fastfood), label: 'Ingredients'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.delivery_dining), label: 'Deliveries'),
-            BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'QR'),
-          ],
-        ),*/
+
     );
   }
 }

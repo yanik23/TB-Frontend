@@ -1,6 +1,8 @@
 
 
-
+/// This DTO class is used to represent a dish for the delivery.
+///
+///
 class DishForDeliveryDTO {
   int id;
   String name;
