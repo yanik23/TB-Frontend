@@ -10,8 +10,14 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:tb_frontend/utils/constants.dart';
 
+// date format used to display the date
 final formatter = DateFormat('dd/MM/yyyy');
 
+/// This class is used to manage the deliveries of the application.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class Delivery {
   int id;
   String username;
@@ -24,6 +30,7 @@ class Delivery {
       this.details, this.dishes);
 
 
+  /// This function is used to create a delivery from a json.
   factory Delivery.fromJson(Map<String, dynamic> json) {
     return Delivery(
       json['id'],
@@ -39,6 +46,7 @@ class Delivery {
     );
   }
 
+  /// This function is used to convert a delivery to a json.
   Map<String, dynamic> toJson() => {
         'id': id,
         'userName': username,
@@ -51,6 +59,13 @@ class Delivery {
       };
 }
 
+/// This function is used to fetch all deliveries from the server.
+///
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to fetch the deliveries, an exception will be thrown.
+///
+/// @return A list of all deliveries.
 Future<List<Delivery>> fetchDeliveries() async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -85,6 +100,14 @@ Future<List<Delivery>> fetchDeliveries() async {
   }
 }
 
+/// This function is used to fetch a delivery from the backend.
+///
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to fetch the delivery, an exception will be thrown.
+///
+/// @param id The id of the delivery to be fetched.
+/// @return The delivery.
 Future<Delivery> fetchDelivery(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -119,6 +142,14 @@ Future<Delivery> fetchDelivery(int id) async {
   }
 }
 
+/// This function is used to create a delivery on the backend.
+///
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to create the delivery, an exception will be thrown.
+///
+/// @param delivery The delivery to be created.
+/// @return The created delivery.
 Future<Delivery> createDelivery(Delivery delivery) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -164,6 +195,14 @@ Future<Delivery> createDelivery(Delivery delivery) async {
   }
 }
 
+/// This function is used to update a delivery on the backend.
+///
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to update the delivery, an exception will be thrown.
+///
+/// @param delivery The delivery to be updated.
+/// @return The updated delivery.
 Future<Delivery> updateDelivery(Delivery delivery) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -207,6 +246,14 @@ Future<Delivery> updateDelivery(Delivery delivery) async {
   }
 }
 
+/// This function is used to delete a delivery on the backend.
+///
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to delete the delivery, an exception will be thrown.
+///
+/// @param id The id of the delivery to be deleted.
+/// @return The status code of the request.
 Future<int> deleteDelivery(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 

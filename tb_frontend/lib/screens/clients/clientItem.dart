@@ -3,12 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../../models/client.dart';
 
+
+/// This class is used to display a client item.
+/// It is used in the client list screen.
+/// Inspired and adapted from : https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class ClientItem extends StatelessWidget {
   final Client client;
   final Function(BuildContext context, Client client) onSelect;
 
   const ClientItem(this.client, this.onSelect, {super.key});
 
+  /// This function is used to build the client item.
   @override
   Widget build(BuildContext context) {
     return Card(

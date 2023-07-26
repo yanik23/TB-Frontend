@@ -5,14 +5,23 @@ import 'package:transparent_image/transparent_image.dart';
 import '../../models/delivery.dart';
 
 
+// date format used for the delivery date
 final formatter = DateFormat('dd/MM/yyyy');
 
+/// This class is used to create a delivery item widget
+///
+/// Inspired and adapted from : https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DeliveryItem extends StatelessWidget {
   final Delivery delivery;
   final Function(BuildContext context, Delivery delivery) onSelect;
 
   const DeliveryItem(this.delivery, this.onSelect, {super.key});
 
+  /// This function is used to build the delivery item
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -96,11 +105,7 @@ class DeliveryItem extends StatelessWidget {
                       ]
                   ),
                   const SizedBox(height: 8),
-
-                  //Wrap(
-                   // children: [
                       Row(
-                        //alignment: WrapAlignment.center,
                         children: [
                           const Icon(Icons.delivery_dining, color: Colors.white,),
                           Expanded(
@@ -121,9 +126,6 @@ class DeliveryItem extends StatelessWidget {
                       ),
                     ],
                   ),
-                  //const Spacer(),
-                //]),
-
               ),
             )
           ],

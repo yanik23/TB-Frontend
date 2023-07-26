@@ -1,14 +1,16 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/models/client.dart';
-
 import 'clientDetailsScreen.dart';
 import 'clientItem.dart';
 import 'createClientScreen.dart';
 import 'dart:async';
 
+/// This class is used to display the clients screen
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class ClientsScreen extends StatefulWidget {
   const ClientsScreen({super.key});
 
@@ -16,6 +18,7 @@ class ClientsScreen extends StatefulWidget {
   State<ClientsScreen> createState() => _ClientsScreenState();
 }
 
+/// this class is used to manage the state of the clients screen.
 class _ClientsScreenState extends State<ClientsScreen> {
   late Future<List<Client>> clients;
   List<Client> localClients = [];
@@ -23,6 +26,8 @@ class _ClientsScreenState extends State<ClientsScreen> {
   TextEditingController editingController = TextEditingController();
   bool _showSearchBar = false;
 
+  /// This function is used to initialize the state of the clients screen.
+  /// It fetches the clients from the backend.
   @override
   void initState() {
     super.initState();
@@ -35,33 +40,25 @@ class _ClientsScreenState extends State<ClientsScreen> {
 
       if (value.isEmpty) {
         fetchClientsLocally().then((value) => {
-          setState(() {
-            localClients.addAll(value);
-            searchedClients.addAll(value);
-          })
-        });
+              setState(() {
+                localClients.addAll(value);
+                searchedClients.addAll(value);
+              })
+            });
       }
-      //localClients.addAll(value);
-      //searchedClients.addAll(value);
     }).catchError((error) {
-      //log("=================================ERROgxdR=======================");
-      //log(error.toString());
       fetchClientsLocally().then((value) => {
             setState(() {
               localClients.addAll(value);
               searchedClients.addAll(value);
             })
           });
-      /*clients.then((value) => {
-      localClients.addAll(value),
-      searchedClients.addAll(value),
-        log(localClients.toString()),
-        log(searchedClients.toString())
-      })
-      });*/
     });
   }
 
+  /// This function is used to select a client.
+  /// It navigates to the client details screen.
+  /// If the client was edited, it updates the client screen.
   void _selectClient(BuildContext context, Client client) async {
     final updatedClient = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -78,6 +75,9 @@ class _ClientsScreenState extends State<ClientsScreen> {
     }
   }
 
+  /// This function is used to create a client.
+  /// It navigates to the create client screen.
+  /// If the client was created, it updates the client screen.
   void _createClient() async {
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -86,15 +86,15 @@ class _ClientsScreenState extends State<ClientsScreen> {
     );
     if (newClient != null) {
       setState(() {
-        //clients = fetchClients();
-        /*newClient.status = "new";
-        createClientLocally(newClient);*/
         localClients.add(newClient);
         searchedClients.add(newClient);
       });
     }
   }
 
+  /// This function is used to delete a client from the backend.
+  /// If the client was deleted, it updates the client screen and shows a snackbar.
+  /// If the client could not be deleted, it shows a snackbar.
   void _deleteClient(Client client) async {
     final response = await deleteClient(client.id).catchError((error) {
       if (context.mounted) {
@@ -110,7 +110,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
           ),
         );
       }
-      // TODO: workaround for now, need to fix.
       setState(() {});
     });
     if (response.statusCode == HttpStatus.noContent) {
@@ -134,6 +133,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
     }
   }
 
+  /// This function is used to filter the clients by name with the search bar.
   void _filterSearchResults(String query) {
     setState(() {
       searchedClients = localClients
@@ -143,18 +143,21 @@ class _ClientsScreenState extends State<ClientsScreen> {
     });
   }
 
+  /// This function is used to refresh the clients screen.
+  /// It fetches the clients from the backend.
   Future _refreshClients() async {
     setState(() {
       clients = fetchClients();
       clients.then((value) => {
-        localClients.clear(),
-        localClients.addAll(value),
-        searchedClients.clear(),
-        searchedClients.addAll(value)
-      });
+            localClients.clear(),
+            localClients.addAll(value),
+            searchedClients.clear(),
+            searchedClients.addAll(value)
+          });
     });
   }
 
+  /// This function is used to build the clients screen.
   @override
   Widget build(BuildContext context) {
     Widget searchBar = Padding(
@@ -192,6 +195,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                       onDismissed: (direction) {
                         showDialog(
                           context: context,
+                          /// A dialog is shown to confirm the deletion of the client.
                           builder: (ctx) => AlertDialog(
                             title: const Text("Delete Client"),
                             content: const Text(

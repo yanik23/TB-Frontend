@@ -1,6 +1,5 @@
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/dishes/generateQRCodeScreen.dart';
 import '../../models/dish.dart';
@@ -186,12 +185,7 @@ class _DishDetailsScreenState extends State<DishDetailsScreen> {
                     const SizedBox(height: 8.0),
 
                     if(localDish.ingredients?.isEmpty ?? true)
-                      const Text('N/A', /*style: TextStyle(
-                        fontSize: 18.0,
-                        //fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),*/),
+                      const Text('N/A'),
                     Container(
                       width: double.infinity,
                       constraints: const BoxConstraints(maxHeight: 250.0),

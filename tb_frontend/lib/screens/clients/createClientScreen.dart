@@ -1,10 +1,14 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-
 import '../../models/client.dart';
 import '../../utils/constants.dart';
 
+
+/// This class is used to display the create client screen
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class CreateClientScreen extends StatefulWidget {
   final Client? client;
   final String title;
@@ -14,9 +18,11 @@ class CreateClientScreen extends StatefulWidget {
   State<CreateClientScreen> createState() => _CreateClientScreenState();
 }
 
+/// This class is used to manage the state of the create client screen
 class _CreateClientScreenState extends State<CreateClientScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  // initial values for the form fields
   int _id = 0;
   String _name = '';
   String _addressName = '';
@@ -25,11 +31,15 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
   String _city = '';
 
 
+  // regex patterns for validation
   final RegExp _nameRegExp = RegExp(nameRegexPattern);
   final RegExp _streetAndCityRegExp = RegExp(streetAndCityRegexPattern);
   final RegExp _intRegExp = RegExp(intRegexPattern);
-  final RegExp _doubleRegExp = RegExp(doubleRegexPattern);
 
+  /// This function is used to initialize the state of the create client screen
+  /// It sets the initial values for the form fields
+  /// if the client is not null this means we update the client,
+  /// it sets the values of the client to the form fields for editing
   @override
   void initState() {
     if (widget.client != null) {
@@ -45,7 +55,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
     }
   }
 
-
+  /// This function is used to create or update a client
   void _createOrUpdateClient() {
     // Create a new client object with the input data
     Client newClient = Client(
@@ -57,6 +67,10 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
       _city,
     );
     Future<Client> resultClient;
+
+    /// If the client is null, we create a new client
+    /// else we update the client
+    /// We show a snackbar with the result of the operation
     String snackBarMessage = '';
     if(widget.client == null) {
       resultClient = createClient(newClient);
@@ -65,6 +79,8 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
       resultClient = updateClient(newClient);
       snackBarMessage = 'Client updated successfully';
     }
+
+    /// We show a snackbar with the result of the operation
     resultClient.then((client) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(snackBarMessage, textAlign: TextAlign.center),
@@ -88,6 +104,7 @@ class _CreateClientScreenState extends State<CreateClientScreen> {
     // Go back to the previous screen
   }
 
+  /// This function is used to build the create client screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(

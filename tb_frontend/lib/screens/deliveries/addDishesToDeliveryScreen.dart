@@ -1,12 +1,16 @@
 
 
 import 'package:flutter/material.dart';
-
 import '../welcomeScreen.dart';
 import 'createDeliveryScreen.dart';
 import '../../utils/widgets/searchBar.dart' as sb;
 
 
+/// This class is used to display the add dishes to delivery screen
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class AddDishesToDeliveryScreen extends StatefulWidget {
   final List<DishCheck> dishes;
   final List<DishCheck> selectedDishes;
@@ -18,14 +22,21 @@ class AddDishesToDeliveryScreen extends StatefulWidget {
   State<AddDishesToDeliveryScreen> createState() => _AddDishesToDeliveryScreenState();
 }
 
+/// This class is used to manage the state of the add dishes to delivery screen
 class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
-  List<DishCheck> dishes = [];
-  List<DishCheck> selectedDishes = [];
-  List<DishCheck> searchedDishes = [];
 
+  // the full list of dishes to be displayed
+  List<DishCheck> dishes = [];
+  // the list of dishes selected by the user
+  List<DishCheck> selectedDishes = [];
+  // the list of dishes searched by the user
+  List<DishCheck> searchedDishes = [];
+  // show search bar
   bool _showSearchBar = false;
+  // editing controller for the search bar
   TextEditingController editingController = TextEditingController();
 
+  /// This function is used to initialize the state of the add dishes to delivery screen
   @override
   void initState() {
     super.initState();
@@ -55,6 +66,7 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
     });
   }
 
+  /// This function is used to toggle the dish
   void _toggleDish(int index, bool value) {
     setState(() {
       selectedDishes[index].isChecked = value;
@@ -62,12 +74,14 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
     });
   }
 
+  /// This function is used to add the selected dishes to the delivery
   void _onAddPressed() {
     List<DishCheck> sd = searchedDishes.where((element) => element.isChecked).toList();
     Navigator.of(context).pop(sd);
   }
 
 
+  /// This function is used to filter the dishes searched by the user
   void _filterSearchResults(String query) {
     setState(() {
       searchedDishes = selectedDishes
@@ -79,6 +93,7 @@ class _AddDishesToDeliveryScreenState extends State<AddDishesToDeliveryScreen> {
 
 
 
+  /// This function is used to build the add dishes to delivery screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(

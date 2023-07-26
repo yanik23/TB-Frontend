@@ -1,12 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+
+/// this class is used to display the statistics screen of the application.
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
 
   @override
   State<StatisticsScreen> createState() => _StatisticsScreenState();
 }
+
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
   int touchedIndex = -1;
@@ -15,7 +18,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Statistics'),
+        title: const Text('Statistics'),
       ),
       body: Center(
         child: PieChart(

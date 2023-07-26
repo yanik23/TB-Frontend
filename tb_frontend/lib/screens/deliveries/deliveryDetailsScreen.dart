@@ -1,12 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:tb_frontend/screens/welcomeScreen.dart';
 
+import 'package:flutter/material.dart';
 import '../../models/delivery.dart';
 import 'createDeliveryScreen.dart';
 
 
-
+/// This class is used to display the delivery details screen
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DeliveryDetailsScreen extends StatefulWidget {
+  // the delivery to be displayed
   final Delivery tempDelivery;
 
   const DeliveryDetailsScreen(this.tempDelivery, {super.key});
@@ -15,17 +19,21 @@ class DeliveryDetailsScreen extends StatefulWidget {
   State<DeliveryDetailsScreen> createState() => _DeliveryDetailsScreenState();
 }
 
+/// This class is used to manage the state of the delivery details screen
 class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
   late Future<Delivery> delivery;
-  //Delivery localDelivery
 
+  /// This function is used to initialize the state of the delivery details screen
+  /// It fetches the delivery from the backend
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     delivery = fetchDelivery(widget.tempDelivery.id);
   }
 
+  /// This function is used to edit a delivery
+  /// it navigates to the create delivery screen
+  /// if the delivery was edited, it updates the delivery details screen
   void _editDelivery(Delivery c) async {
     final newDelivery = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -39,6 +47,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
     }
   }
 
+  /// This function is used to build the delivery details screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,6 +158,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                     ),
                     const SizedBox(height: 16.0),
 
+                    /// This Widget is used to build the list of dishes of the delivery
                     Container(
                       width: double.infinity,
                       constraints: const BoxConstraints(maxHeight: 250.0),

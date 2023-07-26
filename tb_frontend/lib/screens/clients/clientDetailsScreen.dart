@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import '../../models/client.dart';
 import 'createClientScreen.dart';
 
+
+/// this class is used to display the details of a client
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class ClientDetailsScreen extends StatefulWidget {
   final Client tempClient;
 
@@ -11,10 +17,11 @@ class ClientDetailsScreen extends StatefulWidget {
   State<ClientDetailsScreen> createState() => _ClientDetailsScreenState();
 }
 
+/// This class is used to manage the state of the client details screen
 class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
   late Future<Client> client;
-  //Client localClient
 
+  /// This function is used to initialize the state of the client details screen
   @override
   void initState() {
     // TODO: implement initState
@@ -22,6 +29,9 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
     client = fetchClient(widget.tempClient.id);
   }
 
+  /// This function is used to edit a client
+  /// it navigates to the create client screen
+  /// if the client was edited, it updates the client details screen
   void _editClient(Client c) async {
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -35,6 +45,7 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
     }
   }
 
+  /// This function is used to build the client details screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +75,7 @@ class _ClientDetailsScreenState extends State<ClientDetailsScreen> {
           ),
         ],
       ),
+      /// This function is used to build the client details screen
       body: WillPopScope(
         onWillPop: () async {
           Navigator.of(context).pop(client);

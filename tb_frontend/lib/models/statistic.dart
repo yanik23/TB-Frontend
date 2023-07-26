@@ -8,12 +8,23 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 
+
+/// This class is used to represent the average delivered per dish type.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class AvgDeliveredPerType {
+
+  /// The type of the dish.
   String currentType;
+
+  /// The average quantity of the delivered dishes.
   double avgDelivered;
 
   AvgDeliveredPerType(this.currentType, this.avgDelivered);
 
+  /// This function is used to create an average delivered per dish type from a json.
   factory AvgDeliveredPerType.fromJson(Map<String, dynamic> json) {
 
     return AvgDeliveredPerType(
@@ -22,12 +33,21 @@ class AvgDeliveredPerType {
     );
   }
 }
+
+/// This class is used to represent the quantity delivered per dish size.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class QuantityDeliveredPerSize {
+  // The size of the dish.
   String currentSize;
+  // The quantity of the delivered dishes.
   double quantityDelivered;
 
   QuantityDeliveredPerSize(this.currentSize, this.quantityDelivered);
 
+  /// This function is used to create a quantity delivered per dish size from a json.
   factory QuantityDeliveredPerSize.fromJson(Map<String, dynamic> json) {
 
     return QuantityDeliveredPerSize(
@@ -37,6 +57,13 @@ class QuantityDeliveredPerSize {
   }
 }
 
+/// This function is used to fetch the total delivered dishes per type.
+///
+/// If the access token is invalid, a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to fetch the statistics, an exception will be thrown.
+///
+/// @return A list of the total delivered dishes per type.
 Future<List<AvgDeliveredPerType>> fetchTotalDeliveriesPerType() async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -76,6 +103,14 @@ Future<List<AvgDeliveredPerType>> fetchTotalDeliveriesPerType() async {
   }
 }
 
+
+/// This function is used to fetch the average delivered dishes per size.
+///
+/// If the access token is invalid, a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to fetch the statistics, an exception will be thrown.
+///
+/// @return A list of the average delivered dishes per size.
 Future<List<AvgDeliveredPerType>> fetchAvgDeliveriesPerType() async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -98,7 +133,13 @@ Future<List<AvgDeliveredPerType>> fetchAvgDeliveriesPerType() async {
   }
 }
 
-
+/// This function is used to fetch the total delivered dishes per size.
+///
+/// If the access token is invalid, a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to fetch the statistics, an exception will be thrown.
+///
+/// @return A list of the total delivered dishes per size.
 Future<List<QuantityDeliveredPerSize>> fetchQuantitiesDeliveredPerSize() async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 

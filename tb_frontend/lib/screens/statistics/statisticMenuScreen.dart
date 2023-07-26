@@ -5,6 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:tb_frontend/screens/statistics/monthlyStatisticsScreen.dart';
 import 'package:tb_frontend/screens/statistics/statisticsTotalScreen.dart';
 
+
+/// This class is used to display the statistic menu screen of the application.
+///
+/// @author Yanik Lange
+/// @date 27.07.2023
+/// @version 1
 class StatisticMenuScreen extends StatelessWidget {
   const StatisticMenuScreen({super.key});
 
@@ -41,7 +47,18 @@ class StatisticMenuScreen extends StatelessWidget {
           ),
           TextButton.icon(
             onPressed: () {
-
+              AlertDialog(
+                title: const Text("Money Statistics"),
+                content: const Text("Money statistics not implemented yet"),
+                actions: [
+                  TextButton(
+                    child: const Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
             },
             icon: const Icon(Icons.monetization_on, size: 36),
             label: const Text('Ingredients'),
@@ -65,8 +82,6 @@ class StatisticMenuScreen extends StatelessWidget {
               foregroundColor: Colors.grey,
             ),
           ),
-
-
         ],
       ),
       );

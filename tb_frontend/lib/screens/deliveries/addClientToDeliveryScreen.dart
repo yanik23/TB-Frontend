@@ -3,18 +3,12 @@
 
 
 import 'package:flutter/material.dart';
-
 import '../../models/client.dart';
-import '../../models/dish.dart';
 import '../welcomeScreen.dart';
 import '../../utils/widgets/searchBar.dart' as sb;
 
 
-/*class DishCheck {
-  String name = "";
-  bool check = false;
-  DishCheck({this.check = false});
-}*/
+
 class AddClientToDeliveryScreen extends StatefulWidget {
 
   List<Client> clients;

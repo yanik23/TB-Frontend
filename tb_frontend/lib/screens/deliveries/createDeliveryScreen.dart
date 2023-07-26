@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:tb_frontend/dto/dishForDeliveryDTO.dart';
 import 'package:tb_frontend/models/dish.dart';
@@ -11,6 +9,7 @@ import '../../utils/secureStorageManager.dart';
 import '../welcomeScreen.dart';
 import 'addDishesToDeliveryScreen.dart';
 
+/// This class is used to represent a dish with a checkbox.
 class DishCheck {
   int id;
   String name;
@@ -22,9 +21,12 @@ class DishCheck {
       this.quantityDelivered);
 }
 
+/// This class is used to display the create delivery screen
 class CreateDeliveryScreen extends StatefulWidget {
+  // the delivery to be updated. If null, we create a new delivery
   final Delivery? delivery;
-  final title;
+  // the title of the screen
+  final String title;
 
   const CreateDeliveryScreen(this.title, {this.delivery, super.key});
 
@@ -32,21 +34,28 @@ class CreateDeliveryScreen extends StatefulWidget {
   State<CreateDeliveryScreen> createState() => _CreateDeliveryScreenState();
 }
 
+/// This class is used to manage the state of the create delivery screen
 class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  // initial values for the form fields
   int _id = 0;
   String _username = "";
   String _clientName = '';
   late DateTime _date = DateTime.now();
   String? _deliveryDetails = '';
 
+  // the list of clients that can be selected
   final List<Client> _clients = [];
+  // the list of dishes that can be selected
   final List<DishCheck> _dishes = [];
+  // the list of dishes selected by the user
   List<DishCheck> selectedDishes = [];
 
+  // regex patterns for validation
   final RegExp _descriptionRegExp = RegExp(descriptionRegexPattern);
 
+  /// This function is used to initialize the state of the create delivery screen
   @override
   void initState() {
     super.initState();
@@ -70,6 +79,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
   }
 
+  /// This function is used to load the user from the secure storage
   void _loadUser() async {
     final username = await SecureStorageManager.read('KEY_USERNAME');
     if (username != null) {
@@ -79,6 +89,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
   }
 
+  /// This function is used to load the clients from the backend
   void _loadClients() async {
     fetchClients().then((value) {
       setState(() {
@@ -87,6 +98,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     });
   }
 
+  /// This function is used to load the dishes from the backend
   void _loadDishes() async {
     fetchDishes().then((value) {
       setState(() {
@@ -97,6 +109,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     });
   }
 
+  /// This function is used to show the date picker
   void _showDatePicker() {
     showDatePicker(
       context: context,
@@ -112,6 +125,9 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     });
   }
 
+  /// This function is used to add a client to the delivery
+  /// It navigates to the add client to delivery screen
+  /// If a client was added, it updates the client name
   void _addClientToDelivery() async {
     final newClient = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -125,6 +141,9 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
   }
 
+  /// This function is used to add dishes to the delivery
+  /// It navigates to the add dishes to delivery screen
+  /// If dishes were added, it updates the list of selected dishes
   void _addDishesToDelivery() async {
     final newDishes = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -139,6 +158,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
   }
 
+  /// This function is used to create or update a delivery
   void _createOrUpdateDelivery() {
     // Create a new delivery object with the input data
     Delivery newDelivery = Delivery(
@@ -153,7 +173,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
           .toList(),
     );
 
-    //Future<Delivery> resultDelivery = createDelivery(newDelivery);
+    /// if the delivery is null, we create a new delivery, else we update the delivery
     Future<Delivery> resultDelivery;
     String snackBarMessage = '';
     if (widget.delivery == null) {
@@ -163,6 +183,10 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
       resultDelivery = updateDelivery(newDelivery);
       snackBarMessage = 'Delivery updated successfully';
     }
+
+    /// if the delivery was created or updated successfully, we show a snackbar
+    /// and navigate back to the deliveries screen with the updated or created delivery
+    /// else we show a snackbar with the error message
     resultDelivery.then((delivery) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -185,6 +209,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     });
   }
 
+  /// This function is used to build the create delivery screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,18 +243,17 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                 const SizedBox(height: 16.0),
                 Row(
                   children: [
-                    Text('Delivery date : ', style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 16.0,
-                        color: kColorScheme.primary
-                    ),
+                    Text(
+                      'Delivery date : ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16.0,
+                          color: kColorScheme.primary),
                     ),
                     const Spacer(),
                     Text(
                       formatter.format(_date),
-                      /* ? 'No date selected'
-                          : formatter.format(_date!),*/
                     ),
                     IconButton(
                       onPressed: _showDatePicker,
@@ -238,12 +262,8 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                   ],
                 ),
                 const SizedBox(height: 16.0),
-                //Row(
-                // children: [
-
 
                 Row(
-                  //mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       'Delivered to : ',
@@ -254,6 +274,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                           color: kColorScheme.primary),
                     ),
                     const Spacer(),
+                    /// add client button
                     ElevatedButton(
                         onPressed: () {
                           _addClientToDelivery();
@@ -264,17 +285,16 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                 Text(
                   _clientName.isEmpty ? 'No client selected' : _clientName,
                 ),
-                //],
-                //),
                 const SizedBox(height: 16.0),
                 Row(
                   children: [
-                    Text('List of dishes :', style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 16.0,
-                        color: kColorScheme.primary
-                    ),
+                    Text(
+                      'List of dishes :',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16.0,
+                          color: kColorScheme.primary),
                     ),
                     const Spacer(),
                     ElevatedButton(
@@ -286,6 +306,8 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                 ),
 
                 const SizedBox(height: 16.0),
+
+                /// This widget displays the list of selected dishes for a delivery
                 Container(
                   width: double.infinity,
                   constraints: const BoxConstraints(maxHeight: 250.0),
@@ -293,34 +315,44 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: selectedDishes.length,
-                      itemBuilder: (context, index) =>
-                          Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
+                      itemBuilder: (context, index) => Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              selectedDishes[index].name ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                //fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            Row(
                               children: [
-                                Text(selectedDishes[index].name ?? 'N/A', style: TextStyle(
-                                  fontSize: 18.0,
-                                  //fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.recycling, color: Colors.orangeAccent),
-                                    const SizedBox(width: 8.0),
-                                    const Text("Remained: "),
-                                    Text(selectedDishes[index].quantityRemained.toString() ?? 'N/A'),
-                                    const Spacer(),
-                                    const Icon(Icons.delivery_dining, color: Colors.orangeAccent),
-                                    const SizedBox(width: 8.0),
-                                    const Text("Delivered: "),
-                                    Text(selectedDishes[index].quantityDelivered.toString() ?? 'N/A'),
-                                  ],
-                                ),
-                                const SizedBox(height: 16.0),
+                                const Icon(Icons.recycling,
+                                    color: Colors.orangeAccent),
+                                const SizedBox(width: 8.0),
+                                const Text("Remained: "),
+                                Text(selectedDishes[index]
+                                        .quantityRemained
+                                        .toString() ??
+                                    'N/A'),
+                                const Spacer(),
+                                const Icon(Icons.delivery_dining,
+                                    color: Colors.orangeAccent),
+                                const SizedBox(width: 8.0),
+                                const Text("Delivered: "),
+                                Text(selectedDishes[index]
+                                        .quantityDelivered
+                                        .toString() ??
+                                    'N/A'),
                               ],
                             ),
-                          ),
+                            const SizedBox(height: 16.0),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -338,9 +370,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
             ),
           ),
         ),
-        //],
       ),
-      //),
     );
   }
 }

@@ -1,5 +1,4 @@
 
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -9,6 +8,11 @@ import 'deliveryDetailsScreen.dart';
 import 'deliveryItem.dart';
 
 
+/// This class is used to display the deliveries screen
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class DeliveriesScreen extends StatefulWidget {
   const DeliveriesScreen({super.key});
 
@@ -16,17 +20,23 @@ class DeliveriesScreen extends StatefulWidget {
   State<DeliveriesScreen> createState() => _DeliveriesScreenState();
 }
 
+/// This class is used to manage the state of the deliveries screen
 class _DeliveriesScreenState extends State<DeliveriesScreen> {
 
+  // the list of deliveries fetched from the backend
   late Future<List<Delivery>> deliveries;
+  // the list of deliveries stored locally
   List<Delivery> localDeliveries = [];
+  // the list of deliveries searched by the user
   List<Delivery> searchedDeliveries = [];
-
+  // show search bar
   bool _showSearchBar = false;
-
+  // editing controller for the search bar
   TextEditingController editingController = TextEditingController();
 
 
+  /// This function is used to initialize the state of the deliveries screen
+  /// It fetches the deliveries from the backend.
   @override
   void initState() {
     super.initState();
@@ -41,6 +51,10 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
       })*/
     });
   }
+
+  /// This function is used to select a delivery.
+  /// It navigates to the delivery details screen.
+  /// If the delivery was edited, it updates the delivery details screen
   void _selectDelivery(BuildContext context, Delivery delivery) async {
     final updatedDelivery = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -57,6 +71,9 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
     }
   }
 
+  /// This function is used to create a delivery.
+  /// It navigates to the create delivery screen.
+  /// If the delivery was created, it updates the deliveries screen
   void _createDelivery() async{
     final newDelivery = await Navigator.of(context).push(
       MaterialPageRoute(
@@ -74,6 +91,7 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
     }
   }
 
+  /// This function is used to filter the deliveries by the search query.
   void _filterSearchResults(String query) {
     setState(() {
       searchedDeliveries = localDeliveries
@@ -82,8 +100,9 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
     });
   }
 
+  /// This function is used to refresh the deliveries screen.
+  /// It fetches the deliveries from the backend to refresh the list.
   Future _refreshDeliveries() async {
-    log("=================================REFRESHING CLIENTS=================================");
     setState(() {
       deliveries = fetchDeliveries();
       deliveries.then((value) => {
@@ -95,8 +114,11 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
     });
   }
 
+  /// This function is used to delete a delivery.
+  /// It deletes the delivery from the backend.
+  /// If the delivery was deleted, it updates the deliveries screen and shows a snackbar.
+  /// If the delivery could not be deleted, it shows a snackbar with an error message.
   void _deleteDelivery(Delivery delivery) async {
-    log("=================================DELETING CLIENT=================================");
     final statusCode = await deleteDelivery(delivery.id).catchError((error) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -135,8 +157,10 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
   }
 
 
+  /// This function is used to build the deliveries screen
   @override
   Widget build(BuildContext context) {
+    /// This widget is used to display the search bar
     Widget searchBar = Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
@@ -155,8 +179,7 @@ class _DeliveriesScreenState extends State<DeliveriesScreen> {
       ),
     );
 
-    log("=================================BINDING CLIENTS SCREEN===============================");
-    //late Future<List<Delivery>> deliveries = fetchDeliveries();
+     /// This widget is used to display the deliveries
     Widget content = FutureBuilder<List<Delivery>>(
       future: deliveries,
       builder: (context, snapshot) {

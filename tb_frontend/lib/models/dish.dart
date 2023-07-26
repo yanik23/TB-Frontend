@@ -8,16 +8,24 @@ import 'package:tb_frontend/utils/secureStorageManager.dart';
 import '../utils/constants.dart';
 import '../utils/refreshToken.dart';
 
+
+// enum used to represent the type of a dish
 enum DishType {
   meat,
   vegetarian,
   vegan,
 }
-
+// enum used to represent the size of a dish
 enum DishSize {
   fit,
   gain,
 }
+
+/// This class is used to represent a dish.
+///
+/// @author Yanik Lange
+/// @date 26.07.2023
+/// @version 1
 class Dish {
   final int id;
   String name;
@@ -62,6 +70,8 @@ class Dish {
     this.ingredients,
   });
 
+  /// This function is used to get create a dish from a json with the minimum.
+  /// used to display on the list of dishes
   factory Dish.fromJson(Map<String, dynamic> json) {
     return Dish(
       id: json['id'],
@@ -74,6 +84,8 @@ class Dish {
     );
   }
 
+  /// This function is used to get create a dish from a json with all details.
+  /// used to display on the details of a dish
   factory Dish.fromServerJson(Map<String, dynamic> json) {
     return Dish(
       id: json['id'],
@@ -98,6 +110,7 @@ class Dish {
     );
   }
 
+  /// This function is used to convert a dish to a json.
   Map<String, dynamic> toJson() {
     return {
       'name': name,
@@ -123,6 +136,14 @@ class Dish {
 
 }
 
+/// This function is used to fetch a dish from the backend.
+///
+/// If the access token is invalid a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to access the resource, an exception will be thrown.
+///
+/// @param id the id of the dish to be fetched
+/// @return the fetched dish
 Future<Dish> fetchDish(int id) async {
     final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -169,6 +190,13 @@ Future<Dish> fetchDish(int id) async {
 
 }
 
+/// This function is used to fetch all dishes from the backend.
+///
+/// If the access token is invalid, a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to access the resource, an exception will be thrown.
+///
+/// @return the fetched dishes
 Future<List<Dish>> fetchDishes() async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -215,6 +243,14 @@ Future<List<Dish>> fetchDishes() async {
   }
 }
 
+/// This function is used to create a dish on the backend.
+///
+/// If the access token is invalid, a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to create the resource, an exception will be thrown.
+///
+/// @param dish the dish to be created
+/// @return the created dish
 Future<Dish> createDish(Dish dish) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
   if(token != null) {
@@ -256,6 +292,14 @@ Future<Dish> createDish(Dish dish) async {
   }
 }
 
+/// This function is used to update a dish on the backend.
+///
+/// If the access token is invalid, a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to update the resource, an exception will be thrown.
+///
+/// @param dish the dish to be updated
+/// @return the updated dish
 Future<Dish> updateDish(Dish dish) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -302,6 +346,14 @@ Future<Dish> updateDish(Dish dish) async {
   }
 }
 
+/// This function is used to delete a dish on the backend.
+///
+/// If the access token is invalid, a new one will be fetched and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not allowed to delete the resource, an exception will be thrown.
+///
+/// @param id the id of the dish to be deleted
+/// @return the response of the backend
 Future<http.Response> deleteDish(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 

@@ -56,7 +56,7 @@ class _MonthlyStatisticsScreenState extends State<MonthlyStatisticsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Monthly Statistics'),
+        title: const Text('Monthly Statistics [WIP]'),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),

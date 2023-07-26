@@ -97,6 +97,8 @@ Future<Client> fetchClient(int id) async {
 }
 
 /// This method is used to fetch all clients from the backend.
+///
+/// if the access token is invalid, an exception is thrown.
 Future<List<Client>> fetchClients() async {
   final accessToken = await SecureStorageManager.read('ACCESS_TOKEN');
   if (accessToken != null) {
@@ -112,6 +114,13 @@ Future<List<Client>> fetchClients() async {
 }
 
 /// This method is used to fetch all clients from the backend with a given access token.
+///
+/// if the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// if the refresh token is invalid, an exception will be thrown.
+/// if the user is not authorized to fetch the clients, an exception will be thrown.
+///
+/// @param accessToken The access token to use for the request.
+/// @return A list of clients.
 Future<List<Client>> fetchClientsWithToken(String accessToken) async {
   final response = await http.get(
     Uri.parse('$uriPrefix/clients'),
@@ -142,6 +151,13 @@ Future<List<Client>> fetchClientsWithToken(String accessToken) async {
 }
 
 /// This method is used to create a client on the backend.
+///
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to create a client, an exception will be thrown.
+///
+/// @param client The client to create.
+/// @return The created client.
 Future<Client> createClient(Client client) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -185,6 +201,13 @@ Future<Client> createClient(Client client) async {
   }
 }
 
+/// This method is used to update a client on the backend.
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to update a client, an exception will be thrown.
+///
+/// @param client The client to update.
+/// @return The updated client.
 Future<Client> updateClient(Client client) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -227,6 +250,13 @@ Future<Client> updateClient(Client client) async {
   }
 }
 
+/// This method is used to delete a client on the backend.
+/// If the access token is invalid, a new one will be fetched using the refresh token and the request will be repeated.
+/// If the refresh token is invalid, an exception will be thrown.
+/// If the user is not authorized to delete a client, an exception will be thrown.
+///
+/// @param id The id of the client to delete.
+/// @return The response of the request.
 Future<http.Response> deleteClient(int id) async {
   final token = await SecureStorageManager.read('ACCESS_TOKEN');
 
@@ -265,7 +295,9 @@ Future<http.Response> deleteClient(int id) async {
   }
 }
 
-
+/// This method is used to fetch all clients from the local database.
+///
+/// @return A list of clients.
 Future<List<Client>> fetchClientsLocally() async {
   // Get a reference to the database.
   final Database db = await DBHelper.database;
@@ -289,7 +321,9 @@ Future<List<Client>> fetchClientsLocally() async {
 }
 
 
-
+/// This method is used to create a client on the local database.
+///
+/// @param client The client to create.
 Future<void> createClientLocally(Client client) async {
   // Get a reference to the database.
   final Database db = await DBHelper.database;
@@ -304,6 +338,9 @@ Future<void> createClientLocally(Client client) async {
   );
 }
 
+/// This method is used to update a client on the local database.
+///
+/// @param client The client to update.
 Future<void> updateClientLocally(Client client) async {
   final db = await DBHelper.database;
 
@@ -315,6 +352,9 @@ Future<void> updateClientLocally(Client client) async {
   );
 }
 
+/// This method is used to delete a client on the local database.
+///
+/// @param id The id of the client to delete.
 Future<void> deleteClientLocally(int id) async {
   final db = await DBHelper.database;
 

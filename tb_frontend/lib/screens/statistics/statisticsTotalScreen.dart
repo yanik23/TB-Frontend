@@ -153,12 +153,8 @@ class _StatisticsTotalScreenState extends State<StatisticsTotalScreen> {
                     ),
                   ),
                   Column(
-                    /*mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,*/
                     children: <Widget>[
                       for (int i = 0; i < content.length; i++)
-                        /*Column(
-                      children: [*/
                         Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 2, horizontal: 4),
@@ -175,8 +171,6 @@ class _StatisticsTotalScreenState extends State<StatisticsTotalScreen> {
                           ),
                         ),
                       const SizedBox(height: 8)
-                      //],
-                      //),
                     ],
                   ),
                 ]);

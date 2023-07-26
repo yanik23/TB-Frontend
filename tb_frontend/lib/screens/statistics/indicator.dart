@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
 
+
+/// indicator for the pie chart used in the statistics screen.
+/// source : https://github.com/imaNNeo/fl_chart/tree/master/example
 class Indicator extends StatelessWidget {
   const Indicator({
     super.key,
